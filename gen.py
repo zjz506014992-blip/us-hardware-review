@@ -5,6 +5,70 @@ import json, hashlib
 
 DATE = "2026-04-24"
 
+# 当日宏观/指数数据（每日手动更新或 FMP 自动拉取）
+# 格式: [(代码, 名称, 收盘, 涨跌%, 备注)]
+BROAD_INDICES = [
+    ('SPX',  'S&P 500',     '7,165.08', 0.80,  '收盘新高'),
+    ('NDX',  'Nasdaq 100',  '24,836.60', 1.63, '收盘新高'),
+    ('DJI',  'Dow Jones',   '49,230.71', -0.16, '防御股拖累'),
+    ('RUT',  'Russell 2000','2,418.50',  0.62,  '小盘跟涨'),
+    ('VIX',  'VIX',         '13.85',    -4.20, '风险偏好回升'),
+    ('DXY',  'US Dollar',   '103.25',   -0.30, '弱美元利好'),
+    ('US10Y','10Y 收益率',   '4.32%',    -2.5,  'bp，利率回落'),
+    ('WTI',  'WTI 原油',    '$72.40',   -1.80, 'OPEC 增产预期'),
+]
+
+SEMI_INDICES = [
+    ('SOX',  'PHLX 半导体',     '~10,560', 5.00,  '18 连阳，52 周高'),
+    ('SOXX', 'iShares 半导体',  '$255.70', 4.95,  '权重股驱动'),
+    ('SMH',  'VanEck 半导体',   '$506.24', 5.06,  'AI 算力 ETF 创新高'),
+    ('XSD',  'SPDR 半导体（小盘等权重）', '$420.00', 4.80, '设备/小盘弹性'),
+    ('PSI',  'Invesco 动态半导体','$215.50', 4.85, '量化半导体'),
+]
+
+# GICS 11 一级行业（用 SPDR Sector ETF 代理）
+GICS_INDICES = [
+    ('XLK',  '信息科技 Tech',         '$245.80', 2.50,  '半导体拉动'),
+    ('XLC',  '通信服务 Comm Svc',     '$118.40', 1.10,  'Meta/Google 同步'),
+    ('XLY',  '可选消费 Cons Disc',    '$226.00', 0.45,  'AMZN/TSLA 分化'),
+    ('XLF',  '金融 Financials',       '$54.30',  0.30,  '银行温和涨'),
+    ('XLI',  '工业 Industrials',     '$148.20', 0.18,  '航空+国防中性'),
+    ('XLB',  '材料 Materials',       '$92.10',  0.10,  '原油拖累'),
+    ('XLRE', '房地产 Real Estate',    '$42.80',  0.28,  '利率友好'),
+    ('XLV',  '医疗 Health Care',     '$152.10', -0.22, '防御板块回吐'),
+    ('XLU',  '公用事业 Utilities',    '$78.90',  -0.32, '核电主题分化'),
+    ('XLP',  '必选消费 Cons Staples', '$82.50',  -0.55, '防御股回流权益资产'),
+    ('XLE',  '能源 Energy',          '$92.60',  -1.55, '油价回落 -1.8%'),
+]
+
+# 行业大会日历（常量，每年初维护一次）
+INDUSTRY_EVENTS = [
+    ('2026-01-06', '2026-01-09', 'CES 2026 拉斯维加斯', '消费电子大展，AI PC/Robot/汽车'),
+    ('2026-02-15', '2026-02-19', 'ISSCC 2026 旧金山', '芯片设计学术顶会'),
+    ('2026-03-02', '2026-03-05', 'MWC Barcelona', '5G/手机芯片/无线通信'),
+    ('2026-03-17', '2026-03-21', 'NVIDIA GTC 2026', 'Rubin/Blackwell Ultra 发布'),
+    ('2026-05-13', '2026-05-15', 'Google I/O 2026', 'TPU/Gemini/Android'),
+    ('2026-06-09', '2026-06-13', 'Apple WWDC 2026', 'M5 Mac、iOS 20、AI 战略'),
+    ('2026-07-08', '2026-07-10', 'SemiCon West 旧金山', '设备厂商年度展'),
+    ('2026-08-24', '2026-08-26', 'Hot Chips 2026', 'CPU/GPU 架构发布'),
+    ('2026-09-09', '2026-09-09', 'Apple iPhone 18 发布会', 'A20 芯片'),
+    ('2026-09-04', '2026-09-09', 'IFA Berlin', '消费电子'),
+    ('2026-10-13', '2026-10-15', 'NVIDIA GTC DC 华盛顿', 'AI 数据中心专场'),
+    ('2026-11-15', '2026-11-20', 'SC26 Supercomputing', 'HPC/AI 计算'),
+]
+
+# 宏观日历（每周更新一次或 FMP 自动拉取）
+MACRO_EVENTS = [
+    ('2026-04-25', '4 月 Conf. Board 消费者信心', '医疗/消费'),
+    ('2026-04-28', 'Q1 ECI（雇佣成本指数）', 'Fed 关注通胀'),
+    ('2026-04-29', 'ADP 4 月就业 + JOLTS 3 月空缺', '劳动力市场'),
+    ('2026-04-30', '**Q1 GDP 初值** + 3 月 PCE 物价指数', 'Fed 政策核心数据'),
+    ('2026-05-01', '**4 月非农 + 时薪** + ISM 制造业 PMI', '决定 5/6 FOMC'),
+    ('2026-05-06', 'FOMC 5 月会议（无新闻发布会）', '利率决议'),
+    ('2026-05-13', '4 月 CPI', '通胀核心指标'),
+    ('2026-05-14', '4 月 PPI', '生产端通胀'),
+]
+
 INDUSTRY_MAP = {
 'AI加速':['NVDA','AMD','AVGO','MRVL','CRDO','ALAB'],
 'CPU处理器':['INTC'],
@@ -295,6 +359,33 @@ def write_html(data):
     treemap_json = json.dumps(treemap, ensure_ascii=False)
     scatter_json = json.dumps(scatter_pts, ensure_ascii=False)
 
+    # 指数表生成
+    def idx_row(t):
+        code, name, close, dp, note = t
+        return f'<tr><td><b>{code}</b></td><td>{name}</td><td>{close}</td><td>{fmt_dp(dp)}</td><td style="color:#8b949e;font-size:.82rem">{note}</td></tr>'
+    broad_rows = ''.join(idx_row(t) for t in BROAD_INDICES)
+    semi_rows = ''.join(idx_row(t) for t in SEMI_INDICES)
+    gics_rows = ''.join(idx_row(t) for t in GICS_INDICES)
+
+    # 跨行业风格自动分析
+    gics_sorted = sorted(GICS_INDICES, key=lambda x: -x[3])
+    top_sec = gics_sorted[0]
+    bot_sec = gics_sorted[-1]
+    spread = round(top_sec[3] - bot_sec[3], 2)
+    risk_on = sum(1 for t in GICS_INDICES if t[3] > 0)
+    risk_off = sum(1 for t in GICS_INDICES if t[3] < 0)
+    sector_analysis = (
+        f'今日 11 个 GICS 板块中 <b class="up">{risk_on} 涨</b> / <b class="down">{risk_off} 跌</b>，'
+        f'<b>{top_sec[1]}（{top_sec[0]} {fmt_dp(top_sec[3])}）</b>领涨，'
+        f'<b>{bot_sec[1]}（{bot_sec[0]} {fmt_dp(bot_sec[3])}）</b>垫底，强弱差 <b>{spread} 个点</b>。'
+    )
+    if top_sec[0] in ('XLK', 'XLC', 'XLY') and bot_sec[0] in ('XLP', 'XLU', 'XLV', 'XLE'):
+        sector_analysis += ' 典型 <b style="color:#e57373">Risk-On</b> 风格——成长/科技领跑、防御/必选回吐，反映市场重新追逐 Beta；半导体超配（SOX +' + str(SEMI_INDICES[0][3]) + '%）跑赢 XLK 一倍以上，AI 算力链显著强于科技整体。'
+    elif top_sec[0] in ('XLP', 'XLU', 'XLV') and bot_sec[0] in ('XLK', 'XLC', 'XLY'):
+        sector_analysis += ' <b style="color:#388e3c">Risk-Off</b> 风格——防御板块抬升、成长股回吐，需警惕宏观/地缘风险。'
+    else:
+        sector_analysis += ' 板块间无明显风格分化，市场整体方向性较弱。'
+
     html = f'''<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -380,18 +471,30 @@ tr:hover td{{background:#1c2128}}
 </div>
 
 <div class="section">
-  <div class="title">📌 大盘指数</div>
+  <div class="title">📌 宏观大盘 + 行业指数（GICS 11 板块 + 半导体专项）</div>
+
+  <div style="font-size:.82rem;color:#8b949e;margin:6px 0 6px;font-weight:600">📊 宽基与宏观</div>
   <table>
-    <thead><tr><th>指数</th><th>收盘</th><th>涨跌</th><th>备注</th></tr></thead>
-    <tbody>
-      <tr><td>S&P 500</td><td>7,165.08</td><td><span class="up">+0.80%</span></td><td>收盘新高</td></tr>
-      <tr><td>Nasdaq Comp</td><td>24,836.60</td><td><span class="up">+1.63%</span></td><td>收盘新高</td></tr>
-      <tr><td>Dow Jones</td><td>49,230.71</td><td><span class="down">-0.16%</span></td><td>防御股拖累</td></tr>
-      <tr><td><b>PHLX SOX</b></td><td>~10,560</td><td><span class="up"><b>+5.00%</b></span></td><td>18 连阳，52 周高</td></tr>
-      <tr><td><b>VanEck SMH</b></td><td>$506.24</td><td><span class="up"><b>+5.06%</b></span></td><td>AI 算力 ETF 创新高</td></tr>
-    </tbody>
+    <thead><tr><th>代码</th><th>名称</th><th>收盘</th><th>涨跌</th><th>备注</th></tr></thead>
+    <tbody>{broad_rows}</tbody>
   </table>
-  <p style="margin-top:10px;font-size:.85rem;color:#8b949e">宏观背景：DOJ 撤销对美联储主席 Powell 的刑事调查，市场利率端松动；油价回落 1.8%。</p>
+
+  <div style="font-size:.82rem;color:#8b949e;margin:14px 0 6px;font-weight:600">💎 半导体/硬件专项</div>
+  <table>
+    <thead><tr><th>代码</th><th>名称</th><th>收盘</th><th>涨跌</th><th>备注</th></tr></thead>
+    <tbody>{semi_rows}</tbody>
+  </table>
+
+  <div style="font-size:.82rem;color:#8b949e;margin:14px 0 6px;font-weight:600">🌐 GICS 11 板块（SPDR Sector ETF）— 横向跨行业对比</div>
+  <table>
+    <thead><tr><th>代码</th><th>名称</th><th>收盘</th><th>涨跌</th><th>备注</th></tr></thead>
+    <tbody>{gics_rows}</tbody>
+  </table>
+
+  <div style="margin-top:14px;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px;font-size:.87rem;color:#c9d1d9;line-height:1.7">
+    <b style="color:#e6edf3">🎯 跨行业风格分析：</b>
+    {sector_analysis}
+  </div>
 </div>
 
 <div class="section">
