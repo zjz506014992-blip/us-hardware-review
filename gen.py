@@ -285,12 +285,32 @@ def write_html(data):
     ind_avgs = [x[1]['avg'] for x in ind_sorted]
     ind_colors = [dp_color(v) for v in ind_avgs]
     ind_tooltip_extra = [f"{x[1]['up']}/{x[1]['total']} 上涨" for x in ind_sorted]
+
+    # Top30 横向柱（升序绘图，最大在顶）
+    top30_asc = sorted(data['top30'], key=lambda x: x['dp'])
+    top30_labels = [s['s'] for s in top30_asc]
+    top30_vals = [s['dp'] for s in top30_asc]
+    top30_colors = [dp_color(v) for v in top30_vals]
+    top30_inds = [s['ind'] for s in top30_asc]
+
+    # 散点：log10(市值) vs 涨跌
+    import math
+    scatter_pts = [
+        {'x': round(math.log10(max(s['cap'], 1)), 2), 'y': s['dp'], 'sym': s['s'], 'ind': s['ind'], 'cap': s['cap']}
+        for s in stocks if s['cap'] > 0
+    ]
+
     chartjs_data = json.dumps({
         'ind_labels': ind_labels,
         'ind_avgs': ind_avgs,
         'ind_colors': ind_colors,
         'ind_extra': ind_tooltip_extra,
         'donut': {'up': totals['up'], 'down': totals['down'], 'flat': totals['flat']},
+        'top30_labels': top30_labels,
+        'top30_vals': top30_vals,
+        'top30_colors': top30_colors,
+        'top30_inds': top30_inds,
+        'scatter': scatter_pts,
     }, ensure_ascii=False)
 
     html = f'''<!DOCTYPE html>
@@ -386,7 +406,16 @@ tr:hover td{{background:#1c2128}}
   </div>
 </div>
 
-<div class="section placeholder">📉 Top30 横向柱 + 市值散点 将在下一次推送中加入</div>
+<div class="grid2">
+  <div class="section" style="margin-bottom:0">
+    <div class="title">🚀 涨跌幅 Top 30（横向柱）</div>
+    <div style="position:relative;height:680px"><canvas id="top30bar"></canvas></div>
+  </div>
+  <div class="section" style="margin-bottom:0">
+    <div class="title">💎 市值 vs 涨跌幅（散点，X 轴 log10 市值，单位百万美元）</div>
+    <div style="position:relative;height:680px"><canvas id="scatter"></canvas></div>
+  </div>
+</div>
 
 <script>
 const TREEMAP_DATA = {treemap_json};
@@ -469,6 +498,84 @@ new Chart(document.getElementById('indBar'), {{
       y: {{
         grid: {{color: '#21262d'}},
         ticks: {{color: '#e6edf3', font: {{size: 11}}}}
+      }}
+    }}
+  }}
+}});
+
+// Top30 横向柱
+new Chart(document.getElementById('top30bar'), {{
+  type: 'bar',
+  data: {{
+    labels: CJS.top30_labels,
+    datasets: [{{
+      label: '涨跌%',
+      data: CJS.top30_vals,
+      backgroundColor: CJS.top30_colors.map(c => c + 'cc'),
+      borderColor: CJS.top30_colors,
+      borderWidth: 1
+    }}]
+  }},
+  options: {{
+    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+    plugins: {{
+      legend: {{display: false}},
+      tooltip: {{
+        callbacks: {{
+          label: (ctx) => `${{ctx.parsed.x > 0 ? '+' : ''}}${{ctx.parsed.x.toFixed(2)}}%  [${{CJS.top30_inds[ctx.dataIndex]}}]`
+        }},
+        backgroundColor: '#21262d', titleColor: '#e6edf3', bodyColor: '#e6edf3'
+      }}
+    }},
+    scales: {{
+      x: {{grid: {{color: '#21262d'}}, ticks: {{color: '#8b949e', callback: v => v + '%'}}}},
+      y: {{grid: {{color: '#21262d'}}, ticks: {{color: '#e6edf3', font: {{size: 10}}}}}}
+    }}
+  }}
+}});
+
+// 市值散点
+new Chart(document.getElementById('scatter'), {{
+  type: 'scatter',
+  data: {{
+    datasets: [{{
+      label: '股票',
+      data: CJS.scatter.map(p => ({{x: p.x, y: p.y, sym: p.sym, ind: p.ind, cap: p.cap}})),
+      backgroundColor: CJS.scatter.map(p => {{
+        const dp = p.y;
+        if (dp >= 5) return '#00c853cc';
+        if (dp >= 3) return '#4caf50cc';
+        if (dp >= 1) return '#a5d6a7cc';
+        if (dp >= 0) return '#cddc39cc';
+        if (dp >= -1) return '#ffab91cc';
+        if (dp >= -3) return '#ef5350cc';
+        return '#b71c1ccc';
+      }}),
+      pointRadius: 4, pointHoverRadius: 7
+    }}]
+  }},
+  options: {{
+    responsive: true, maintainAspectRatio: false,
+    plugins: {{
+      legend: {{display: false}},
+      tooltip: {{
+        callbacks: {{
+          label: (ctx) => {{
+            const p = ctx.raw;
+            return `${{p.sym}} [${{p.ind}}]  ${{p.y > 0 ? '+' : ''}}${{p.y}}%  市值 $${{(p.cap/1000).toFixed(1)}}B`;
+          }}
+        }},
+        backgroundColor: '#21262d', titleColor: '#e6edf3', bodyColor: '#e6edf3'
+      }}
+    }},
+    scales: {{
+      x: {{
+        title: {{display: true, text: 'log10(市值，百万USD)', color: '#8b949e'}},
+        grid: {{color: '#21262d'}}, ticks: {{color: '#8b949e'}}
+      }},
+      y: {{
+        title: {{display: true, text: '涨跌幅 %', color: '#8b949e'}},
+        grid: {{color: '#21262d'}}, ticks: {{color: '#8b949e', callback: v => v + '%'}}
       }}
     }}
   }}
