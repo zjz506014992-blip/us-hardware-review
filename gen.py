@@ -417,6 +417,175 @@ tr:hover td{{background:#1c2128}}
   </div>
 </div>
 
+<div class="section">
+  <div class="title">📌 大盘指数</div>
+  <table>
+    <thead><tr><th>指数</th><th>收盘</th><th>涨跌</th><th>备注</th></tr></thead>
+    <tbody>
+      <tr><td>S&P 500</td><td>7,165.08</td><td><span class="up">+0.80%</span></td><td>收盘新高</td></tr>
+      <tr><td>Nasdaq Comp</td><td>24,836.60</td><td><span class="up">+1.63%</span></td><td>收盘新高</td></tr>
+      <tr><td>Dow Jones</td><td>49,230.71</td><td><span class="down">-0.16%</span></td><td>防御股拖累</td></tr>
+      <tr><td><b>PHLX SOX</b></td><td>~10,560</td><td><span class="up"><b>+5.00%</b></span></td><td>18 连阳，52 周高</td></tr>
+      <tr><td><b>VanEck SMH</b></td><td>$506.24</td><td><span class="up"><b>+5.06%</b></span></td><td>AI 算力 ETF 创新高</td></tr>
+    </tbody>
+  </table>
+  <p style="margin-top:10px;font-size:.85rem;color:#8b949e">宏观背景：DOJ 撤销对美联储主席 Powell 的刑事调查，市场利率端松动；油价回落 1.8%。</p>
+</div>
+
+<div class="section">
+  <div class="title">🔍 重点个股深度解读</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px">
+      <div style="font-weight:700;color:#3fb950;margin-bottom:6px">1️⃣ INTC — 转身的拐点 +23.60%</div>
+      <div style="font-size:.82rem;color:#8b949e;margin-bottom:6px">收盘 $82.55 / 市值 ~$3,470 亿</div>
+      <ul style="font-size:.85rem;color:#c9d1d9;line-height:1.7;padding-left:18px">
+        <li>Q1 EPS $0.29（预期 $0.01，超 29 倍）；营收 $13.58B</li>
+        <li>Q2 指引 $13.8–14.8B vs 预期 $13.07B</li>
+        <li>2026 capex $9.1B 直接利好 AMAT/LRCX/KLAC/ASML</li>
+        <li>象征性意义：自 2000 年互联网泡沫顶后首次创新高</li>
+      </ul>
+    </div>
+    <div style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px">
+      <div style="font-weight:700;color:#3fb950;margin-bottom:6px">2️⃣ ARM — AGI CPU 巨型蓝图 +14.31%</div>
+      <div style="font-size:.82rem;color:#8b949e;margin-bottom:6px">收盘 $232.35 / 市值 ~$2,440 亿</div>
+      <ul style="font-size:.85rem;color:#c9d1d9;line-height:1.7;padding-left:18px">
+        <li>首款自研 AGI CPU 数据中心芯片，2031 营收目标 $25B</li>
+        <li>Citi/Guggenheim/Evercore 等 7 家券商上调目标价至 $240</li>
+        <li>从 IP 授权商升级为整机厂，估值锚切换</li>
+        <li>3 周从 $137 → $235，涨 71%</li>
+      </ul>
+    </div>
+    <div style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px">
+      <div style="font-weight:700;color:#3fb950;margin-bottom:6px">3️⃣ AMD — Intel 涨潮最大受益方 +13.90%</div>
+      <div style="font-size:.82rem;color:#8b949e;margin-bottom:6px">收盘 $347.77 / 市值 ~$5,650 亿</div>
+      <ul style="font-size:.85rem;color:#c9d1d9;line-height:1.7;padding-left:18px">
+        <li>纯粹受 Intel 业绩外溢，无公司新闻</li>
+        <li>DA Davidson：Intel 业绩是 AMD 营收大爆发的"预演"</li>
+        <li>YTD +64%，过去 90 天 +24.5%</li>
+        <li>下周 5/6 财报前加速</li>
+      </ul>
+    </div>
+    <div style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px">
+      <div style="font-weight:700;color:#3fb950;margin-bottom:6px">4️⃣ QCOM — Intel 同盟军 +10.30%</div>
+      <div style="font-size:.82rem;color:#8b949e;margin-bottom:6px">收盘 $144.85 / 市值 ~$1,550 亿</div>
+      <ul style="font-size:.85rem;color:#c9d1d9;line-height:1.7;padding-left:18px">
+        <li>边缘 AI 推理利好移动 SoC + PC 芯片（X Elite）</li>
+        <li>4/29 盘后发布 Q2 FY26 业绩</li>
+        <li>半年 -13% 后单日修复 10 个点，重回上行通道</li>
+      </ul>
+    </div>
+    <div style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px">
+      <div style="font-weight:700;color:#3fb950;margin-bottom:6px">5️⃣ NVDA — $5T 王座 +4.83%</div>
+      <div style="font-size:.82rem;color:#8b949e;margin-bottom:6px">收盘 $209.29 / 市值 ~$5.1 万亿</div>
+      <ul style="font-size:.85rem;color:#c9d1d9;line-height:1.7;padding-left:18px">
+        <li>当日重回 5 万亿美元市值</li>
+        <li>与 Oklo 核电 PPA 协议确认，AI 数据中心电力锁定</li>
+        <li>市场轮动到落后者（INTC/AMD/MU/WDC），NVDA 涨幅相对温和</li>
+        <li>5/28 财报为下一季节性顶级催化</li>
+      </ul>
+    </div>
+    <div style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px">
+      <div style="font-weight:700;color:#3fb950;margin-bottom:6px">6️⃣ SNDK — 存储周期顶配 +5.10%</div>
+      <div style="font-size:.82rem;color:#8b949e;margin-bottom:6px">收盘 $995.01 / 市值 ~$720 亿</div>
+      <ul style="font-size:.85rem;color:#c9d1d9;line-height:1.7;padding-left:18px">
+        <li>YTD +295%，AI 数据中心 NAND 需求指数级放大</li>
+        <li>WDC +4.5% / MU +5% / STX +3.5% 全面爆发</li>
+        <li>首只专项存储 ETF 上市两周内 AUM 破 $1B</li>
+      </ul>
+    </div>
+    <div style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px">
+      <div style="font-weight:700;color:#3fb950;margin-bottom:6px">7️⃣ SMCI — AI 服务器急先锋 +9.08%</div>
+      <div style="font-size:.82rem;color:#8b949e;margin-bottom:6px">收盘 $29.18 / 市值 ~$185 亿</div>
+      <ul style="font-size:.85rem;color:#c9d1d9;line-height:1.7;padding-left:18px">
+        <li>跟随 NVDA/AMD 算力链情绪，无公司新闻</li>
+        <li>仍处财务重述阴影下，但 GB300 订单可见度高</li>
+        <li>需关注 5/6 月业绩窗口波动</li>
+      </ul>
+    </div>
+    <div style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px">
+      <div style="font-weight:700;color:#f85149;margin-bottom:6px">8️⃣ AVGO — 唯一掉队大票 -0.11%</div>
+      <div style="font-size:.82rem;color:#8b949e;margin-bottom:6px">收盘 $419.49 / 市值 ~$1.95 万亿</div>
+      <ul style="font-size:.85rem;color:#c9d1d9;line-height:1.7;padding-left:18px">
+        <li>板块普涨日单日反向，技术性整理</li>
+        <li>可能与 ASIC 客户集中度担忧 / 高估值消化有关</li>
+        <li>不影响中期叙事，短期或继续震荡</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="title">📰 产业新闻速读</div>
+  <ol style="padding-left:20px;line-height:1.85;font-size:.9rem;color:#c9d1d9">
+    <li><b>Intel Q1 2026 财报炸裂全行业。</b>EPS 28 倍超预期，AI 业务占比突破 60%，2026 capex 上调至 $9.1B → 直接拉动 AMAT/LRCX/KLAC/ASML/ENTG 全链涨 3–5%</li>
+    <li><b>DOJ 撤销对 Fed Powell 主席的刑事调查。</b>央行独立性溢价回归，10Y 利率小幅回落，成长股估值压制解除</li>
+    <li><b>ARM 发布首款自研 AGI CPU。</b>数据中心战略升级，2031 营收目标 $25B；从 IP 授权 → 整机方案</li>
+    <li><b>AMD 获 DA Davidson 上调评级。</b>称 Intel 业绩为 AMD 业绩的"前奏"，CPU AI 需求行业级共振</li>
+    <li><b>存储 ETF AUM 两周破 $1B。</b>SNDK/MU/WDC/STX 资金面集中流入</li>
+    <li><b>NVDA 与 Oklo 签核电采购协议。</b>AI 数据中心电力问题获阶段性解决方案</li>
+    <li><b>SOX 指数 18 连阳。</b>创历史最长连涨纪录，半导体周期 + AI 主题 + 美股流动性三共振</li>
+    <li><b>QCOM/SWKS/QRVO 重新定价。</b>Intel 边缘 AI 推理论调外溢，QCOM 单日 +10% 修复半年估值差</li>
+  </ol>
+</div>
+
+<div class="section">
+  <div class="title">📅 30 日业绩日历（池内公司）</div>
+  <table>
+    <thead><tr><th>日期</th><th>代码</th><th>时段</th><th>EPS 预期</th><th>营收预期</th><th>看点</th></tr></thead>
+    <tbody>
+      <tr><td colspan="6" style="background:#21262d;color:#58a6ff;font-weight:700">第 1 周（4/27 – 5/1）⚡ 高优先级</td></tr>
+      <tr><td>4/28 二</td><td><b>AAPL</b> ⚡</td><td>盘后</td><td>$1.65</td><td>$109.69B</td><td>iPhone Q2 出货指引</td></tr>
+      <tr><td>4/29 三</td><td><b>QCOM</b> ⚡</td><td>盘后</td><td>$2.85</td><td>$11.2B</td><td>验证 INTC 边缘 AI 论调</td></tr>
+      <tr><td>4/29 三</td><td>NVMI ⚡</td><td>盘后</td><td>$0.78</td><td>$191M</td><td>设备链跟踪</td></tr>
+      <tr><td>4/30 四</td><td>LFUS ⚡</td><td>盘后</td><td>$2.10</td><td>$580M</td><td>—</td></tr>
+      <tr><td>5/1 五</td><td><b>AMKR</b> ⚡</td><td>盘后</td><td>$0.32</td><td>$1.45B</td><td>OSAT 景气度</td></tr>
+      <tr><td>5/1 五</td><td>LOGI ⚡</td><td>盘后</td><td>$1.05</td><td>$1.06B</td><td>消费电子</td></tr>
+      <tr><td colspan="6" style="background:#21262d;color:#58a6ff;font-weight:700">第 2 周（5/4 – 5/8）</td></tr>
+      <tr><td>5/4 一</td><td>ON</td><td>盘后</td><td>$0.55</td><td>$1.42B</td><td>SiC/汽车</td></tr>
+      <tr><td>5/4 一</td><td>DIOD</td><td>盘后</td><td>$0.20</td><td>$310M</td><td>—</td></tr>
+      <tr><td>5/5 二</td><td><b>AMD</b></td><td>盘后</td><td>$0.95</td><td>$7.85B</td><td>AI CPU 大考</td></tr>
+      <tr><td>5/5 二</td><td>LSCC</td><td>盘后</td><td>$0.30</td><td>$130M</td><td>FPGA</td></tr>
+      <tr><td>5/6 三</td><td><b>ARM</b></td><td>盘后</td><td>$0.45</td><td>$1.05B</td><td>AGI CPU 验证</td></tr>
+      <tr><td>5/6 三</td><td>IONQ</td><td>盘后</td><td>-$0.42</td><td>$13M</td><td>量子叙事</td></tr>
+      <tr><td>5/7 四</td><td><b>MSI</b></td><td>盘后</td><td>$3.20</td><td>$2.65B</td><td>无线通信</td></tr>
+      <tr><td>5/7 四</td><td><b>MCHP</b></td><td>盘后</td><td>$0.40</td><td>$1.05B</td><td>MCU 周期</td></tr>
+      <tr><td>5/8 五</td><td>UMC</td><td>盘前</td><td>—</td><td>—</td><td>晶圆代工</td></tr>
+      <tr><td colspan="6" style="background:#21262d;color:#58a6ff;font-weight:700">第 3 周（5/11 – 5/15）</td></tr>
+      <tr><td>5/12 二</td><td><b>TSM</b> 月营收</td><td>—</td><td>—</td><td>—</td><td>AI 算力链</td></tr>
+      <tr><td>5/13 三</td><td><b>CSCO</b></td><td>盘后</td><td>$0.95</td><td>$14.0B</td><td>网络设备</td></tr>
+      <tr><td>5/13 三</td><td><b>DELL</b></td><td>盘后</td><td>$1.85</td><td>$25.5B</td><td>AI 服务器</td></tr>
+      <tr><td>5/14 四</td><td><b>AMAT</b></td><td>盘后</td><td>$2.35</td><td>$7.40B</td><td>设备龙头</td></tr>
+      <tr><td>5/14 四</td><td>NTAP</td><td>盘后</td><td>$1.95</td><td>$1.75B</td><td>存储</td></tr>
+      <tr><td colspan="6" style="background:#21262d;color:#58a6ff;font-weight:700">第 4 周（5/18 – 5/22）</td></tr>
+      <tr><td>5/19 二</td><td>KEYS</td><td>盘后</td><td>$1.78</td><td>$1.34B</td><td>测试仪器</td></tr>
+      <tr><td>5/20 三</td><td><b>MRVL</b></td><td>盘后</td><td>$0.65</td><td>$1.95B</td><td>AI 加速</td></tr>
+      <tr><td>5/21 四</td><td><b>NVDA</b></td><td>盘后</td><td>—</td><td>—</td><td>季度顶级催化</td></tr>
+      <tr><td>5/21 四</td><td>ZBRA</td><td>盘前</td><td>$4.10</td><td>$1.32B</td><td>条码识别</td></tr>
+    </tbody>
+  </table>
+  <p style="margin-top:10px;font-size:.82rem;color:#8b949e">⚡ 标记为未来 5 个交易日内的池内业绩。共池内约 26 家公司在 30 日内披露。</p>
+</div>
+
+<div class="section">
+  <div class="title">🔭 未来 5 交易日观察（4/27 – 5/1）</div>
+  <table>
+    <thead><tr><th>日期</th><th>池内业绩</th><th>宏观/行业事件</th><th>关键技术位</th></tr></thead>
+    <tbody>
+      <tr><td><b>4/27 一</b></td><td>—</td><td>Advantest 东京盘 Q4 业绩</td><td>SPX 7,150 / SOX 10,500</td></tr>
+      <tr><td><b>4/28 二</b></td><td><b>AAPL</b> 盘后</td><td>美 Q1 ECI</td><td>AAPL 跨夜 ±5%</td></tr>
+      <tr><td><b>4/29 三</b></td><td><b>QCOM</b> / NVMI 盘后</td><td>FOMC 5 月预期；ADP 就业</td><td>SOX 能否站稳 10,500</td></tr>
+      <tr><td><b>4/30 四</b></td><td>LFUS 盘后</td><td><b>Q1 GDP 初值</b> + 3 月 PCE</td><td>警戒通胀超预期</td></tr>
+      <tr><td><b>5/1 五</b></td><td><b>AMKR</b> / LOGI 盘后</td><td><b>4 月非农 + 时薪</b> + ISM 制造业 PMI</td><td>SPX 10 日均线 ~7,100</td></tr>
+    </tbody>
+  </table>
+  <ul style="margin-top:12px;padding-left:20px;line-height:1.7;font-size:.88rem;color:#c9d1d9">
+    <li><b>AAPL 4/28 财报：</b>关注 iPhone Q2 出货指引、服务业务利润率、Vision Pro 后续；不及预期或拖累 NDX 1–2%</li>
+    <li><b>QCOM 4/29 财报：</b>检验 INTC 边缘 AI 论调外溢的真伪；指引上修则 RF/Fabless 板块继续接力</li>
+    <li><b>5/1 非农：</b>决定 5/6 FOMC 路径；强劲数据或抑制 AI 链短线情绪</li>
+    <li><b>板块技术位：</b>SOX 18 连阳后随时可能均值回归，10,500 / 10,000 为关键支撑</li>
+  </ul>
+</div>
+
 <script>
 const TREEMAP_DATA = {treemap_json};
 const CJS = {chartjs_data};
