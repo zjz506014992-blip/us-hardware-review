@@ -780,11 +780,81 @@ new Chart(document.getElementById('donut'), {{
 </body>
 </html>'''
 
+    out = f'/home/user/work/{DATE}.html'
+    with open(out, 'w', encoding='utf-8') as f:
+        f.write(html)
+    print(f"{DATE}.html written, {len(html)} bytes")
+
+def update_meta(totals):
+    import os
+    meta_path = '/home/user/work/_meta.json'
+    if os.path.exists(meta_path):
+        with open(meta_path, encoding='utf-8') as f:
+            meta = json.load(f)
+    else:
+        meta = {}
+    meta[DATE] = {
+        'up': totals['up'], 'down': totals['down'],
+        'flat': totals['flat'], 'total': totals['total'],
+        'cap_w': totals['cap_w'], 'arith': totals['arith'],
+    }
+    with open(meta_path, 'w', encoding='utf-8') as f:
+        json.dump(meta, f, ensure_ascii=False, indent=2)
+    return meta
+
+def write_index(meta):
+    dates = sorted(meta.keys(), reverse=True)
+    rows = ''
+    for d in dates:
+        m = meta[d]
+        sign = '+' if m['cap_w'] > 0 else ''
+        color = '#3fb950' if m['cap_w'] > 0 else '#f85149'
+        rows += f'''<tr>
+          <td><a href="{d}.html" style="color:#58a6ff;text-decoration:none;font-weight:600">{d}</a></td>
+          <td style="color:{color};font-weight:700">{sign}{m["cap_w"]}%</td>
+          <td style="color:#3fb950">{m["up"]}</td>
+          <td style="color:#f85149">{m["down"]}</td>
+          <td style="color:#8b949e">{m["flat"]}</td>
+          <td style="color:#8b949e">{m["total"]}</td>
+        </tr>'''
+
+    html = f'''<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>美股硬件板块复盘 — 历史存档</title>
+<style>
+*{{box-sizing:border-box;margin:0;padding:0}}
+body{{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:40px 20px;max-width:800px;margin:0 auto}}
+h1{{font-size:1.5rem;margin-bottom:6px}}
+.sub{{color:#8b949e;font-size:.88rem;margin-bottom:28px}}
+table{{width:100%;border-collapse:collapse;font-size:.9rem}}
+th{{background:#21262d;color:#8b949e;padding:10px 14px;text-align:left;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em}}
+td{{padding:12px 14px;border-bottom:1px solid #21262d}}
+tr:hover td{{background:#161b22}}
+.badge{{display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:4px;padding:2px 8px;font-size:.75rem;color:#8b949e}}
+</style>
+</head>
+<body>
+<h1>🖥️ 美股硬件板块复盘 — 历史存档</h1>
+<div class="sub">覆盖 316 只股票 · 24 个子行业 · 4 大板块 · 点击日期查看当日完整复盘</div>
+<table>
+  <thead>
+    <tr><th>日期</th><th>市值加权均</th><th>上涨</th><th>下跌</th><th>平盘</th><th>总数</th></tr>
+  </thead>
+  <tbody>{rows}</tbody>
+</table>
+<div style="margin-top:20px;color:#8b949e;font-size:.82rem">数据来源：Finnhub /quote + WebSearch 公开市场数据交叉核对</div>
+</body>
+</html>'''
     with open('/home/user/work/index.html', 'w', encoding='utf-8') as f:
         f.write(html)
-    print(f"index.html written, {len(html)} bytes")
+    print(f"index.html updated, {len(dates)} dates listed")
 
 if __name__ == '__main__':
     data = main()
     print(f"Stocks: {len(data['stocks'])}, Up/Down/Flat: {data['totals']['up']}/{data['totals']['down']}/{data['totals']['flat']}")
     write_html(data)
+    meta = update_meta(data['totals'])
+    write_index(meta)
