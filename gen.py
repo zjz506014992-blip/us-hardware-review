@@ -169,6 +169,42 @@ KEY_STOCKS = [
 ],
 'technical': '突破 2025-03 历史高点 $300，进入"无阻力区间"，目标 $400 整数关口。RSI 84（超买），但成交量持续放大，趋势力量强劲。短期支撑 $325（缺口下沿）/ $310（5 日均线）；阻力位 $360 / $400。期权 PCR 0.45（看涨为主），机构资金净流入连续 8 周。',
 },
+{
+'sym': 'QCOM',
+'title': 'INTC 同盟军，半年 -13% 后单日修复 10pp（+10.30%）',
+'dp': 10.30, 'close': 144.85, 'cap': '$1,550 亿',
+'vol': '$5.2B（2.8 倍 90 日均值）', 'range52w': '$132.40 – $185.50',
+'fund': 'INTC 边缘 AI 推理论调外溢至移动 SoC 与 PC 芯片，QCOM 作为最大受益者单日大幅反弹。基本面：QCT（芯片业务，占营收 85%）2026Q1 预期营收 $9.6B、YoY +18%，其中手机业务 $6.0B（华为/小米回流 + 中端 Snapdragon 8 Elite Gen 2 拉动 ASP）+ 汽车业务 $1.0B（Snapdragon Cockpit 已配套全球 27 家车厂、连续 4 季双位数增长）+ IoT/PC 业务 $1.5B（Snapdragon X Elite 在 Microsoft Surface/Dell/HP 出货量翻倍）。QTL（IP 授权）业务 $1.6B（华为复授权 + 苹果 5G 调制解调器续约至 2027）。FY26 全年营收预期 $42.5B（+10% YoY）、EPS $11.20。X Elite 第二代（Oryon V3）2026H2 推出，对标 AAPL M4，成为 Microsoft Copilot+ PC 的核心硬件。手机芯片在中国市场份额从 2024 年 28% 升至 2026 年 38%（联发科同期下滑）。',
+'sellside': [
+  {'firm': 'Bernstein', 'rating': '增持', 'tp': '$165 → $185', 'view': 'PC 业务（X Elite）成为新增长曲线，估值锚应包含 PC SoC 份额'},
+  {'firm': 'TD Cowen', 'rating': '买入', 'tp': '$170', 'view': 'Apple 调制解调器续约至 2027 大幅缓解市场担忧'},
+  {'firm': 'Wedbush', 'rating': '中性 → 买入', 'tp': '$140 → $175', 'view': '半年 -13% 后估值修复，4/29 财报或成关键确认'},
+  {'firm': 'Stifel', 'rating': '买入', 'tp': '$180', 'view': '中国手机厂商份额持续扩张，QCT 毛利率从 28% 升至 32%'},
+  {'firm': 'Citi', 'rating': '中性', 'tp': '$155', 'view': '认可短期反弹，但 Apple 自研基带是中长期最大尾部风险'},
+  {'firm': 'Goldman Sachs', 'rating': '中性', 'tp': '$150', 'view': 'PC 业务渗透速度仍需 2026H2 财报验证'},
+],
+'bull': [
+  'PC SoC 是新增长曲线，X Elite 在 Copilot+ PC 中市占率突破 50%',
+  '汽车业务 Snapdragon Cockpit 锁定 BMW/Mercedes/GM/Stellantis 等 27 家车厂',
+  '中国手机市场份额从 28% → 38%（中端机回流），QCT 毛利率逐季提升',
+  '4/29 财报指引若上修，RF（SWKS/QRVO）/PC 链（DELL/HP）将继续接力',
+  '当前 PE 14x（FY27）远低于半导体板块均值 25x，估值修复空间大',
+],
+'bear': [
+  'AAPL 自研基带（C1+ 已在 iPhone 16e 量产）是最大尾部风险，2027 年起 QCOM 营收每年损失 $4-5B',
+  '联发科在中国中端市场反扑，Dimensity 9400 与 Snapdragon 8 Gen 3 价格战激烈',
+  'PC SoC 业务规模仍小（&lt;5% 营收），ramp 速度受限于 OEM 出货决策',
+  '汽车业务虽增长快，但 ASP 提升空间有限（每车 $200-300 SoC）',
+  '4/29 财报若指引保守（&lt;$10.5B Q3），将触发回调',
+],
+'catalysts': [
+  '<b>4/29 Q2 FY26 财报（盘后）</b>：核心看点 QCT 营收 + Q3 指引方向',
+  '<b>5/30 Computex Taipei</b>：Snapdragon X Elite Gen 2 详细规格披露',
+  '<b>9 月 Apple iPhone 18 发布</b>：QCOM 5G 基带份额数据（C1+ 渗透率）',
+  '<b>2026 年底</b>：Snapdragon 8 Elite Gen 3 规格（3nm 工艺）',
+],
+'technical': '突破 200 日均线 $135 + 半年下降趋势线 $140，结构性反转信号。RSI 72（接近超买），但相对 SOX 仍跑输 25pp，后续追赶空间。短期支撑 $135（200 日均线）/ $128（缺口下沿）；阻力位 $155（2024 年高点）/ $170（机构目标价中枢）。',
+},
 ]
 
 # 产业新闻（按权威性分 Tier，每个 Tier 一个列表）
