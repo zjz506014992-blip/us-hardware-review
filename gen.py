@@ -132,6 +132,43 @@ KEY_STOCKS = [
 ],
 'technical': '突破 2025-03 历史高点 $200，进入"价格发现"模式，无技术阻力。RSI 88（极端超买），布林带上轨持续突破。短期支撑 $215（5 日均线）/ $195（20 日均线）；3 周内从 $137 → $235，累计 +71%，短线获利盘巨大，回调 -5~-8% 概率高。期权 IV 65%（vs 历史均值 38%）。',
 },
+{
+'sym': 'AMD',
+'title': 'INTC 业绩外溢的最大受益者，5/5 财报前抢跑（+13.90%）',
+'dp': 13.90, 'close': 347.77, 'cap': '$5,650 亿',
+'vol': '$18.2B（4.1 倍 90 日均值）', 'range52w': '$118.50 – $352.40',
+'fund': '当日 AMD 无任何公司新闻发布，纯粹受 INTC Q1 业绩外溢驱动。市场反推：INTC 边缘 AI CPU 推理需求论调若成立，AMD EPYC（数据中心 CPU 份额已从 2024 年 18% 升至 2026 年 33%）+ Instinct MI350（AI 加速）将获得更高 ASP 弹性。基本面持续强劲：MI350X 系列（CDNA4 架构）已被 OpenAI、Microsoft、Meta、Oracle 四大客户下单，2026 年 AI 业务营收指引上修至 $9.5B（前 $7.0B），同比 +295%；EPYC Turin（Zen 5）服务器份额持续扩张，超大规模云厂商采购占比 65%。Q1 2026 财报（5/5 盘后）市场预期：营收 $7.85B（YoY +35%）、EPS $0.95（YoY +52%），关键看点是 AI 业务能否突破 $2.5B 季度（前季 $2.0B）。Lisa Su 此前在 Computex 2025 暗示 MI350 出货 ramp 速度"超越内部预期"。',
+'sellside': [
+  {'firm': 'DA Davidson', 'rating': '中性 → 买入', 'tp': '$280 → $400', 'view': 'INTC 业绩是 AMD 营收大爆发的"前奏"，CPU AI 需求行业级共振'},
+  {'firm': 'Wells Fargo', 'rating': '增持', 'tp': '$320 → $410', 'view': 'MI400 路线图领先 NVDA Rubin 单代，CY27 估值有 30% 上修'},
+  {'firm': 'Morgan Stanley', 'rating': '增持', 'tp': '$340 → $415', 'view': '数据中心 CPU 份额突破 35% 临界点，毛利率持续上行'},
+  {'firm': 'BofA', 'rating': '买入', 'tp': '$390', 'view': 'Q1 财报后预期上修，CY26 EPS 共识从 $5.30 → $6.20'},
+  {'firm': 'Cantor Fitzgerald', 'rating': '增持', 'tp': '$425', 'view': 'AI 业务估值应单独按 NVDA PSR 估值，整体估值锚仍偏低'},
+  {'firm': 'KeyBanc', 'rating': '增持', 'tp': '$380', 'view': 'EPYC Turin 拐点已至，Server CPU YoY +50% 可期'},
+],
+'bull': [
+  'EPYC 在数据中心 CPU 市场份额每季+1.5pp，2027 年有望突破 40% 临界值',
+  'Instinct MI350 系列已锁定 4 大超大规模客户，AI 业务 2027 年营收目标 $20B（vs 2024 年 $5B）',
+  '与 NVDA Rubin 平台直接对标，但单 GPU 价格低 30%，TCO 优势明显',
+  '5/5 财报上修预期强烈，CY26 EPS 上修空间 +15%',
+  'YTD +64%，但相对 NVDA YTD 跑输 18pp，存在 catch-up 机会',
+],
+'bear': [
+  'NVDA Blackwell Ultra 在大客户绑定上仍有显著优势，CUDA 生态壁垒难破',
+  '当前 PE 38x（FY27），已部分反映 AI 加速业务最乐观情景',
+  'Server CPU 受 AWS Graviton4（ARM 架构）持续分流，长期份额上限或低于市场预期',
+  '消费 CPU 业务（Ryzen）2026 年增长放缓，PC 周期已过高峰',
+  '5/5 财报若 AI 营收仅 $2.0–2.2B（市场预期 $2.5B），将触发剧烈回调',
+],
+'catalysts': [
+  '<b>5/5 Q1 2026 财报（盘后）</b>：AI 业务季度营收是核心，>$2.5B 则继续 outperform NVDA',
+  '<b>5/30 Computex Taipei</b>：MI400 详细规格 + 软件生态 ROCm 7.0 发布',
+  '<b>6 月 OpenAI Demo Day</b>：是否官宣 AMD MI350 在 GPT 推理的部署比例',
+  '<b>Q3 2026</b>：MI400 流片预期，与 NVDA Rubin 头碰头时间窗口',
+  '<b>2026H2</b>：Zen 6 EPYC Venice 流片，3nm + 256 核突破',
+],
+'technical': '突破 2025-03 历史高点 $300，进入"无阻力区间"，目标 $400 整数关口。RSI 84（超买），但成交量持续放大，趋势力量强劲。短期支撑 $325（缺口下沿）/ $310（5 日均线）；阻力位 $360 / $400。期权 PCR 0.45（看涨为主），机构资金净流入连续 8 周。',
+},
 ]
 
 # 产业新闻（按权威性分 Tier，每个 Tier 一个列表）
