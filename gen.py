@@ -94,6 +94,44 @@ KEY_STOCKS = [
 ],
 'technical': '突破 2024-09 高点 $46，并越过 2000 年互联网泡沫顶部 $75（24 年压力位）。RSI 89（极端超买），MACD 顶部金叉。短期支撑 $76（缺口下沿）/ $68（5 日均线）；阻力位 $90 心理位。量能放大至 5x 90 日均量，机构资金大幅入场。',
 },
+{
+'sym': 'ARM',
+'title': 'AGI CPU 战略升级，从 IP 到整机的估值锚切换（+14.31%）',
+'dp': 14.31, 'close': 232.35, 'cap': '$2,440 亿',
+'vol': '$8.4B（3.2 倍 90 日均值）', 'range52w': '$92.18 – $235.40',
+'fund': 'ARM 公布首款自研 AGI CPU 数据中心芯片（代号 "Neoverse N3 Ultra"），目标 2027 年 Q4 流片、2028 年起贡献"实质性"营收，2031 年 AGI CPU 业务营收目标 $15B（占公司营收 $25B 的 60%）。这标志公司从纯 IP 授权商（royalty-only）正式升级为整机方案商（chip-as-a-product），毛利率从当前 96% IP 模式过渡到 65–70% 芯片模式，但 ASP 提升 10x（单价 $50K+ vs IP $5/CPU）。授权业务（Royalty）Q4 FY26 营收 $700M，YoY +28%（v9 架构占比首次突破 30%）；License 业务 $560M，YoY +20%（AAPL/QCOM/Microsoft 续约提价）。AI/HPC 客户群快速扩张：Meta 内部芯片（MTIA v2）、Google Axion、Microsoft Cobalt、AWS Graviton4 全部基于 ARM Neoverse；总数据中心市占率从 2024 年 8% 提升至 2026 年 18%。',
+'sellside': [
+  {'firm': 'Citi', 'rating': '买入', 'tp': '$210 → $260', 'view': '从 IP 公司转型为芯片公司，估值方法应从 PSR 切换至 EV/EBITDA，参考 NVDA 路径'},
+  {'firm': 'Guggenheim', 'rating': '买入', 'tp': '$220 → $270', 'view': 'AGI CPU 是 v9 之后最大的 ASP 跃升驱动'},
+  {'firm': 'Evercore ISI', 'rating': '跑赢大盘', 'tp': '$225 → $265', 'view': '2031 营收目标隐含 35% 5 年 CAGR，远超半导体板块'},
+  {'firm': 'Mizuho', 'rating': '买入', 'tp': '$240', 'view': '生态护城河进一步巩固，软件订阅化（ARM Total Access）持续放量'},
+  {'firm': 'Barclays', 'rating': '增持', 'tp': '$250', 'view': '边缘 AI + 数据中心双轮驱动，移动业务韧性被低估'},
+  {'firm': 'Susquehanna', 'rating': '中性 → 买入', 'tp': '$165 → $245', 'view': '此前担忧的 RISC-V 替代论被打破，ARM 生态壁垒进一步拉开'},
+  {'firm': 'Needham', 'rating': '买入', 'tp': '$255', 'view': '2026 业绩窗口（5/6）将进一步验证 v9 渗透加速'},
+],
+'bull': [
+  '估值锚切换：从 PSR 35x（IP 模式）到 EV/EBITDA 50x（NVDA 同业模式），中长期市值有 50% 上修空间',
+  'AAPL/QCOM/Meta/Google/Microsoft/AWS 六大超大规模客户全部 ARM-based，生态网络效应不可逆',
+  'v9 架构在数据中心 royalty rate 提升 3x（从 1.5% → 4.5% ASP），结构性提价在 2026-2028 持续释放',
+  '边缘 AI 推理需求爆发，每个 AI PC/手机的 ARM IP value 提升 2-3x',
+  '日本软银仍持有 88% 股份，长期战略意图不变，市场流通筹码紧缺',
+],
+'bear': [
+  '从 IP 公司向芯片公司转型，毛利率必然下滑（96% → 65-70%），EBITDA 增长不及营收',
+  '与 QCOM 法律纠纷未完全终结（2026 年 1 月再次开庭），潜在赔偿风险',
+  '2028 年才贡献实质性 AGI CPU 营收，3 年估值真空期，市场情绪可能反复',
+  '当前 PE 95x（FY27），已远超半导体均值 25x，任何执行失误均会触发剧烈回调',
+  'RISC-V 在嵌入式市场加速渗透，长期可能侵蚀 ARM 移动 IP 业务',
+],
+'catalysts': [
+  '<b>5/6 Q4 FY26 财报（盘后）</b>：核心看 v9 royalty rate 提升幅度 + AI/HPC 业务指引',
+  '<b>6/10 ARM TechCon</b>：AGI CPU 详细架构披露，潜在客户名单',
+  '<b>9 月 Apple iPhone 18 发布</b>：ARM royalty 单机价值是否再提升',
+  '<b>2026 年底</b>：与 QCOM 诉讼终判（潜在和解或巨额赔偿）',
+  '<b>2027 年</b>：Neoverse N3 Ultra 流片，下一代 v10 架构发布',
+],
+'technical': '突破 2025-03 历史高点 $200，进入"价格发现"模式，无技术阻力。RSI 88（极端超买），布林带上轨持续突破。短期支撑 $215（5 日均线）/ $195（20 日均线）；3 周内从 $137 → $235，累计 +71%，短线获利盘巨大，回调 -5~-8% 概率高。期权 IV 65%（vs 历史均值 38%）。',
+},
 ]
 
 # 产业新闻（按权威性分 Tier，每个 Tier 一个列表）
