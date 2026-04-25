@@ -280,6 +280,19 @@ def write_html(data):
 
     treemap_json = json.dumps(treemap, ensure_ascii=False)
 
+    # Chart.js 数据
+    ind_labels = [x[0] for x in ind_sorted]
+    ind_avgs = [x[1]['avg'] for x in ind_sorted]
+    ind_colors = [dp_color(v) for v in ind_avgs]
+    ind_tooltip_extra = [f"{x[1]['up']}/{x[1]['total']} 上涨" for x in ind_sorted]
+    chartjs_data = json.dumps({
+        'ind_labels': ind_labels,
+        'ind_avgs': ind_avgs,
+        'ind_colors': ind_colors,
+        'ind_extra': ind_tooltip_extra,
+        'donut': {'up': totals['up'], 'down': totals['down'], 'flat': totals['flat']},
+    }, ensure_ascii=False)
+
     html = f'''<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -287,6 +300,7 @@ def write_html(data):
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>美股硬件板块复盘 {DATE}</title>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
 *{{box-sizing:border-box;margin:0;padding:0}}
 body{{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:20px;max-width:1400px;margin:0 auto}}
@@ -357,10 +371,26 @@ tr:hover td{{background:#1c2128}}
   </div>
 </div>
 
-<div class="section placeholder">📈 子行业柱状 / 散点 / Top30 横向柱将在下一次推送中加入</div>
+<div class="grid2">
+  <div class="section" style="margin-bottom:0">
+    <div class="title">📊 子行业涨跌幅（算术均，自下而上）</div>
+    <div style="position:relative;height:560px"><canvas id="indBar"></canvas></div>
+  </div>
+  <div class="section" style="margin-bottom:0">
+    <div class="title">🥧 涨跌平分布</div>
+    <div style="position:relative;height:330px"><canvas id="donut"></canvas></div>
+    <div style="margin-top:14px;text-align:center;font-size:.85rem;color:#c9d1d9">
+      <div>涨幅占比 <b class="up">{round(totals['up']*100/totals['total'],1)}%</b> · 跌幅占比 <b class="down">{round(totals['down']*100/totals['total'],1)}%</b></div>
+      <div style="margin-top:6px;color:#8b949e">市值加权均 <b class="up">+{totals['cap_w']}%</b> · 算术均 <b class="up">+{totals['arith']}%</b></div>
+    </div>
+  </div>
+</div>
+
+<div class="section placeholder">📉 Top30 横向柱 + 市值散点 将在下一次推送中加入</div>
 
 <script>
 const TREEMAP_DATA = {treemap_json};
+const CJS = {chartjs_data};
 const chart = echarts.init(document.getElementById('treemap'), null, {{renderer: 'canvas'}});
 chart.setOption({{
   backgroundColor: 'transparent',
@@ -406,6 +436,68 @@ chart.setOption({{
   }}]
 }});
 window.addEventListener('resize', () => chart.resize());
+
+// 子行业柱状
+new Chart(document.getElementById('indBar'), {{
+  type: 'bar',
+  data: {{
+    labels: CJS.ind_labels,
+    datasets: [{{
+      label: '均涨跌%',
+      data: CJS.ind_avgs,
+      backgroundColor: CJS.ind_colors.map(c => c + 'cc'),
+      borderColor: CJS.ind_colors,
+      borderWidth: 1,
+    }}]
+  }},
+  options: {{
+    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+    plugins: {{
+      legend: {{display: false}},
+      tooltip: {{
+        callbacks: {{
+          label: (ctx) => `${{ctx.parsed.x > 0 ? '+' : ''}}${{ctx.parsed.x.toFixed(2)}}%  (${{CJS.ind_extra[ctx.dataIndex]}})`
+        }},
+        backgroundColor: '#21262d', titleColor: '#e6edf3', bodyColor: '#e6edf3', borderColor: '#30363d', borderWidth: 1
+      }}
+    }},
+    scales: {{
+      x: {{
+        grid: {{color: '#21262d'}},
+        ticks: {{color: '#8b949e', callback: v => v + '%'}}
+      }},
+      y: {{
+        grid: {{color: '#21262d'}},
+        ticks: {{color: '#e6edf3', font: {{size: 11}}}}
+      }}
+    }}
+  }}
+}});
+
+// 涨跌平饼
+new Chart(document.getElementById('donut'), {{
+  type: 'doughnut',
+  data: {{
+    labels: ['上涨', '下跌', '平盘'],
+    datasets: [{{
+      data: [CJS.donut.up, CJS.donut.down, CJS.donut.flat],
+      backgroundColor: ['#3fb950', '#f85149', '#8b949e'],
+      borderColor: '#161b22', borderWidth: 2
+    }}]
+  }},
+  options: {{
+    responsive: true, maintainAspectRatio: false, cutout: '62%',
+    plugins: {{
+      legend: {{position: 'bottom', labels: {{color: '#e6edf3', font: {{size: 12}}, padding: 14}}}},
+      tooltip: {{
+        callbacks: {{
+          label: (ctx) => `${{ctx.label}}: ${{ctx.parsed}} 只 (${{(ctx.parsed*100/(CJS.donut.up+CJS.donut.down+CJS.donut.flat)).toFixed(1)}}%)`
+        }},
+        backgroundColor: '#21262d', titleColor: '#e6edf3', bodyColor: '#e6edf3'
+      }}
+    }}
+  }}
+}});
 </script>
 
 <div class="sub" style="margin-top:20px">数据来源：Finnhub /quote + WebSearch 公开市场数据交叉核对 · 大中盘股为确认值，微盘部分基于子行业均值估算</div>
