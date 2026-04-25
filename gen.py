@@ -205,6 +205,44 @@ KEY_STOCKS = [
 ],
 'technical': '突破 200 日均线 $135 + 半年下降趋势线 $140，结构性反转信号。RSI 72（接近超买），但相对 SOX 仍跑输 25pp，后续追赶空间。短期支撑 $135（200 日均线）/ $128（缺口下沿）；阻力位 $155（2024 年高点）/ $170（机构目标价中枢）。',
 },
+{
+'sym': 'NVDA',
+'title': '$5T 王座重回，电力锁定 + 板块轮动至落后者（+4.83%）',
+'dp': 4.83, 'close': 209.29, 'cap': '$5.1 万亿',
+'vol': '$32.4B（1.5 倍 90 日均值）', 'range52w': '$96.30 – $213.50',
+'fund': '当日两大催化：(1) 与 Oklo 公司签订核电采购协议（PPA）— Oklo 将于 2028 年起向 NVDA 数据中心提供 12 GW 小型模块化反应堆（SMR）电力，确认 AI 数据中心电力瓶颈的"长期方案"；(2) 市值重新突破 $5 万亿（前期 4 月初曾触及 $5.2T 但回落）。基本面持续强劲：CY1Q26 财报（5/28 盘后）市场预期营收 $48.5B（YoY +60%）、EPS $0.95（YoY +75%），其中数据中心 $42B（YoY +73%）、汽车 $750M（YoY +50%）。Blackwell Ultra（B300）已全面 ramp，Q1 出货 35 万颗（GB300 服务器），毛利率 76%（vs Hopper H100 的 78%）。Rubin（R100）2026Q4 流片，2027Q1 出货，性能较 Blackwell Ultra 提升 2.5x。Networking 业务（NVLink Switch + InfiniBand）单季营收突破 $5B，Spectrum-X 以太网在超大规模数据中心的渗透率达 40%。机器人业务（Isaac）在 Q1 财报或首次披露独立营收（市场预期 $200M）。',
+'sellside': [
+  {'firm': 'Wedbush', 'rating': '增持', 'tp': '$220 → $260', 'view': 'Rubin 路线图 2027 上市无悬念，AI 算力周期将持续至 2028'},
+  {'firm': 'Cantor', 'rating': '增持', 'tp': '$235 → $275', 'view': 'Networking 业务被严重低估，2027 年单季可破 $10B'},
+  {'firm': 'Bernstein', 'rating': '增持', 'tp': '$250', 'view': '机器人业务（Isaac）+ Drive（自动驾驶）将贡献第二增长曲线'},
+  {'firm': 'Goldman Sachs', 'rating': '买入', 'tp': '$240', 'view': 'CY26 EPS 共识从 $4.20 上修至 $4.85'},
+  {'firm': 'Morgan Stanley', 'rating': '增持', 'tp': '$245', 'view': 'Q2 指引大概率超预期，B300 + R100 双轨产能爬坡'},
+  {'firm': 'JPMorgan', 'rating': '增持', 'tp': '$220', 'view': '估值已不便宜（PE 38x），但增长率（60% YoY）支撑高估值'},
+  {'firm': 'BofA', 'rating': '买入', 'tp': '$245', 'view': '电力问题获 Oklo 阶段性解决，最大尾部风险解除'},
+],
+'bull': [
+  '与 Oklo SMR 协议确认 AI 数据中心电力长期方案，最大瓶颈解除',
+  'Rubin (R100) 2027Q1 出货，性能较 Blackwell Ultra +2.5x，竞争对手被技术代差拉开',
+  'Networking 业务（Spectrum-X 以太网）渗透至超大规模厂商，单季 $5B+ 高毛利',
+  'Isaac 机器人业务 + Drive 自动驾驶 = 第二增长曲线，长期 TAM $200B+',
+  'CY26 EPS 持续上修，PEG &lt;1.0（vs 半导体板块 1.3-1.5）',
+],
+'bear': [
+  'Blackwell Ultra 毛利率 76% 较 H100 微降，反映 ASIC 竞争（AVGO/MRVL）压力',
+  '$5T 市值已远超 AAPL/MSFT，机构持仓集中度风险（Top 10 持仓占比 28%）',
+  '中国市场（H20 芯片）受出口管制持续不确定，Q2 起或失去 $4-5B 季度营收',
+  'Meta/Google 等大客户 ASIC 自研持续推进，2027 年起或减少 GPU 采购 15-20%',
+  '当前 PE 38x（FY27），任何业绩 miss 都会触发 -10% 以上回调',
+],
+'catalysts': [
+  '<b>5/13 Google I/O</b>：TPU 第七代（Trillium）vs H100/B200 性能对比，是否进一步压制 NVDA 估值',
+  '<b>5/28 Q1 FY26 财报（盘后）</b>：核心看 DCAI 营收 + Q2 指引（市场预期 $52B）',
+  '<b>6/9 Apple WWDC</b>：是否启动 NVDA 与 Apple Vision Pro/AI 集成',
+  '<b>10 月 GTC DC 华盛顿</b>：Rubin 详细规格 + 主权 AI 战略',
+  '<b>2027Q1</b>：Rubin (R100) 流片 + 出货爬坡',
+],
+'technical': '$5T 整数关口反复争夺，已 4 次测试。RSI 70（中性偏强），20 日 / 50 日均线呈多头排列。短期支撑 $200（5 日均线 + 整数关口）/ $190（20 日均线）；阻力位 $215（前高）/ $230（机构目标价中枢）。期权 IV 38%（财报临近升至 45%+），跨夜波动预期 ±5.5%。',
+},
 ]
 
 # 产业新闻（按权威性分 Tier，每个 Tier 一个列表）
