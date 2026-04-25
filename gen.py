@@ -231,13 +231,14 @@ def main():
     return data_js
 
 def dp_color(dp):
-    if dp >= 5: return '#00c853'
-    if dp >= 3: return '#4caf50'
-    if dp >= 1: return '#a5d6a7'
-    if dp >= 0: return '#cddc39'
-    if dp >= -1: return '#ffab91'
-    if dp >= -3: return '#ef5350'
-    return '#b71c1c'
+    # A股惯例：涨红跌绿
+    if dp >= 7:  return '#7f0000'
+    if dp >= 4:  return '#c62828'
+    if dp >= 1:  return '#e57373'
+    if dp >= 0:  return '#ef9a9a'
+    if dp >= -1: return '#a5d6a7'
+    if dp >= -4: return '#388e3c'
+    return '#1b5e20'
 
 def fmt_dp(dp):
     sign = '+' if dp > 0 else ''
@@ -254,64 +255,45 @@ def add_colors_to_tree(node):
     return node
 
 def write_html(data):
+    import math
     stocks = data['stocks']
     totals = data['totals']
     ind_stats = data['ind_stats']
     treemap = [add_colors_to_tree(g) for g in data['treemap']]
-
     ind_sorted = sorted(ind_stats.items(), key=lambda x: -x[1]['avg'])
-    top30 = sorted(data['top30'], key=lambda x: -x['dp'])
-    losers = sorted([s for s in stocks if s['dp'] < 0], key=lambda x: x['dp'])[:10]
 
-    # 构建子行业表
-    ind_rows = ''.join(
-        f'<tr><td>{ind}</td><td>{fmt_dp(st["avg"])}</td><td>{st["up"]}/{st["total"]}</td></tr>'
-        for ind, st in ind_sorted
-    )
-    # Top30 表
-    top30_rows = ''.join(
-        f'<tr><td>{i+1}</td><td><b>{s["s"]}</b></td><td>{s["ind"]}</td><td>${s["c"]:.2f}</td><td>{fmt_dp(s["dp"])}</td></tr>'
-        for i, s in enumerate(top30)
-    )
-    losers_rows = ''.join(
-        f'<tr><td><b>{s["s"]}</b></td><td>{s["ind"]}</td><td>${s["c"]:.2f}</td><td>{fmt_dp(s["dp"])}</td></tr>'
-        for s in losers
-    )
+    # 子行业表：含成份股涨跌列
+    ind_rows = ''
+    for ind, st in ind_sorted:
+        ind_stks = sorted([s for s in stocks if s['ind'] == ind], key=lambda x: -x['dp'])
+        chips = ' '.join(
+            f'<span style="display:inline-block;margin:1px 3px 1px 0;color:{dp_color(s["dp"])};white-space:nowrap;font-size:.78rem"><b>{s["s"]}</b> {"+" if s["dp"]>0 else ""}{s["dp"]:.1f}%</span>'
+            for s in ind_stks
+        )
+        ind_rows += f'<tr><td style="white-space:nowrap;font-weight:600">{ind}</td><td style="white-space:nowrap">{fmt_dp(st["avg"])}</td><td style="white-space:nowrap">{st["up"]}/{st["total"]}</td><td style="line-height:1.9">{chips}</td></tr>'
 
-    treemap_json = json.dumps(treemap, ensure_ascii=False)
-
-    # Chart.js 数据
-    ind_labels = [x[0] for x in ind_sorted]
-    ind_avgs = [x[1]['avg'] for x in ind_sorted]
-    ind_colors = [dp_color(v) for v in ind_avgs]
-    ind_tooltip_extra = [f"{x[1]['up']}/{x[1]['total']} 上涨" for x in ind_sorted]
-
-    # Top30 横向柱（升序绘图，最大在顶）
-    top30_asc = sorted(data['top30'], key=lambda x: x['dp'])
-    top30_labels = [s['s'] for s in top30_asc]
-    top30_vals = [s['dp'] for s in top30_asc]
-    top30_colors = [dp_color(v) for v in top30_vals]
-    top30_inds = [s['ind'] for s in top30_asc]
-
-    # 散点：log10(市值) vs 涨跌
-    import math
+    # 散点数据
     scatter_pts = [
         {'x': round(math.log10(max(s['cap'], 1)), 2), 'y': s['dp'], 'sym': s['s'], 'ind': s['ind'], 'cap': s['cap']}
         for s in stocks if s['cap'] > 0
     ]
 
-    chartjs_data = json.dumps({
-        'ind_labels': ind_labels,
-        'ind_avgs': ind_avgs,
-        'ind_colors': ind_colors,
-        'ind_extra': ind_tooltip_extra,
-        'donut': {'up': totals['up'], 'down': totals['down'], 'flat': totals['flat']},
-        'top30_labels': top30_labels,
-        'top30_vals': top30_vals,
-        'top30_colors': top30_colors,
-        'top30_inds': top30_inds,
-        'scatter': scatter_pts,
-    }, ensure_ascii=False)
+    # 市值风格分析
+    large = [s for s in stocks if s['cap'] >= 50000]
+    mid   = [s for s in stocks if 5000 <= s['cap'] < 50000]
+    small = [s for s in stocks if s['cap'] < 5000]
+    la = round(sum(s['dp'] for s in large)/len(large), 2) if large else 0
+    ma = round(sum(s['dp'] for s in mid  )/len(mid),   2) if mid   else 0
+    sa = round(sum(s['dp'] for s in small)/len(small),  2) if small else 0
+    if la > sa + 1:
+        style_verdict = f'当日呈现<b>大市值主导</b>特征，权重股拉动显著（大盘 +{la}% > 中盘 +{ma}% > 小盘 +{sa}%）。'
+    elif sa > la + 1:
+        style_verdict = f'当日呈现<b>小市值弹性更强</b>特征，资金情绪积极（小盘 +{sa}% > 中盘 +{ma}% > 大盘 +{la}%）。'
+    else:
+        style_verdict = f'大中小市值表现相近（大盘 +{la}%，中盘 +{ma}%，小盘 +{sa}%），板块整体同步，无明显风格分化。'
+
+    treemap_json = json.dumps(treemap, ensure_ascii=False)
+    scatter_json = json.dumps(scatter_pts, ensure_ascii=False)
 
     html = f'''<!DOCTYPE html>
 <html lang="zh-CN">
@@ -330,29 +312,34 @@ h1{{font-size:1.6rem;margin-bottom:6px}}
 .card{{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px 14px}}
 .lbl{{color:#8b949e;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em}}
 .val{{font-size:1.5rem;font-weight:700;margin-top:4px}}
-.up{{color:#3fb950}}.down{{color:#f85149}}.neutral{{color:#8b949e}}
+.up{{color:#e53935}}.down{{color:#43a047}}.neutral{{color:#8b949e}}
 .section{{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;margin-bottom:16px}}
 .title{{font-size:.95rem;color:#8b949e;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}}
 table{{width:100%;border-collapse:collapse;font-size:.85rem}}
 th{{background:#21262d;color:#8b949e;padding:8px 10px;text-align:left;font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em}}
-td{{padding:7px 10px;border-bottom:1px solid #21262d}}
+td{{padding:7px 10px;border-bottom:1px solid #21262d;vertical-align:middle}}
 tr:hover td{{background:#1c2128}}
-.grid2{{display:grid;grid-template-columns:1fr 1fr;gap:16px}}
-@media(max-width:768px){{.grid2{{grid-template-columns:1fr}}}}
-.placeholder{{padding:40px;text-align:center;color:#8b949e;border:1px dashed #30363d;border-radius:8px}}
+.navlinks{{display:flex;gap:10px;margin-bottom:16px;font-size:.88rem}}
+.navlinks a{{color:#58a6ff;text-decoration:none;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:6px 14px}}
+.navlinks a:hover{{background:#21262d}}
 </style>
 </head>
 <body>
 <h1>🖥️ 美股硬件板块每日复盘</h1>
 <div class="sub">数据日期 <b>{DATE}</b> · 覆盖 {totals['total']} 只股票 · 24 个子行业 · 4 大板块</div>
 
+<div class="navlinks">
+  <a href="index.html">← 历史存档</a>
+  <a href="stocks-{DATE}.html">📋 全部个股数据</a>
+</div>
+
 <div class="stats">
   <div class="card"><div class="lbl">总数</div><div class="val">{totals['total']}</div></div>
   <div class="card"><div class="lbl">上涨</div><div class="val up">{totals['up']}</div></div>
   <div class="card"><div class="lbl">下跌</div><div class="val down">{totals['down']}</div></div>
   <div class="card"><div class="lbl">平盘</div><div class="val neutral">{totals['flat']}</div></div>
-  <div class="card"><div class="lbl">市值加权均</div><div class="val up">+{totals['cap_w']}%</div></div>
-  <div class="card"><div class="lbl">算术均</div><div class="val up">+{totals['arith']}%</div></div>
+  <div class="card"><div class="lbl">市值加权均</div><div class="val {'up' if totals['cap_w']>=0 else 'down'}">{"+" if totals['cap_w']>=0 else ""}{totals['cap_w']}%</div></div>
+  <div class="card"><div class="lbl">算术均</div><div class="val {'up' if totals['arith']>=0 else 'down'}">{"+" if totals['arith']>=0 else ""}{totals['arith']}%</div></div>
 </div>
 
 <div class="section">
@@ -360,60 +347,35 @@ tr:hover td{{background:#1c2128}}
   <p style="line-height:1.7;color:#c9d1d9">Intel Q1 2026 财报炸裂引爆全板块：EPS $0.29（预期 $0.01，超 29 倍）、营收 $13.58B、Q2 指引 $13.8–14.8B，三杀超预期。<b class="up">INTC +23.60%</b> 创 2000 年以来历史新高；<b class="up">AMD +13.90%</b>、<b class="up">ARM +14.31%</b>、<b class="up">QCOM +10.30%</b>、<b class="up">NVDA +4.83%</b> 重回 $5T 市值。SOX 指数 18 连阳，刷新历史最长连涨纪录。</p>
 </div>
 
-<div class="grid2">
-  <div class="section">
-    <div class="title">子行业涨跌榜</div>
-    <table><thead><tr><th>子行业</th><th>均涨跌</th><th>上涨/总数</th></tr></thead><tbody>{ind_rows}</tbody></table>
-  </div>
-  <div class="section">
-    <div class="title">反向异动 Top 10</div>
-    <table><thead><tr><th>代码</th><th>子行业</th><th>收盘</th><th>涨跌</th></tr></thead><tbody>{losers_rows}</tbody></table>
-  </div>
-</div>
-
 <div class="section">
-  <div class="title">Top 30 涨跌榜</div>
-  <table><thead><tr><th>#</th><th>代码</th><th>子行业</th><th>收盘</th><th>涨跌</th></tr></thead><tbody>{top30_rows}</tbody></table>
-</div>
-
-<div class="section">
-  <div class="title">🗺️ 市值热力图（按板块/子行业 → 个股；面积≈√市值，颜色=涨跌幅）</div>
+  <div class="title">🗺️ 市值热力图（面积≈√市值 · 颜色：涨红跌绿 · 点击子行业可下钻）</div>
   <div id="treemap" style="height:620px"></div>
   <div style="margin-top:10px;font-size:.78rem;color:#8b949e">
     色阶：
-    <span style="background:#b71c1c;color:#fff;padding:2px 8px;border-radius:3px">≤-3%</span>
-    <span style="background:#ef5350;color:#fff;padding:2px 8px;border-radius:3px;margin-left:4px">-3~-1%</span>
-    <span style="background:#ffab91;color:#000;padding:2px 8px;border-radius:3px;margin-left:4px">-1~0%</span>
-    <span style="background:#cddc39;color:#000;padding:2px 8px;border-radius:3px;margin-left:4px">0~1%</span>
-    <span style="background:#a5d6a7;color:#000;padding:2px 8px;border-radius:3px;margin-left:4px">1~3%</span>
-    <span style="background:#4caf50;color:#fff;padding:2px 8px;border-radius:3px;margin-left:4px">3~5%</span>
-    <span style="background:#00c853;color:#fff;padding:2px 8px;border-radius:3px;margin-left:4px">≥5%</span>
+    <span style="background:#1b5e20;color:#fff;padding:2px 8px;border-radius:3px">跌≥4%</span>
+    <span style="background:#388e3c;color:#fff;padding:2px 8px;border-radius:3px;margin-left:4px">-4~-1%</span>
+    <span style="background:#a5d6a7;color:#000;padding:2px 8px;border-radius:3px;margin-left:4px">-1~0%</span>
+    <span style="background:#ef9a9a;color:#000;padding:2px 8px;border-radius:3px;margin-left:4px">0~1%</span>
+    <span style="background:#e57373;color:#fff;padding:2px 8px;border-radius:3px;margin-left:4px">1~4%</span>
+    <span style="background:#c62828;color:#fff;padding:2px 8px;border-radius:3px;margin-left:4px">4~7%</span>
+    <span style="background:#7f0000;color:#fff;padding:2px 8px;border-radius:3px;margin-left:4px">涨≥7%</span>
   </div>
 </div>
 
-<div class="grid2">
-  <div class="section" style="margin-bottom:0">
-    <div class="title">📊 子行业涨跌幅（算术均，自下而上）</div>
-    <div style="position:relative;height:560px"><canvas id="indBar"></canvas></div>
-  </div>
-  <div class="section" style="margin-bottom:0">
-    <div class="title">🥧 涨跌平分布</div>
-    <div style="position:relative;height:330px"><canvas id="donut"></canvas></div>
-    <div style="margin-top:14px;text-align:center;font-size:.85rem;color:#c9d1d9">
-      <div>涨幅占比 <b class="up">{round(totals['up']*100/totals['total'],1)}%</b> · 跌幅占比 <b class="down">{round(totals['down']*100/totals['total'],1)}%</b></div>
-      <div style="margin-top:6px;color:#8b949e">市值加权均 <b class="up">+{totals['cap_w']}%</b> · 算术均 <b class="up">+{totals['arith']}%</b></div>
-    </div>
-  </div>
+<div class="section">
+  <div class="title">📊 子行业涨跌榜 · 成份股</div>
+  <table><thead><tr><th>子行业</th><th>均涨跌</th><th>上涨/总数</th><th>成份股（按涨幅排序）</th></tr></thead><tbody>{ind_rows}</tbody></table>
 </div>
 
-<div class="grid2">
-  <div class="section" style="margin-bottom:0">
-    <div class="title">🚀 涨跌幅 Top 30（横向柱）</div>
-    <div style="position:relative;height:680px"><canvas id="top30bar"></canvas></div>
-  </div>
-  <div class="section" style="margin-bottom:0">
-    <div class="title">💎 市值 vs 涨跌幅（散点，X 轴 log10 市值，单位百万美元）</div>
-    <div style="position:relative;height:680px"><canvas id="scatter"></canvas></div>
+<div class="section">
+  <div class="title">💎 市值 vs 涨跌幅（X 轴：log₁₀ 市值（百万美元）· 涨红跌绿）</div>
+  <div style="position:relative;height:480px"><canvas id="scatter"></canvas></div>
+  <div style="margin-top:12px;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px;font-size:.87rem;color:#c9d1d9;line-height:1.7">
+    <b style="color:#e6edf3">📐 大小市值风格分析：</b>
+    大市值（≥$50B，{len(large)} 只）均涨 <b class="{'up' if la>=0 else 'down'}">{"+" if la>=0 else ""}{la}%</b>，
+    中市值（$5–50B，{len(mid)} 只）均涨 <b class="{'up' if ma>=0 else 'down'}">{"+" if ma>=0 else ""}{ma}%</b>，
+    小市值（&lt;$5B，{len(small)} 只）均涨 <b class="{'up' if sa>=0 else 'down'}">{"+" if sa>=0 else ""}{sa}%</b>。
+    {style_verdict}
   </div>
 </div>
 
@@ -588,7 +550,7 @@ tr:hover td{{background:#1c2128}}
 
 <script>
 const TREEMAP_DATA = {treemap_json};
-const CJS = {chartjs_data};
+const SCATTER = {scatter_json};
 const chart = echarts.init(document.getElementById('treemap'), null, {{renderer: 'canvas'}});
 chart.setOption({{
   backgroundColor: 'transparent',
@@ -635,91 +597,22 @@ chart.setOption({{
 }});
 window.addEventListener('resize', () => chart.resize());
 
-// 子行业柱状
-new Chart(document.getElementById('indBar'), {{
-  type: 'bar',
-  data: {{
-    labels: CJS.ind_labels,
-    datasets: [{{
-      label: '均涨跌%',
-      data: CJS.ind_avgs,
-      backgroundColor: CJS.ind_colors.map(c => c + 'cc'),
-      borderColor: CJS.ind_colors,
-      borderWidth: 1,
-    }}]
-  }},
-  options: {{
-    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-    plugins: {{
-      legend: {{display: false}},
-      tooltip: {{
-        callbacks: {{
-          label: (ctx) => `${{ctx.parsed.x > 0 ? '+' : ''}}${{ctx.parsed.x.toFixed(2)}}%  (${{CJS.ind_extra[ctx.dataIndex]}})`
-        }},
-        backgroundColor: '#21262d', titleColor: '#e6edf3', bodyColor: '#e6edf3', borderColor: '#30363d', borderWidth: 1
-      }}
-    }},
-    scales: {{
-      x: {{
-        grid: {{color: '#21262d'}},
-        ticks: {{color: '#8b949e', callback: v => v + '%'}}
-      }},
-      y: {{
-        grid: {{color: '#21262d'}},
-        ticks: {{color: '#e6edf3', font: {{size: 11}}}}
-      }}
-    }}
-  }}
-}});
-
-// Top30 横向柱
-new Chart(document.getElementById('top30bar'), {{
-  type: 'bar',
-  data: {{
-    labels: CJS.top30_labels,
-    datasets: [{{
-      label: '涨跌%',
-      data: CJS.top30_vals,
-      backgroundColor: CJS.top30_colors.map(c => c + 'cc'),
-      borderColor: CJS.top30_colors,
-      borderWidth: 1
-    }}]
-  }},
-  options: {{
-    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-    plugins: {{
-      legend: {{display: false}},
-      tooltip: {{
-        callbacks: {{
-          label: (ctx) => `${{ctx.parsed.x > 0 ? '+' : ''}}${{ctx.parsed.x.toFixed(2)}}%  [${{CJS.top30_inds[ctx.dataIndex]}}]`
-        }},
-        backgroundColor: '#21262d', titleColor: '#e6edf3', bodyColor: '#e6edf3'
-      }}
-    }},
-    scales: {{
-      x: {{grid: {{color: '#21262d'}}, ticks: {{color: '#8b949e', callback: v => v + '%'}}}},
-      y: {{grid: {{color: '#21262d'}}, ticks: {{color: '#e6edf3', font: {{size: 10}}}}}}
-    }}
-  }}
-}});
-
-// 市值散点
+// 散点图
+function dpColorJs(dp) {{
+  if (dp >= 7)  return '#7f0000';
+  if (dp >= 4)  return '#c62828';
+  if (dp >= 1)  return '#e57373cc';
+  if (dp >= 0)  return '#ef9a9acc';
+  if (dp >= -1) return '#a5d6a7cc';
+  if (dp >= -4) return '#388e3ccc';
+  return '#1b5e20';
+}}
 new Chart(document.getElementById('scatter'), {{
   type: 'scatter',
   data: {{
     datasets: [{{
-      label: '股票',
-      data: CJS.scatter.map(p => ({{x: p.x, y: p.y, sym: p.sym, ind: p.ind, cap: p.cap}})),
-      backgroundColor: CJS.scatter.map(p => {{
-        const dp = p.y;
-        if (dp >= 5) return '#00c853cc';
-        if (dp >= 3) return '#4caf50cc';
-        if (dp >= 1) return '#a5d6a7cc';
-        if (dp >= 0) return '#cddc39cc';
-        if (dp >= -1) return '#ffab91cc';
-        if (dp >= -3) return '#ef5350cc';
-        return '#b71c1ccc';
-      }}),
+      data: SCATTER.map(p => ({{x: p.x, y: p.y, sym: p.sym, ind: p.ind, cap: p.cap}})),
+      backgroundColor: SCATTER.map(p => dpColorJs(p.y)),
       pointRadius: 4, pointHoverRadius: 7
     }}]
   }},
@@ -739,37 +632,12 @@ new Chart(document.getElementById('scatter'), {{
     }},
     scales: {{
       x: {{
-        title: {{display: true, text: 'log10(市值，百万USD)', color: '#8b949e'}},
+        title: {{display: true, text: 'log₁₀(市值，百万USD)', color: '#8b949e'}},
         grid: {{color: '#21262d'}}, ticks: {{color: '#8b949e'}}
       }},
       y: {{
         title: {{display: true, text: '涨跌幅 %', color: '#8b949e'}},
         grid: {{color: '#21262d'}}, ticks: {{color: '#8b949e', callback: v => v + '%'}}
-      }}
-    }}
-  }}
-}});
-
-// 涨跌平饼
-new Chart(document.getElementById('donut'), {{
-  type: 'doughnut',
-  data: {{
-    labels: ['上涨', '下跌', '平盘'],
-    datasets: [{{
-      data: [CJS.donut.up, CJS.donut.down, CJS.donut.flat],
-      backgroundColor: ['#3fb950', '#f85149', '#8b949e'],
-      borderColor: '#161b22', borderWidth: 2
-    }}]
-  }},
-  options: {{
-    responsive: true, maintainAspectRatio: false, cutout: '62%',
-    plugins: {{
-      legend: {{position: 'bottom', labels: {{color: '#e6edf3', font: {{size: 12}}, padding: 14}}}},
-      tooltip: {{
-        callbacks: {{
-          label: (ctx) => `${{ctx.label}}: ${{ctx.parsed}} 只 (${{(ctx.parsed*100/(CJS.donut.up+CJS.donut.down+CJS.donut.flat)).toFixed(1)}}%)`
-        }},
-        backgroundColor: '#21262d', titleColor: '#e6edf3', bodyColor: '#e6edf3'
       }}
     }}
   }}
@@ -784,6 +652,62 @@ new Chart(document.getElementById('donut'), {{
     with open(out, 'w', encoding='utf-8') as f:
         f.write(html)
     print(f"{DATE}.html written, {len(html)} bytes")
+
+def write_stocks_page(stocks, date):
+    all_stocks = sorted(stocks, key=lambda x: -x['dp'])
+    rows = ''
+    for i, s in enumerate(all_stocks):
+        cap_str = f'${s["cap"]/1000:.1f}B' if s['cap'] >= 1000 else f'${s["cap"]}M'
+        rows += f'<tr><td>{i+1}</td><td><b>{s["s"]}</b></td><td>{s["grp"]}</td><td>{s["ind"]}</td><td>${s["c"]:.2f}</td><td>{fmt_dp(s["dp"])}</td><td>${s["h"]:.2f}</td><td>${s["l"]:.2f}</td><td>${s["pc"]:.2f}</td><td>{cap_str}</td></tr>'
+
+    html = f'''<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>全部个股 {date}</title>
+<style>
+*{{box-sizing:border-box;margin:0;padding:0}}
+body{{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:20px;max-width:1400px;margin:0 auto}}
+h1{{font-size:1.3rem;margin-bottom:6px}}
+.sub{{color:#8b949e;font-size:.88rem;margin-bottom:14px}}
+.navlinks{{display:flex;gap:10px;margin-bottom:14px;font-size:.88rem}}
+.navlinks a{{color:#58a6ff;text-decoration:none;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:6px 14px}}
+.up{{color:#e53935}}.down{{color:#43a047}}.neutral{{color:#8b949e}}
+table{{width:100%;border-collapse:collapse;font-size:.82rem}}
+th{{background:#21262d;color:#8b949e;padding:8px 10px;text-align:left;font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;position:sticky;top:0;z-index:1}}
+td{{padding:6px 10px;border-bottom:1px solid #161b22}}
+tr:hover td{{background:#161b22}}
+input{{background:#161b22;border:1px solid #30363d;border-radius:6px;color:#e6edf3;padding:8px 12px;font-size:.88rem;width:260px;margin-bottom:12px}}
+input::placeholder{{color:#8b949e}}
+</style>
+</head>
+<body>
+<h1>📋 全部个股数据 — {date}</h1>
+<div class="sub">共 {len(all_stocks)} 只 · 按涨跌幅降序排列</div>
+<div class="navlinks">
+  <a href="{date}.html">← 当日复盘</a>
+  <a href="index.html">📁 历史存档</a>
+</div>
+<input type="text" id="filter" placeholder="筛选代码/行业..." oninput="filterTable()">
+<table id="tbl">
+  <thead><tr><th>#</th><th>代码</th><th>大类</th><th>子行业</th><th>收盘</th><th>涨跌</th><th>最高</th><th>最低</th><th>昨收</th><th>市值</th></tr></thead>
+  <tbody>{rows}</tbody>
+</table>
+<script>
+function filterTable() {{
+  const q = document.getElementById('filter').value.toLowerCase();
+  document.querySelectorAll('#tbl tbody tr').forEach(tr => {{
+    tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
+  }});
+}}
+</script>
+</body>
+</html>'''
+    out = f'/home/user/work/stocks-{date}.html'
+    with open(out, 'w', encoding='utf-8') as f:
+        f.write(html)
+    print(f"stocks-{date}.html written, {len(all_stocks)} stocks")
 
 def update_meta(totals):
     import os
@@ -808,12 +732,12 @@ def write_index(meta):
     for d in dates:
         m = meta[d]
         sign = '+' if m['cap_w'] > 0 else ''
-        color = '#3fb950' if m['cap_w'] > 0 else '#f85149'
+        color = '#e53935' if m['cap_w'] > 0 else '#43a047'
         rows += f'''<tr>
           <td><a href="{d}.html" style="color:#58a6ff;text-decoration:none;font-weight:600">{d}</a></td>
           <td style="color:{color};font-weight:700">{sign}{m["cap_w"]}%</td>
-          <td style="color:#3fb950">{m["up"]}</td>
-          <td style="color:#f85149">{m["down"]}</td>
+          <td style="color:#e53935">{m["up"]}</td>
+          <td style="color:#43a047">{m["down"]}</td>
           <td style="color:#8b949e">{m["flat"]}</td>
           <td style="color:#8b949e">{m["total"]}</td>
         </tr>'''
@@ -854,7 +778,9 @@ tr:hover td{{background:#161b22}}
 
 if __name__ == '__main__':
     data = main()
-    print(f"Stocks: {len(data['stocks'])}, Up/Down/Flat: {data['totals']['up']}/{data['totals']['down']}/{data['totals']['flat']}")
+    t = data['totals']
+    print(f"Stocks: {len(data['stocks'])}, Up/Down/Flat: {t['up']}/{t['down']}/{t['flat']}, cap-w: {t['cap_w']}%")
     write_html(data)
+    write_stocks_page(data['stocks'], DATE)
     meta = update_meta(data['totals'])
     write_index(meta)
