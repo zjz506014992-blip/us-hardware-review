@@ -316,6 +316,43 @@ KEY_STOCKS = [
 ],
 'technical': '突破 $900 整数关口 + 历史新高，进入"价格发现"模式。RSI 82（超买），但成交量持续放大。短期支撑 $950（5 日均线）/ $880（缺口下沿）；阻力位 $1,000 心理位 / $1,100（机构目标价中枢）。期权 IV 58%（vs 平均 42%），波动巨大。',
 },
+{
+'sym': 'AVGO',
+'title': '板块普涨日唯一掉队大票，技术性整理（-0.11%）',
+'dp': -0.11, 'close': 419.49, 'cap': '$1.95 万亿',
+'vol': '$15.2B（1.0 倍 90 日均值）', 'range52w': '$210.50 – $445.20',
+'fund': '当日板块普涨情境下 AVGO 单日反向，反映几个结构性担忧的显化。基本面：FY26 全年营收预期 $62B（YoY +24%）、EPS $7.20，AI 收入（ASIC + Networking）2026 年指引 $32B（YoY +60%）。但市场担忧三个层面：(1) ASIC 客户集中度风险 — Google TPU 占 AVGO ASIC 营收 60%、Meta MTIA 占 25%、Apple 自研芯片占 10%，三大客户合计 95%，单一客户波动直接影响整体；(2) Google TPU v7（Trillium）2026Q3 发布后，部分推理工作负载或转向自研而非 AVGO 设计；(3) 软件业务（VMware）整合协同效应低于预期，FY26 营收增长仅 +5%（vs 收购时承诺的 +12%）。市场对 AVGO 估值锚的核心争议：是否应按 NVDA 同类 AI 加速企业（PE 38x）估值，还是回到传统半导体 + 软件混合估值（PE 25x）。当前 PE 32x，处于估值争议中枢。Networking 业务（Tomahawk 5/6 交换芯片）受 NVDA Spectrum-X 以太网竞争加剧，市占率从 2024 年 75% 跌至 2026 年 60%。',
+'sellside': [
+  {'firm': 'Bernstein', 'rating': '增持', 'tp': '$485', 'view': 'AI ASIC 业务长期价值仍被低估，但需观察客户集中度演变'},
+  {'firm': 'Truist', 'rating': '买入', 'tp': '$475', 'view': 'Google TPU v7 仍由 AVGO 设计 + 制造，长期合作未变'},
+  {'firm': 'Morgan Stanley', 'rating': '增持', 'tp': '$465', 'view': 'VMware 协同效应需 2-3 年才能完全释放'},
+  {'firm': 'JPMorgan', 'rating': '中性', 'tp': '$420', 'view': '当前估值已充分反映 AI ASIC 增长，缺乏短期催化'},
+  {'firm': 'Wells Fargo', 'rating': '中性', 'tp': '$430', 'view': 'Networking 业务竞争加剧，单季营收增长放缓至 +15%'},
+  {'firm': 'Citi', 'rating': '中性', 'tp': '$415', 'view': 'ASIC 客户集中度是结构性风险'},
+],
+'bull': [
+  'Google TPU 长期合作伙伴（已签约至 2030 年），TPU v7 设计仍由 AVGO 主导',
+  'Meta MTIA v2/v3 已签约，2027-2028 年贡献 $8-10B 增量营收',
+  'Apple 自研芯片虽规模有限但 ASP 高（每颗 $200+）',
+  'VMware 收购整合后，软件业务毛利率持续上行',
+  '当前 PE 32x（FY27），考虑 AI 业务 60% 增长率仍合理',
+],
+'bear': [
+  'ASIC 客户集中度极高（Top 3 占 95%），客户波动直接影响整体',
+  'Google TPU v7 推出后，部分推理工作负载或转向自研',
+  'Networking 业务（Tomahawk）市占率持续下滑（75% → 60%），NVDA Spectrum-X 抢食',
+  'VMware 整合协同效应低于预期，软件业务增长仅 +5%（vs 承诺 +12%）',
+  '估值锚不清晰，市场在 PE 25-38x 之间反复博弈',
+],
+'catalysts': [
+  '<b>5/13 Google I/O</b>：TPU v7（Trillium）正式发布，AVGO 设计份额披露',
+  '<b>6 月 Q2 FY26 财报</b>：核心看 ASIC 业务 + Q3 指引方向',
+  '<b>9 月 Apple iPhone 18 发布</b>：苹果自研基带 + WiFi 芯片对 AVGO 的实际影响',
+  '<b>2026Q4</b>：Tomahawk 6 出货 + NVDA Spectrum-X 4.0 头碰头时点',
+  '<b>2027 年</b>：Meta MTIA v3 + AVGO 设计的关键节点',
+],
+'technical': '反复测试 $445 历史高点未果，呈现头部信号。RSI 55（中性），20 日均线 $425 + 50 日均线 $410 形成支撑带。短期支撑 $410（50 日均线）/ $390（缺口下沿）；阻力位 $445（前高）/ $475（机构目标价中枢）。期权 IV 35%（vs 平均 30%），波动相对有限。',
+},
 ]
 
 # 产业新闻（按权威性分 Tier，每个 Tier 一个列表）
