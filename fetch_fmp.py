@@ -28,12 +28,12 @@ def get_api_key():
 
 
 def fetch_quote_batch(syms, retries=3):
-    """FMP /quote 批量端点，分块 100/批"""
+    """FMP /stable/batch-quote 端点（v3 已于 2025-08-31 deprecated），分块 100/批"""
     api_key = get_api_key()
     quotes = {}
     chunks = [syms[i:i+100] for i in range(0, len(syms), 100)]
     for i, chunk in enumerate(chunks):
-        url = f"https://financialmodelingprep.com/api/v3/quote/{','.join(chunk)}?apikey={api_key}"
+        url = f"https://financialmodelingprep.com/stable/batch-quote?symbols={','.join(chunk)}&apikey={api_key}"
         for attempt in range(retries):
             try:
                 req = Request(url, headers={'User-Agent': 'us-hardware-review/1.0'})
