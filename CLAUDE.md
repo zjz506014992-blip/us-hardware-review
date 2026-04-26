@@ -194,6 +194,37 @@ NEWS_TIERS = {
 - 自动 commit message 格式：`auto: FMP daily fetch {DATE} (hit {N}/313)`
 - **PAT 权限注意**：从 CLI push 工作流文件需要 `workflow` scope，本地 PAT 不一定有 → 修改 `daily.yml` 时优先在 GitHub 网页编辑
 
+## 11.5 Claude Code on the Web Routine（云端定时任务）
+
+用户在 Claude Code on the Web 配了一个**每日 routine**，跑在 Anthropic 云端，**不依赖用户开机**。
+
+- **触发时间**：北京 7:00am（UTC 23:00），刻意晚于 GitHub Actions 22:30 UTC 完成
+- **第一步永远是 `git pull origin main`**（routine 是新会话，不 pull 会用旧数据）
+- Routine 提示词（复制到 Claude Code on the Web 的 routine 配置里）：
+
+```text
+今天美股硬件板块收盘复盘。
+
+【第一步必做】git pull origin main
+（GitHub Actions 已在 UTC 22:30 自动拉好当日 FMP 数据）
+
+按 CLAUDE.md 第 4 节 8 步流程执行：
+1. 找最新 confirmed_*.json 读取（cap 单位是 $M）
+2. 读 _meta.json 看当日 stats
+3. 用 WebSearch 查 BROAD_INDICES / SEMI_INDICES / GICS_INDICES 的当日收盘
+4. 按 FMP 涨跌幅 + 市值 + 异动度选 6-8 只更新 KEY_STOCKS 深度卡
+5. 用 WebSearch 查当日真新闻填 NEWS_TIERS 4 层
+6. python gen.py → git add → commit → push
+
+【硬规则】
+- 颜色：红涨绿跌（中国习惯）
+- KEY_STOCKS 的 dp/close/cap 必须从 FMP JSON 取实数，不造数据
+- 卖方评级若 WebSearch 无法验证当日存在，省略 sellside 字段或写"暂无评级变动"
+- commit 信息：feat: {DATE} review (cap-w +X.XX%, 一句话核心叙事)
+```
+
+如果发现 routine 跑出来质量有问题（漏选某只异动股、误填假评级、新闻不准），**直接更新这个 routine 提示词** + 同步更新 CLAUDE.md 第 4 节流程，让两边一致。
+
 ## 12. 历史教训（API timeout / 报错的根因）
 
 | 症状 | 根因 | 解决 |
