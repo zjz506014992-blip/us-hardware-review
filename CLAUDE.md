@@ -203,7 +203,7 @@ NEWS_TIERS = {
 - **端点**：必须用 `/stable/...`（v3 在 2025-08-31 deprecated 返回 403）
   - 批量 quote：`https://financialmodelingprep.com/stable/batch-quote?symbols=AAPL,NVDA&apikey=KEY`
   - 单 quote：`https://financialmodelingprep.com/stable/quote?symbol=AAPL&apikey=KEY`
-  - 业绩日历：`https://financialmodelingprep.com/api/v3/earning_calendar?from=YYYY-MM-DD&to=YYYY-MM-DD&apikey=KEY`（注意：日历 API 路径不同，待迁移到 stable）
+  - 业绩日历：`https://financialmodelingprep.com/stable/earnings-calendar?from=YYYY-MM-DD&to=YYYY-MM-DD&apikey=KEY`（响应 schema：symbol / date / eps / epsEstimated / time / revenue / revenueEstimated；time 取值 bmo/amc/null）
 - **频率限制**：免费版 250 次/天
 - **关键字段**：`symbol / price / changesPercentage / marketCap / dayHigh / dayLow / previousClose / volume / timestamp`
 
@@ -298,7 +298,7 @@ NEWS_TIERS = {
 ## 14. 当前未完成 / TODO（更新这里以告知未来 Claude）
 
 - [ ] GICS 11 ETF / VIX / DXY / 10Y / WTI 也接 FMP 自动拉
-- [ ] 业绩日历端点从 v3 迁到 stable
+- [x] 业绩日历端点从 v3 迁到 stable（2026-04-26 完成，calendar.html 切到 `/stable/earnings-calendar`）
 - [ ] AI 自动生成新闻摘要（方式 B，把 Anthropic API 接进 GitHub Actions）
 - [ ] 业绩日历加 BMO/AMC tooltip 显示历史 EPS surprise
 
