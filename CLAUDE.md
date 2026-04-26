@@ -194,33 +194,92 @@ NEWS_TIERS = {
 - 自动 commit message 格式：`auto: FMP daily fetch {DATE} (hit {N}/313)`
 - **PAT 权限注意**：从 CLI push 工作流文件需要 `workflow` scope，本地 PAT 不一定有 → 修改 `daily.yml` 时优先在 GitHub 网页编辑
 
+## 11.4 Routine push 鉴权（fine-grained PAT 方案，方案 1a）
+
+Anthropic 云端 routine **访问不到 GitHub Secrets**，必须自带 token 才能 push。约定用 **fine-grained PAT**（不要用经典 PAT，泄露面太大）：
+
+### 创建 PAT（一次性，每 90 天轮换）
+1. 访问 https://github.com/settings/personal-access-tokens/new
+2. 配置：
+   - **Token name**：`us-hardware-review-routine-{YYYYMM}`（包含月份方便识别旧 token）
+   - **Expiration**：90 天（不要选 No expiration）
+   - **Repository access**：Only select repositories → 只选 `zjz506014992-blip/us-hardware-review`
+   - **Permissions** → Repository permissions：
+     - `Contents`: **Read and write**（必需，用于 push HTML/JSON）
+     - `Metadata`: Read-only（自动包含，无需手动勾）
+     - 其他全部 No access — 特别**不要**给 `Workflows` / `Actions` / `Secrets` 权限
+3. 生成后立刻复制 `github_pat_xxx...`，**写进 routine 配置的环境变量**（见下面 11.5 节），不要落盘
+
+### 轮换流程（每 90 天）
+1. 提前 1 周创建新 token（按上面步骤）
+2. 在 routine 配置里替换 `GH_TOKEN` 值
+3. 跑 routine 一次验证 push 成功
+4. 去 https://github.com/settings/personal-access-tokens 把旧 token Revoke
+5. 在 CLAUDE.md 这一节末尾记一行轮换日志：`{YYYY-MM-DD} 轮换至 us-hardware-review-routine-{YYYYMM}`
+
+### 泄露应急
+- 立刻去 https://github.com/settings/personal-access-tokens Revoke
+- 创建新 token，更新 routine 配置
+- 检查仓库 Insights → Traffic 看是否有异常 clone
+
+### 轮换日志
+- 2026-04-26 初始 token 由 routine 临时使用，**已 Revoke**；正式 token 待用户按上述步骤创建
+
 ## 11.5 Claude Code on the Web Routine（云端定时任务）
 
 用户在 Claude Code on the Web 配了一个**每日 routine**，跑在 Anthropic 云端，**不依赖用户开机**。
 
 - **触发时间**：北京 7:00am（UTC 23:00），刻意晚于 GitHub Actions 22:30 UTC 完成
 - **第一步永远是 `git pull origin main`**（routine 是新会话，不 pull 会用旧数据）
+- **环境变量**：在 Claude Code on the Web routine 配置里加 `GH_TOKEN=github_pat_xxx`（fine-grained PAT，见 11.4 节）
 - Routine 提示词（复制到 Claude Code on the Web 的 routine 配置里）：
 
 ```text
 今天美股硬件板块收盘复盘。
 
-【第一步必做】git pull origin main
-（GitHub Actions 已在 UTC 22:30 自动拉好当日 FMP 数据）
+【第一步必做：拉仓库 + 注入 token】
+1. 如果 /home/user 没有仓库：
+   git clone https://github.com/zjz506014992-blip/us-hardware-review.git /home/user/us-hardware-review
+   cd /home/user/us-hardware-review
+2. 如果已有：
+   cd /home/user/us-hardware-review && git pull origin main
+3. 把 push token 注入 remote URL（GH_TOKEN 已由 routine 环境变量提供）：
+   git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/zjz506014992-blip/us-hardware-review.git"
 
-按 CLAUDE.md 第 4 节 8 步流程执行：
-1. 找最新 confirmed_*.json 读取（cap 单位是 $M）
-2. 读 _meta.json 看当日 stats
-3. 用 WebSearch 查 BROAD_INDICES / SEMI_INDICES / GICS_INDICES 的当日收盘
-4. 按 FMP 涨跌幅 + 市值 + 异动度选 6-8 只更新 KEY_STOCKS 深度卡
-5. 用 WebSearch 查当日真新闻填 NEWS_TIERS 4 层
-6. python gen.py → git add → commit → push
+【按 CLAUDE.md 第 4 节 8 步流程执行】
+1. ls -t confirmed_*.json | head -1 → 读最新 JSON（cap 单位是 $M，不是亿）
+2. 读 _meta.json 看当日 stats（up/down/flat/cap_w/arith）
+3. 用 Python 算出 Top 25 by |dp| 和 Top 25 by |dp|×cap，确定 6-9 只重点解读候选
+4. 用 WebSearch 验证当日：
+   - 大盘指数（SPX/NDX/DJI/RUT/VIX/DXY/US10Y/WTI）
+   - 半导体 ETF（SOX/SOXX/SMH/XSD/PSI）
+   - GICS 11 SPDR ETF
+   - 当日 Top 5 异动股的真实催化（财报、分析师评级、产品发布）
+5. 编辑 gen.py 的 5 个数据 dict（**只动 dict，别动函数体**）：
+   - BROAD_INDICES (line ~13)
+   - SEMI_INDICES (line ~24)
+   - GICS_INDICES (line ~33)
+   - KEY_STOCKS (line ~65) — dp/close/cap 必须从 FMP cache 读实数
+   - NEWS_TIERS (line ~362) — 4 层 Tier 各 3-5 条
+6. python gen.py → 验证："Stocks: 314, Up/Down/Flat: X/Y/Z, cap-w: N.NN%"
+7. 提交 + 推送（沙箱 code-sign 服务通常返回 missing source，禁用签名）：
+   git add gen.py *.html _meta.json
+   git -c commit.gpgsign=false commit -m "feat: {DATE} review (cap-w +X.XX%, 一句话核心叙事)"
+   git push origin main
+
+【最后必做：抹掉 token】
+git remote set-url origin "https://github.com/zjz506014992-blip/us-hardware-review.git"
+（防止 token 落到 .git/config）
 
 【硬规则】
-- 颜色：红涨绿跌（中国习惯）
-- KEY_STOCKS 的 dp/close/cap 必须从 FMP JSON 取实数，不造数据
-- 卖方评级若 WebSearch 无法验证当日存在，省略 sellside 字段或写"暂无评级变动"
-- commit 信息：feat: {DATE} review (cap-w +X.XX%, 一句话核心叙事)
+- 颜色：🔴 红涨绿跌（中国习惯，dp_color() 已封装，不要改）
+- KEY_STOCKS 必须从 FMP JSON 取 dp/close/cap 实数；卖方评级若 WebSearch 无法验证当日存在，省略 sellside 或写"暂无评级变动"
+- 非异动 + 新闻平淡的日子，KEY_STOCKS 可只更新数字、保留长期叙事框架
+- KEY_STOCKS 数量动态：默认 6-8 张；当日有 |dp|>30% 的中盘以上异动股（cap > $30亿）必加 1 张
+- commit 前 git status --short 确认无意外文件（confirmed_*.json 已由 Actions 提交，不要重复 stage）
+- commit 信息中文标题（feat:/fix:/auto: 前缀），简洁说明意图
+
+【发布地址】https://zjz506014992-blip.github.io/us-hardware-review/
 ```
 
 如果发现 routine 跑出来质量有问题（漏选某只异动股、误填假评级、新闻不准），**直接更新这个 routine 提示词** + 同步更新 CLAUDE.md 第 4 节流程，让两边一致。
