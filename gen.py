@@ -489,6 +489,28 @@ CONFIRMED = {
 'QRVO': (91.50, 5.55, 6000),
 }
 
+# === FMP cache 注入：若 confirmed_{DATE}.json 存在，覆盖 DATE 和 CONFIRMED ===
+def _load_fmp_cache():
+    import os, glob
+    repo_dir = os.path.dirname(os.path.abspath(__file__))
+    files = sorted(glob.glob(os.path.join(repo_dir, 'confirmed_*.json')), reverse=True)
+    if not files:
+        return None, {}
+    try:
+        with open(files[0], encoding='utf-8') as f:
+            d = json.load(f)
+        cache = {sym: (v['close'], v['dp'], v['cap']) for sym, v in d.get('data', {}).items()}
+        return d.get('date'), cache
+    except Exception as e:
+        print(f"[FMP] cache load failed ({e}), falling back to hardcoded CONFIRMED")
+        return None, {}
+
+_FMP_DATE, _FMP_CACHE = _load_fmp_cache()
+if _FMP_DATE and _FMP_CACHE:
+    print(f"[FMP] using cache for {_FMP_DATE}: {len(_FMP_CACHE)} stocks (overrides {len(set(_FMP_CACHE)&set(CONFIRMED))} hardcoded)")
+    DATE = _FMP_DATE
+    CONFIRMED = {**CONFIRMED, **_FMP_CACHE}
+
 # 子行业基础参数 (avg, std, base_price_min, base_price_max)
 SECTOR_PARAMS = {
 'AI加速':       (5.0, 4.0),
