@@ -9,6 +9,12 @@ on:
         description: '强制指定交易日 (YYYY-MM-DD)，留空则自动从 FMP 推断'
         required: false
         default: ''
+      earnings_mode:
+        description: '业绩历史模式: delta (默认日增量) / refresh-recent (重拉近 180 天) / full (全量回填 313 calls)'
+        required: false
+        default: 'delta'
+        type: choice
+        options: [delta, refresh-recent, full]
 
 permissions:
   contents: write
@@ -34,6 +40,23 @@ jobs:
           REVIEW_DATE: ${{ github.event.inputs.review_date }}
         run: python fetch_fmp.py
 
+      - name: Fetch earnings history
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+          MODE: ${{ github.event.inputs.earnings_mode || 'delta' }}
+        run: |
+          if [ "$MODE" = "full" ]; then
+            python fetch_earnings_history.py --full
+          elif [ "$MODE" = "refresh-recent" ]; then
+            python fetch_earnings_history.py --refresh-recent 180
+          else
+            python fetch_earnings_history.py
+            if [ "$(date -u +%u)" = "7" ]; then
+              echo "Sunday: also running refresh-recent"
+              python fetch_earnings_history.py --refresh-recent 180
+            fi
+          fi
+
       - name: Generate pages
         run: python gen.py
 
@@ -41,7 +64,7 @@ jobs:
         run: |
           echo "Changed:"
           git status --short
-          ls -la confirmed_*.json 2>/dev/null | tail -3 || true
+          ls -la confirmed_*.json earnings_history.json 2>/dev/null | tail -5 || true
 
       - name: Commit & push
         run: |

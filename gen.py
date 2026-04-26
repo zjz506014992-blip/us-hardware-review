@@ -912,6 +912,7 @@ tr:hover td{{background:#1c2128}}
   <a href="index.html">← 历史存档</a>
   <a href="stocks-{DATE}.html">📋 全部个股数据</a>
   <a href="calendar.html">📅 业绩日历</a>
+  <a href="earnings.html">🗂️ 业绩历史</a>
 </div>
 
 <div class="stats">
@@ -1250,6 +1251,8 @@ input::placeholder{{color:#8b949e}}
 <div class="navlinks">
   <a href="{date}.html">← 当日复盘</a>
   <a href="index.html">📁 历史存档</a>
+  <a href="calendar.html">📅 业绩日历</a>
+  <a href="earnings.html">🗂️ 业绩历史</a>
 </div>
 <input type="text" id="filter" placeholder="筛选代码/行业..." oninput="filterTable()">
 <table id="tbl">
@@ -1324,7 +1327,7 @@ tr:hover td{{background:#161b22}}
 <body>
 <h1>🖥️ 美股硬件板块复盘 — 历史存档</h1>
 <div class="sub">覆盖 314 只股票 · 24 个子行业 · 4 大板块 · 点击日期查看当日完整复盘</div>
-<div style="margin-bottom:18px"><a href="calendar.html" style="display:inline-block;background:#1f6feb;color:#fff;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:.88rem;font-weight:600">📅 业绩日历（FMP 实时）</a></div>
+<div style="margin-bottom:18px;display:flex;gap:10px;flex-wrap:wrap"><a href="calendar.html" style="display:inline-block;background:#1f6feb;color:#fff;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:.88rem;font-weight:600">📅 业绩日历（FMP 实时）</a><a href="earnings.html" style="display:inline-block;background:#8957e5;color:#fff;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:.88rem;font-weight:600">🗂️ 业绩历史（25 年回填 + 持续更新）</a></div>
 <table>
   <thead>
     <tr><th>日期</th><th>市值加权均</th><th>上涨</th><th>下跌</th><th>平盘</th><th>总数</th></tr>
@@ -1403,7 +1406,7 @@ h1{{font-size:1.45rem;margin-bottom:4px}}
 </head>
 <body>
 <h1>📅 美股硬件板块 · 业绩日历</h1>
-<div class="sub"><a href="index.html" style="color:#58a6ff;text-decoration:none">← 返回历史存档</a> · 数据源 FMP · 仅显示池内 {total_n} 只股票 · 客户端直连，每次打开拉最新</div>
+<div class="sub"><a href="index.html" style="color:#58a6ff;text-decoration:none">← 返回历史存档</a> · <a href="earnings.html" style="color:#58a6ff;text-decoration:none">🗂️ 业绩历史（25 年回填）</a> · 数据源 FMP · 仅显示池内 {total_n} 只股票 · 客户端直连，每次打开拉最新</div>
 
 <div class="bar">
   <span class="lbl">大类：</span>
@@ -1432,7 +1435,7 @@ h1{{font-size:1.45rem;margin-bottom:4px}}
 <div id="lst" class="list"></div>
 
 <div class="foot">
-<b>说明</b>：业绩日历从 FMP <code>/api/v3/earning_calendar</code> 直接拉取，过滤到本站覆盖的 314 只硬件板块标的。颜色标识：<b style="color:#1f6feb">BMO 盘前发布</b> / <b style="color:#f59e0b">AMC 盘后发布</b> / <span class="muted">DMH 盘中或未知</span>。鼠标悬停 ticker 查看 EPS 预期/实际/超预期。FMP API 免费版有调用频率限制（250/天），如出现 403/429 请稍后刷新。
+<b>说明</b>：业绩日历从 FMP <code>/stable/earnings-calendar</code> 直接拉取，过滤到本站覆盖的 314 只硬件板块标的。颜色标识：<b style="color:#1f6feb">BMO 盘前发布</b> / <b style="color:#f59e0b">AMC 盘后发布</b> / <span class="muted">DMH 盘中或未知</span>。鼠标悬停 ticker 查看 EPS 预期/实际/超预期。如出现 403/429 请稍后刷新。
 </div>
 
 <script>
@@ -1452,7 +1455,7 @@ const cn = ["日","一","二","三","四","五","六"];
 async function fetchRange(from, to) {{
   const k = from+"_"+to;
   if (cache[k]) return cache[k];
-  const url = `https://financialmodelingprep.com/api/v3/earning_calendar?from=${{from}}&to=${{to}}&apikey=${{KEY}}`;
+  const url = `https://financialmodelingprep.com/stable/earnings-calendar?from=${{from}}&to=${{to}}&apikey=${{KEY}}`;
   const r = await fetch(url);
   if (!r.ok) throw new Error("HTTP "+r.status);
   const j = await r.json();
@@ -1596,6 +1599,368 @@ load();
         f.write(html)
     print(f"calendar.html written, {len(html)} bytes, pool {total_n} stocks")
 
+def write_earnings_page():
+    """生成 earnings.html — 加载 earnings_history.json，搜索 + 表格展示"""
+    pool_pairs = []
+    for ind, syms in INDUSTRY_MAP.items():
+        grp = SUB_TO_GROUP[ind]
+        for sym in syms:
+            pool_pairs.append(f'"{sym}":["{ind}","{grp}"]')
+    pool_js = '{' + ','.join(pool_pairs) + '}'
+
+    history_exists = os.path.exists(os.path.join(REPO_DIR, 'earnings_history.json'))
+    history_note = "" if history_exists else (
+        '<div style="background:#3d2a14;border:1px solid #8b6914;color:#e8c547;'
+        'padding:10px 14px;border-radius:6px;margin-bottom:14px;font-size:.85rem">'
+        '⚠️ <code>earnings_history.json</code> 尚未生成。请先在 GitHub Actions '
+        '手动触发 <code>workflow_dispatch</code> 跑一次 <code>--full</code> 回填。</div>'
+    )
+
+    html = f'''<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>美股硬件板块 · 业绩历史</title>
+<style>
+*{{box-sizing:border-box;margin:0;padding:0}}
+body{{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;padding:24px 16px;max-width:1400px;margin:0 auto}}
+h1{{font-size:1.45rem;margin-bottom:4px}}
+.sub{{color:#8b949e;font-size:.85rem;margin-bottom:18px}}
+.sub a{{color:#58a6ff;text-decoration:none}}
+.bar{{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px;padding:14px;background:#161b22;border:1px solid #21262d;border-radius:8px}}
+.bar .lbl{{color:#8b949e;font-size:.78rem;margin-right:4px}}
+.bar input,.bar select{{background:#0d1117;border:1px solid #30363d;color:#e6edf3;padding:7px 10px;border-radius:6px;font-size:.85rem;font-family:inherit}}
+.bar input:focus,.bar select:focus{{outline:none;border-color:#1f6feb}}
+#q{{min-width:240px}}
+.btn{{background:#21262d;border:1px solid #30363d;color:#e6edf3;padding:7px 14px;border-radius:6px;font-size:.82rem;cursor:pointer;font-family:inherit}}
+.btn:hover{{background:#30363d}}
+.btn.act{{background:#1f6feb;border-color:#1f6feb;color:#fff}}
+.chips{{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto}}
+#status{{color:#8b949e;font-size:.85rem;padding:8px 0 14px}}
+#status.err{{color:#f85149}}
+#status.ok b{{color:#58a6ff}}
+.kpi{{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}}
+.kpi .card{{background:#161b22;border:1px solid #21262d;border-radius:8px;padding:12px 14px}}
+.kpi .lbl{{color:#8b949e;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}}
+.kpi .val{{font-size:1.25rem;font-weight:700;color:#e6edf3}}
+.tblwrap{{background:#161b22;border:1px solid #21262d;border-radius:8px;overflow:hidden}}
+table{{width:100%;border-collapse:collapse;font-size:.85rem}}
+th{{background:#1c2128;color:#8b949e;padding:11px 12px;text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;font-weight:600;cursor:pointer;user-select:none;position:sticky;top:0;z-index:1}}
+th:hover{{color:#e6edf3}}
+th .arr{{display:inline-block;width:10px;color:#58a6ff;margin-left:3px}}
+td{{padding:10px 12px;border-bottom:1px solid #21262d;white-space:nowrap}}
+tr:hover td{{background:#1c2128}}
+.tk{{display:inline-block;background:#21262d;color:#58a6ff;padding:2px 7px;border-radius:4px;font-weight:600;font-size:.78rem;cursor:pointer;text-decoration:none}}
+.tk:hover{{background:#30363d;color:#79c0ff}}
+.tag-bmo{{color:#58a6ff;font-weight:600}}
+.tag-amc{{color:#f59e0b;font-weight:600}}
+.tag-dmh{{color:#8b949e}}
+.beat{{color:#3fb950;font-weight:600}}
+.miss{{color:#f85149;font-weight:600}}
+.muted{{color:#8b949e}}
+.future{{background:#0d2818}}
+.future:hover td{{background:#103324}}
+.dn{{font-size:.7rem;color:#8b949e;margin-left:4px}}
+.empty{{padding:40px;text-align:center;color:#8b949e}}
+.pgbar{{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:#161b22;border:1px solid #21262d;border-top:none;border-radius:0 0 8px 8px;font-size:.82rem;color:#8b949e}}
+.pgbar button{{background:#21262d;border:1px solid #30363d;color:#e6edf3;padding:5px 11px;border-radius:5px;cursor:pointer;font-size:.78rem;margin:0 3px}}
+.pgbar button:disabled{{opacity:.4;cursor:not-allowed}}
+.foot{{margin-top:18px;padding:14px;background:#161b22;border:1px solid #21262d;border-radius:8px;font-size:.78rem;color:#8b949e;line-height:1.7}}
+.foot code{{background:#0d1117;padding:1px 5px;border-radius:3px}}
+@media(max-width:760px){{
+  body{{padding:14px 8px}}
+  .bar{{padding:10px}}
+  td,th{{padding:8px 6px;font-size:.75rem}}
+  #q{{min-width:160px}}
+}}
+</style>
+</head>
+<body>
+<h1>🗂️ 美股硬件板块 · 业绩历史</h1>
+<div class="sub">
+  <a href="index.html">← 历史存档</a> ·
+  <a href="calendar.html">📅 业绩日历</a> ·
+  数据源 FMP · 覆盖池内 314 只 · 过去 25 年 + 未来已确认日期 · 工作日自动增量更新
+</div>
+
+{history_note}
+
+<div class="bar">
+  <span class="lbl">搜索：</span>
+  <input id="q" placeholder="代码 / 子行业（NVDA、AI加速、半导体核心...）" autocomplete="off">
+  <select id="when">
+    <option value="all">全部时段</option>
+    <option value="future">仅未来</option>
+    <option value="recent">近 90 天</option>
+    <option value="1y">近 1 年</option>
+    <option value="5y">近 5 年</option>
+    <option value="10y">近 10 年</option>
+  </select>
+  <select id="grp">
+    <option value="">全部大类</option>
+    <option>半导体核心</option>
+    <option>硬件系统</option>
+    <option>元器件制造</option>
+    <option>分销渠道</option>
+  </select>
+  <select id="time">
+    <option value="">全部时点</option>
+    <option value="bmo">BMO 盘前</option>
+    <option value="amc">AMC 盘后</option>
+    <option value="dmh">DMH/未知</option>
+  </select>
+  <button class="btn" id="reset">↺ 重置</button>
+  <div class="chips">
+    <button class="btn chip" data-q="NVDA">NVDA</button>
+    <button class="btn chip" data-q="AAPL">AAPL</button>
+    <button class="btn chip" data-q="TSM">TSM</button>
+    <button class="btn chip" data-q="AVGO">AVGO</button>
+    <button class="btn chip" data-q="AMD">AMD</button>
+    <button class="btn chip" data-q="INTC">INTC</button>
+  </div>
+</div>
+
+<div id="status">⏳ 正在加载 earnings_history.json…</div>
+<div id="kpi" class="kpi" style="display:none"></div>
+
+<div class="tblwrap" id="tblwrap" style="display:none">
+  <table id="tbl">
+    <thead>
+      <tr>
+        <th data-k="date">日期 <span class="arr"></span></th>
+        <th data-k="symbol">代码 <span class="arr"></span></th>
+        <th data-k="industry">子行业 <span class="arr"></span></th>
+        <th data-k="time">时点 <span class="arr"></span></th>
+        <th data-k="epsEstimated" style="text-align:right">EPS 预期 <span class="arr"></span></th>
+        <th data-k="eps" style="text-align:right">EPS 实际 <span class="arr"></span></th>
+        <th data-k="surprise" style="text-align:right">超预期 <span class="arr"></span></th>
+        <th data-k="revenueEstimated" style="text-align:right">营收预期 <span class="arr"></span></th>
+        <th data-k="revenue" style="text-align:right">营收实际 <span class="arr"></span></th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+  <div class="pgbar">
+    <span id="pginfo"></span>
+    <span>
+      <button id="prev">← 上页</button>
+      <button id="next">下页 →</button>
+    </span>
+  </div>
+</div>
+
+<div class="foot">
+<b>说明</b>：本页直接加载 <code>earnings_history.json</code>（仓库内静态文件，无需调 API）。数据由 GitHub Actions 维护：每个交易日跑 <code>fetch_earnings_history.py</code> 增量合并近 30 天 + 未来 180 天的 <code>/stable/earnings-calendar</code>；每周日跑 <code>--refresh-recent 180</code> 校正订正过的 EPS；首次回填用 <code>--full</code>（手动 workflow_dispatch 触发）逐 ticker 拉 <code>/stable/earnings?symbol=X&limit=120</code>，覆盖近 25-30 年。
+未来未发布日期：行底色淡绿 · EPS/营收"实际"为空 · 仅显示分析师"预期"。
+</div>
+
+<script>
+const POOL = {pool_js};
+const PAGE_SIZE = 100;
+let RAW = {{}};      // sym -> [records]
+let FLAT = [];       // 扁平化后的 [{{date, symbol, industry, group, time, eps, ...}}]
+let view = [];
+let sortK = "date", sortDir = -1;  // 默认日期降序
+let page = 0;
+
+const $ = s => document.querySelector(s);
+
+function epsFmt(v) {{ return (v===null||v===undefined||v==="") ? "—" : Number(v).toFixed(2); }}
+function revFmt(v) {{
+  if (v===null||v===undefined||v===0||v==="") return "—";
+  const a = Math.abs(v);
+  if (a >= 1e12) return (v/1e12).toFixed(2)+"T";
+  if (a >= 1e9) return (v/1e9).toFixed(2)+"B";
+  if (a >= 1e6) return (v/1e6).toFixed(1)+"M";
+  return v.toLocaleString();
+}}
+function surp(act, est) {{
+  if (act==null||est==null||est===0) return null;
+  return ((act-est)/Math.abs(est)*100);
+}}
+function timeTag(t) {{
+  t = (t||"").toLowerCase();
+  if (t==="bmo") return '<span class="tag-bmo">BMO</span>';
+  if (t==="amc") return '<span class="tag-amc">AMC</span>';
+  return '<span class="tag-dmh">—</span>';
+}}
+
+function flatten() {{
+  const today = new Date().toISOString().slice(0,10);
+  FLAT = [];
+  for (const sym in RAW) {{
+    const meta = POOL[sym];
+    if (!meta) continue;
+    for (const r of RAW[sym]) {{
+      FLAT.push({{
+        date: r.date,
+        symbol: sym,
+        industry: meta[0],
+        group: meta[1],
+        time: r.time,
+        eps: r.eps,
+        epsEstimated: r.epsEstimated,
+        revenue: r.revenue,
+        revenueEstimated: r.revenueEstimated,
+        surprise: surp(r.eps, r.epsEstimated),
+        future: r.date > today,
+      }});
+    }}
+  }}
+}}
+
+function applyFilters() {{
+  const q = $("#q").value.trim().toUpperCase();
+  const when = $("#when").value;
+  const grp = $("#grp").value;
+  const tm = $("#time").value;
+  const cutoff = (days) => {{
+    const d = new Date(); d.setDate(d.getDate()-days);
+    return d.toISOString().slice(0,10);
+  }};
+
+  view = FLAT.filter(r => {{
+    if (q) {{
+      const hay = (r.symbol+" "+r.industry+" "+r.group).toUpperCase();
+      const terms = q.split(/\\s+/).filter(Boolean);
+      if (!terms.every(t => hay.includes(t))) return false;
+    }}
+    if (grp && r.group !== grp) return false;
+    if (tm) {{
+      const t = (r.time||"").toLowerCase();
+      if (tm === "dmh") {{ if (t === "bmo" || t === "amc") return false; }}
+      else if (t !== tm) return false;
+    }}
+    if (when === "future") {{ if (!r.future) return false; }}
+    else if (when === "recent") {{ if (r.date < cutoff(90)) return false; }}
+    else if (when === "1y") {{ if (r.date < cutoff(365)) return false; }}
+    else if (when === "5y") {{ if (r.date < cutoff(365*5)) return false; }}
+    else if (when === "10y") {{ if (r.date < cutoff(365*10)) return false; }}
+    return true;
+  }});
+
+  view.sort((a,b) => {{
+    let va = a[sortK], vb = b[sortK];
+    if (va == null && vb == null) return 0;
+    if (va == null) return 1;
+    if (vb == null) return -1;
+    if (typeof va === "string") return sortDir * va.localeCompare(vb);
+    return sortDir * (va - vb);
+  }});
+
+  page = 0;
+  render();
+}}
+
+function render() {{
+  const total = view.length;
+  const totalPg = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  if (page >= totalPg) page = totalPg - 1;
+  if (page < 0) page = 0;
+  const slice = view.slice(page*PAGE_SIZE, (page+1)*PAGE_SIZE);
+
+  const future = view.filter(r => r.future).length;
+  const past = total - future;
+  const beats = view.filter(r => r.surprise != null && r.surprise > 0).length;
+  const misses = view.filter(r => r.surprise != null && r.surprise < 0).length;
+  const symbols = new Set(view.map(r => r.symbol)).size;
+  $("#kpi").style.display = "grid";
+  $("#kpi").innerHTML = `
+    <div class="card"><div class="lbl">命中记录</div><div class="val">${{total.toLocaleString()}}</div></div>
+    <div class="card"><div class="lbl">覆盖 ticker</div><div class="val">${{symbols}}</div></div>
+    <div class="card"><div class="lbl">已发布</div><div class="val">${{past.toLocaleString()}}</div></div>
+    <div class="card"><div class="lbl">未来</div><div class="val" style="color:#3fb950">${{future.toLocaleString()}}</div></div>
+    <div class="card"><div class="lbl">超预期 / 不及</div><div class="val"><span class="beat">${{beats}}</span> <span class="muted" style="font-weight:400">/</span> <span class="miss">${{misses}}</span></div></div>
+  `;
+
+  document.querySelectorAll("th").forEach(th => {{
+    const a = th.querySelector(".arr");
+    if (!a) return;
+    a.textContent = th.dataset.k === sortK ? (sortDir < 0 ? "▼" : "▲") : "";
+  }});
+
+  if (!total) {{
+    $("#tbody").innerHTML = `<tr><td colspan="9" class="empty">无匹配记录。试试清空筛选或换关键字。</td></tr>`;
+  }} else {{
+    $("#tbody").innerHTML = slice.map(r => {{
+      const sCls = r.surprise == null ? "muted" : (r.surprise >= 0 ? "beat" : "miss");
+      const sStr = r.surprise == null ? "—" : (r.surprise>=0?"+":"")+r.surprise.toFixed(1)+"%";
+      const fc = r.future ? " future" : "";
+      const dow = "日一二三四五六"[new Date(r.date+"T00:00:00").getDay()];
+      return `<tr class="${{fc.trim()}}">
+        <td>${{r.date}}<span class="dn">周${{dow}}</span></td>
+        <td><a class="tk" data-sym="${{r.symbol}}">${{r.symbol}}</a></td>
+        <td class="muted">${{r.industry}}</td>
+        <td>${{timeTag(r.time)}}</td>
+        <td style="text-align:right">${{epsFmt(r.epsEstimated)}}</td>
+        <td style="text-align:right">${{epsFmt(r.eps)}}</td>
+        <td style="text-align:right" class="${{sCls}}">${{sStr}}</td>
+        <td style="text-align:right" class="muted">${{revFmt(r.revenueEstimated)}}</td>
+        <td style="text-align:right">${{revFmt(r.revenue)}}</td>
+      </tr>`;
+    }}).join("");
+  }}
+
+  $("#pginfo").textContent = total ? `第 ${{page+1}} / ${{totalPg}} 页 · 共 ${{total.toLocaleString()}} 条` : "—";
+  $("#prev").disabled = page <= 0;
+  $("#next").disabled = page >= totalPg - 1;
+
+  document.querySelectorAll(".tk[data-sym]").forEach(a => {{
+    a.onclick = () => {{ $("#q").value = a.dataset.sym; applyFilters(); }};
+  }});
+}}
+
+async function init() {{
+  try {{
+    const r = await fetch("earnings_history.json", {{cache: "no-cache"}});
+    if (!r.ok) throw new Error("HTTP "+r.status);
+    RAW = await r.json();
+    flatten();
+    const sizeMB = (JSON.stringify(RAW).length / 1024 / 1024).toFixed(2);
+    const today = new Date().toISOString().slice(0,10);
+    const future = FLAT.filter(r => r.date > today).length;
+    $("#status").className = "ok";
+    $("#status").innerHTML = `✅ 加载完成 · <b>${{Object.keys(RAW).length}}</b> 个 ticker · <b>${{FLAT.length.toLocaleString()}}</b> 条业绩记录（含 <b>${{future}}</b> 个未来日期）· ${{sizeMB}} MB`;
+    $("#tblwrap").style.display = "block";
+    applyFilters();
+  }} catch(err) {{
+    $("#status").className = "err";
+    $("#status").innerHTML = `❌ 加载失败：${{err.message}}。<br>如果你刚部署，请先在 GitHub Actions 手动触发 <code>workflow_dispatch</code> 跑一次 <code>fetch_earnings_history.py --full</code> 回填。`;
+  }}
+}}
+
+document.querySelectorAll("th").forEach(th => {{
+  th.onclick = () => {{
+    const k = th.dataset.k;
+    if (!k) return;
+    if (sortK === k) sortDir = -sortDir;
+    else {{ sortK = k; sortDir = (k === "date" || k === "surprise") ? -1 : 1; }}
+    applyFilters();
+  }};
+}});
+$("#q").oninput = () => applyFilters();
+$("#when").onchange = () => applyFilters();
+$("#grp").onchange = () => applyFilters();
+$("#time").onchange = () => applyFilters();
+$("#reset").onclick = () => {{
+  $("#q").value = ""; $("#when").value = "all"; $("#grp").value = ""; $("#time").value = "";
+  sortK = "date"; sortDir = -1; applyFilters();
+}};
+$("#prev").onclick = () => {{ page--; render(); window.scrollTo(0,0); }};
+$("#next").onclick = () => {{ page++; render(); window.scrollTo(0,0); }};
+document.querySelectorAll(".chip").forEach(b => {{
+  b.onclick = () => {{ $("#q").value = b.dataset.q; applyFilters(); }};
+}});
+
+init();
+</script>
+</body>
+</html>'''
+    with open(os.path.join(REPO_DIR, 'earnings.html'), 'w', encoding='utf-8') as f:
+        f.write(html)
+    print(f"earnings.html written, {len(html)} bytes (loads earnings_history.json on client)")
+
 if __name__ == '__main__':
     data = main()
     t = data['totals']
@@ -1605,3 +1970,4 @@ if __name__ == '__main__':
     meta = update_meta(data['totals'])
     write_index(meta)
     write_calendar_page()
+    write_earnings_page()
