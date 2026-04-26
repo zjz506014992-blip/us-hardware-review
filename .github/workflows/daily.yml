@@ -15,6 +15,11 @@ on:
         default: 'delta'
         type: choice
         options: [delta, refresh-recent, full]
+      fetch_profiles:
+        description: '是否拉取公司 profile (313 calls). 通常每周日自动跑, 这里强制触发用'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -57,6 +62,25 @@ jobs:
             fi
           fi
 
+      - name: Fetch company profiles
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+          FORCE: ${{ github.event.inputs.fetch_profiles }}
+        run: |
+          # profiles 不常变, 每周日跑 + 手动 force, 否则跳过
+          if [ "$FORCE" = "true" ]; then
+            echo "Manual force: fetching profiles"
+            python fetch_earnings_history.py --profiles
+          elif [ ! -f company_profiles.json ]; then
+            echo "company_profiles.json missing: bootstrapping"
+            python fetch_earnings_history.py --profiles
+          elif [ "$(date -u +%u)" = "7" ]; then
+            echo "Sunday: refreshing profiles"
+            python fetch_earnings_history.py --profiles
+          else
+            echo "Skipping profiles (only runs Sundays or when missing)"
+          fi
+
       - name: Generate pages
         run: python gen.py
 
@@ -64,7 +88,7 @@ jobs:
         run: |
           echo "Changed:"
           git status --short
-          ls -la confirmed_*.json earnings_history.json 2>/dev/null | tail -5 || true
+          ls -la confirmed_*.json earnings_history.json company_profiles.json 2>/dev/null | tail -5 || true
 
       - name: Commit & push
         run: |

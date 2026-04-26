@@ -195,17 +195,83 @@ def mode_refresh_recent(api_key, days=180):
         print(f"\nFailed: {','.join(failed)}")
 
 
+def mode_profiles(api_key):
+    """拉取 313 只 ticker 的公司 profile, 写 company_profiles.json. 313 calls."""
+    print(f"=== PROFILES: {len(TICKERS)} tickers ===")
+    profiles_file = os.path.join(REPO_DIR, 'company_profiles.json')
+    profiles = {}
+    if os.path.exists(profiles_file):
+        with open(profiles_file, encoding='utf-8') as f:
+            profiles = json.load(f)
+    failed = []
+    sample_logged = False
+    for i, sym in enumerate(TICKERS):
+        url = f"https://financialmodelingprep.com/stable/profile-symbol?symbol={sym}&apikey={api_key}"
+        try:
+            data = http_get(url)
+            if isinstance(data, dict) and ('Error Message' in data or 'error' in data):
+                print(f"  [{i+1}/{len(TICKERS)}] {sym}: API error {data}")
+                failed.append(sym)
+                continue
+            if not isinstance(data, list) or not data:
+                print(f"  [{i+1}/{len(TICKERS)}] {sym}: empty payload")
+                failed.append(sym)
+                continue
+            if not sample_logged:
+                print(f"\n=== SAMPLE [{sym}] ===")
+                print(json.dumps(data[0], indent=2, ensure_ascii=False, default=str)[:1500])
+                print("=== END SAMPLE ===\n")
+                sample_logged = True
+            p = data[0]
+            desc = p.get('description') or ''
+            # 截断到 800 字符避免 JSON 膨胀
+            if len(desc) > 800:
+                desc = desc[:800].rstrip() + '...'
+            profiles[sym] = {
+                'name': p.get('companyName') or p.get('name'),
+                'description': desc,
+                'industry': p.get('industry'),
+                'sector': p.get('sector'),
+                'country': p.get('country'),
+                'website': p.get('website'),
+                'image': p.get('image'),
+                'exchange': p.get('exchange') or p.get('exchangeShortName'),
+                'ipoDate': p.get('ipoDate'),
+                'ceo': p.get('ceo'),
+                'fullTimeEmployees': p.get('fullTimeEmployees'),
+                'fetchedAt': datetime.now(timezone.utc).isoformat(timespec='seconds'),
+            }
+            print(f"  [{i+1}/{len(TICKERS)}] {sym}: {profiles[sym]['name']} · {profiles[sym]['industry']}")
+        except Exception as e:
+            print(f"  [{i+1}/{len(TICKERS)}] {sym}: FAILED {e}")
+            failed.append(sym)
+        if (i + 1) % 25 == 0:
+            with open(profiles_file, 'w', encoding='utf-8') as f:
+                json.dump(profiles, f, ensure_ascii=False, separators=(',', ':'), sort_keys=True)
+        time.sleep(0.15)
+    with open(profiles_file, 'w', encoding='utf-8') as f:
+        json.dump(profiles, f, ensure_ascii=False, separators=(',', ':'), sort_keys=True)
+    size_kb = os.path.getsize(profiles_file) / 1024
+    print(f"\nWrote {profiles_file}: {len(profiles)} profiles, {size_kb:.1f} KB")
+    if failed:
+        print(f"Failed ({len(failed)}): {','.join(failed)}")
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--full', action='store_true', help='Full backfill (313 calls)')
     p.add_argument('--refresh-recent', type=int, nargs='?', const=180, default=None,
                    metavar='DAYS', help='Re-fetch tickers with earnings in last N days')
+    p.add_argument('--profiles', action='store_true',
+                   help='Fetch company profiles -> company_profiles.json (313 calls)')
     args = p.parse_args()
     api_key = get_api_key()
     if args.full:
         mode_full(api_key)
     elif args.refresh_recent is not None:
         mode_refresh_recent(api_key, args.refresh_recent)
+    elif args.profiles:
+        mode_profiles(api_key)
     else:
         mode_delta(api_key)
 

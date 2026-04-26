@@ -1342,7 +1342,8 @@ tr:hover td{{background:#161b22}}
     print(f"index.html updated, {len(dates)} dates listed")
 
 def write_calendar_page():
-    """生成 calendar.html — 客户端直连 FMP earnings calendar，过滤到 314 池"""
+    """生成 calendar.html — 加载 earnings_history.json + company_profiles.json，
+    点击日期格弹出当天所有公司的业绩 + 公司简介 + 行业。"""
     pool_pairs = []
     for ind, syms in INDUSTRY_MAP.items():
         grp = SUB_TO_GROUP[ind]
@@ -1400,13 +1401,56 @@ h1{{font-size:1.45rem;margin-bottom:4px}}
 .muted{{color:#8b949e}}
 .foot{{margin-top:18px;padding:12px;background:#161b22;border:1px solid #21262d;border-radius:8px;font-size:.78rem;color:#8b949e;line-height:1.7}}
 .foot a{{color:#58a6ff;text-decoration:none}}
+.foot code{{background:#0d1117;padding:1px 5px;border-radius:3px}}
 .nav{{display:flex;gap:6px;margin-left:auto}}
-@media(max-width:760px){{.grid{{grid-template-columns:repeat(7,1fr);gap:3px}}.cell{{min-height:80px;padding:5px}}.tk{{font-size:.62rem;padding:1px 3px}}.legend{{width:100%;margin-left:0;margin-top:6px}}}}
+.cell.has{{cursor:pointer;transition:transform .1s,border-color .1s}}
+.cell.has:hover{{border-color:#1f6feb;transform:translateY(-1px)}}
+.overlay{{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:flex-start;justify-content:center;z-index:100;overflow-y:auto;padding:30px 14px}}
+.overlay.show{{display:flex}}
+.dialog{{background:#0d1117;border:1px solid #30363d;border-radius:10px;width:100%;max-width:880px;box-shadow:0 16px 48px rgba(0,0,0,.6)}}
+.dlg-head{{position:sticky;top:0;background:#161b22;border-bottom:1px solid #30363d;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;border-radius:10px 10px 0 0;z-index:1}}
+.dlg-head h2{{font-size:1.1rem;color:#e6edf3}}
+.dlg-head .sub{{font-size:.78rem;color:#8b949e;margin-top:3px;margin-bottom:0}}
+.dlg-close{{background:#21262d;border:1px solid #30363d;color:#e6edf3;width:32px;height:32px;border-radius:6px;cursor:pointer;font-size:1.1rem;line-height:1}}
+.dlg-close:hover{{background:#f85149;border-color:#f85149}}
+.dlg-body{{padding:14px 18px 20px;display:flex;flex-direction:column;gap:14px}}
+.ec{{background:#161b22;border:1px solid #21262d;border-radius:8px;padding:14px 16px}}
+.ec-head{{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px}}
+.ec-head img{{width:40px;height:40px;border-radius:6px;background:#0d1117;object-fit:contain;flex-shrink:0}}
+.ec-head .ti{{flex:1;min-width:0}}
+.ec-head .sym{{font-size:1.05rem;font-weight:700;color:#e6edf3}}
+.ec-head .sym a{{color:#58a6ff;text-decoration:none}}
+.ec-head .sym a:hover{{text-decoration:underline}}
+.ec-head .ind{{font-size:.78rem;color:#8b949e;margin-top:2px}}
+.ec-head .ind b{{color:#79c0ff;font-weight:600}}
+.ec-head .timing{{font-size:.78rem;font-weight:700;padding:5px 10px;border-radius:5px;flex-shrink:0;align-self:flex-start}}
+.ec-head .timing.bmo{{background:#1f6feb;color:#fff}}
+.ec-head .timing.amc{{background:#f59e0b;color:#1a1a1a}}
+.ec-head .timing.dmh{{background:#30363d;color:#8b949e}}
+.ec-eps{{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px 18px;margin-bottom:10px;font-size:.82rem}}
+.ec-eps .lbl{{color:#8b949e;font-size:.7rem;text-transform:uppercase;letter-spacing:.04em}}
+.ec-eps .v{{color:#e6edf3;font-weight:600;font-size:.95rem}}
+.ec-eps .beat{{color:#3fb950}}
+.ec-eps .miss{{color:#f85149}}
+.ec-desc{{color:#c9d1d9;font-size:.85rem;line-height:1.65;margin-bottom:8px}}
+.ec-desc.muted{{color:#8b949e;font-style:italic}}
+.ec-foot{{display:flex;flex-wrap:wrap;gap:14px;font-size:.75rem;color:#8b949e;padding-top:8px;border-top:1px solid #21262d}}
+.ec-foot a{{color:#58a6ff;text-decoration:none}}
+.ec-foot a:hover{{text-decoration:underline}}
+.ec-foot span{{display:inline-flex;align-items:center;gap:4px}}
+@media(max-width:760px){{
+  .grid{{grid-template-columns:repeat(7,1fr);gap:3px}}
+  .cell{{min-height:80px;padding:5px}}
+  .tk{{font-size:.62rem;padding:1px 3px}}
+  .legend{{width:100%;margin-left:0;margin-top:6px}}
+  .dialog{{margin:0}}
+  .ec-head img{{width:32px;height:32px}}
+}}
 </style>
 </head>
 <body>
 <h1>📅 美股硬件板块 · 业绩日历</h1>
-<div class="sub"><a href="index.html" style="color:#58a6ff;text-decoration:none">← 返回历史存档</a> · <a href="earnings.html" style="color:#58a6ff;text-decoration:none">🗂️ 业绩历史（25 年回填）</a> · 数据源 FMP · 仅显示池内 {total_n} 只股票 · 客户端直连，每次打开拉最新</div>
+<div class="sub"><a href="index.html" style="color:#58a6ff;text-decoration:none">← 返回历史存档</a> · <a href="earnings.html" style="color:#58a6ff;text-decoration:none">🗂️ 业绩历史（25 年回填）</a> · 数据源 FMP · 池内 {total_n} 只股票 · <b style="color:#58a6ff">点击有数据的日期格 → 弹出公司业绩 + 简介</b></div>
 
 <div class="bar">
   <span class="lbl">大类：</span>
@@ -1430,40 +1474,41 @@ h1{{font-size:1.45rem;margin-bottom:4px}}
   </div>
 </div>
 
-<div id="status">⏳ 正在从 FMP 拉取业绩日历…</div>
+<div id="status">⏳ 正在加载 earnings_history.json…</div>
 <div id="cal" class="grid" style="display:none"></div>
 <div id="lst" class="list"></div>
 
+<div id="modal" class="overlay">
+  <div class="dialog">
+    <div class="dlg-head">
+      <div>
+        <h2 id="dlg-title">日期</h2>
+        <div class="sub" id="dlg-sub"></div>
+      </div>
+      <button class="dlg-close" id="dlg-close">×</button>
+    </div>
+    <div class="dlg-body" id="dlg-body"></div>
+  </div>
+</div>
+
 <div class="foot">
-<b>说明</b>：业绩日历从 FMP <code>/stable/earnings-calendar</code> 直接拉取，过滤到本站覆盖的 314 只硬件板块标的。颜色标识：<b style="color:#1f6feb">BMO 盘前发布</b> / <b style="color:#f59e0b">AMC 盘后发布</b> / <span class="muted">DMH 盘中或未知</span>。鼠标悬停 ticker 查看 EPS 预期/实际/超预期。如出现 403/429 请稍后刷新。
+<b>说明</b>：业绩日历从仓库内 <code>earnings_history.json</code>（每天 GitHub Actions 自动增量）渲染，相比直连 FMP <code>earnings-calendar</code> 端点覆盖更全（per-symbol 端点能拿到 calendar 端点漏掉的记录，例如 NXPI 4/28）。颜色：<b style="color:#1f6feb">BMO 盘前</b> / <b style="color:#f59e0b">AMC 盘后</b> / <span class="muted">DMH 盘中或未知（多数历史/远期数据无该字段）</span>。**点击有数据的日期格** 弹出当天所有公司业绩 + 公司简介（来自 <code>company_profiles.json</code>）。
 </div>
 
 <script>
-const KEY = "{FMP_API_KEY}";
 const POOL = {pool_js};
 const POOL_SET = new Set(Object.keys(POOL));
+let HISTORY = {{}};       // sym -> [records]
+let PROFILES = {{}};      // sym -> profile
+let BY_DATE = {{}};       // "2026-04-29" -> [{{symbol, time, eps, ...}}, ...]
 let cur = new Date();
 cur.setDate(1);
 let groupFilter = "";
 let view = "cal";
-let cache = {{}};
 
 const $ = s => document.querySelector(s);
 const fmt = d => d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 const cn = ["日","一","二","三","四","五","六"];
-
-async function fetchRange(from, to) {{
-  const k = from+"_"+to;
-  if (cache[k]) return cache[k];
-  const url = `https://financialmodelingprep.com/stable/earnings-calendar?from=${{from}}&to=${{to}}&apikey=${{KEY}}`;
-  const r = await fetch(url);
-  if (!r.ok) throw new Error("HTTP "+r.status);
-  const j = await r.json();
-  if (!Array.isArray(j)) throw new Error(j["Error Message"] || JSON.stringify(j).slice(0,200));
-  const filtered = j.filter(e => POOL_SET.has(e.symbol));
-  cache[k] = filtered;
-  return filtered;
-}}
 
 function tkClass(t) {{
   t = (t||"").toLowerCase();
@@ -1471,36 +1516,45 @@ function tkClass(t) {{
   if (t==="amc") return "amc";
   return "dmh";
 }}
-
 function epsFmt(v) {{ return (v===null||v===undefined||v==="") ? "—" : Number(v).toFixed(2); }}
+function revFmt(v) {{
+  if (v==null||v===0||v==="") return "—";
+  const a = Math.abs(v);
+  if (a >= 1e12) return (v/1e12).toFixed(2)+"T";
+  if (a >= 1e9) return (v/1e9).toFixed(2)+"B";
+  if (a >= 1e6) return (v/1e6).toFixed(1)+"M";
+  return v.toLocaleString();
+}}
 function surprise(act, est) {{
-  if (act===null||est===null||act===undefined||est===undefined||est===0) return null;
+  if (act==null||est==null||est===0) return null;
   return ((act-est)/Math.abs(est)*100);
 }}
-
-function tooltipText(e) {{
-  const meta = POOL[e.symbol];
-  const ind = meta ? meta[0] : "";
-  const est = epsFmt(e.epsEstimated);
-  const act = epsFmt(e.eps);
-  const s = surprise(e.eps, e.epsEstimated);
-  const sStr = s===null ? "—" : (s>=0?"+":"")+s.toFixed(1)+"%";
-  return `${{e.symbol}} · ${{ind}}\\n时点: ${{(e.time||"unknown").toUpperCase()}}\\nEPS 预期: ${{est}}\\nEPS 实际: ${{act}}\\n超预期: ${{sStr}}\\n营收预期: ${{e.revenueEstimated?(e.revenueEstimated/1e9).toFixed(2)+"B":"—"}}`;
+function escapeHTML(s) {{
+  return String(s||"").replace(/[&<>"']/g, c => ({{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}})[c]);
 }}
 
-function renderCal(items) {{
+function buildIndex() {{
+  BY_DATE = {{}};
+  for (const sym in HISTORY) {{
+    if (!POOL_SET.has(sym)) continue;
+    for (const r of HISTORY[sym]) {{
+      if (!r.date) continue;
+      (BY_DATE[r.date] = BY_DATE[r.date] || []).push({{
+        symbol: sym, time: r.time, eps: r.eps, epsEstimated: r.epsEstimated,
+        revenue: r.revenue, revenueEstimated: r.revenueEstimated,
+      }});
+    }}
+  }}
+}}
+
+function renderCal() {{
   const y = cur.getFullYear(), m = cur.getMonth();
   const first = new Date(y, m, 1);
   const lastD = new Date(y, m+1, 0).getDate();
   const startDow = first.getDay();
   const today = new Date(); today.setHours(0,0,0,0);
 
-  const byDate = {{}};
-  items.forEach(e => {{
-    if (groupFilter && (!POOL[e.symbol] || POOL[e.symbol][1] !== groupFilter)) return;
-    (byDate[e.date] = byDate[e.date]||[]).push(e);
-  }});
-
+  let monthHits = 0;
   let html = "";
   for (let i=0;i<7;i++) html += `<div class="dh ${{i===0||i===6?"we":""}}">${{cn[i]}}</div>`;
   for (let i=0;i<startDow;i++) html += `<div class="cell we"></div>`;
@@ -1511,66 +1565,165 @@ function renderCal(items) {{
     const we = dow===0||dow===6;
     const isTdy = dt.getTime() === today.getTime();
     const isPast = dt < today && !isTdy;
-    const evs = byDate[ds] || [];
+    const allEvs = BY_DATE[ds] || [];
+    const evs = groupFilter
+      ? allEvs.filter(e => POOL[e.symbol] && POOL[e.symbol][1] === groupFilter)
+      : allEvs;
     evs.sort((a,b) => {{
       const o = {{bmo:0,dmh:1,amc:2}};
       return (o[(a.time||"").toLowerCase()]||1) - (o[(b.time||"").toLowerCase()]||1);
     }});
+    monthHits += evs.length;
     let cls = "cell";
     if (we) cls += " we";
     if (isTdy) cls += " tdy";
     else if (isPast) cls += " past";
-    let badges = evs.map(e => `<a class="tk ${{tkClass(e.time)}}" title="${{tooltipText(e).replace(/"/g,"&quot;")}}">${{e.symbol}}</a>`).join(" ");
+    if (evs.length) cls += " has";
+    const badges = evs.map(e => `<span class="tk ${{tkClass(e.time)}}">${{e.symbol}}</span>`).join(" ");
     const cnt = evs.length ? `<span class="cnt">${{evs.length}}</span>` : "";
-    html += `<div class="${{cls}}"><div class="dn"><span>${{d}}</span>${{cnt}}</div><div>${{badges}}</div></div>`;
+    const dataAttr = evs.length ? ` data-date="${{ds}}"` : "";
+    html += `<div class="${{cls}}"${{dataAttr}}><div class="dn"><span>${{d}}</span>${{cnt}}</div><div>${{badges}}</div></div>`;
   }}
   $("#cal").innerHTML = html;
+  document.querySelectorAll(".cell.has").forEach(el => {{
+    el.onclick = () => openDay(el.dataset.date);
+  }});
+  return monthHits;
 }}
 
-function renderList(items) {{
-  const filtered = items.filter(e => !groupFilter || (POOL[e.symbol] && POOL[e.symbol][1] === groupFilter));
-  filtered.sort((a,b) => a.date.localeCompare(b.date) || (a.symbol < b.symbol ? -1 : 1));
+function renderList() {{
+  const y = cur.getFullYear(), m = cur.getMonth();
+  const monthStart = fmt(new Date(y, m, 1));
+  const monthEnd = fmt(new Date(y, m+1, 0));
+  const items = [];
+  for (const date in BY_DATE) {{
+    if (date < monthStart || date > monthEnd) continue;
+    for (const e of BY_DATE[date]) {{
+      if (groupFilter && (!POOL[e.symbol] || POOL[e.symbol][1] !== groupFilter)) continue;
+      items.push({{date, ...e}});
+    }}
+  }}
+  items.sort((a,b) => a.date.localeCompare(b.date) || a.symbol.localeCompare(b.symbol));
   const byDate = {{}};
-  filtered.forEach(e => (byDate[e.date]=byDate[e.date]||[]).push(e));
+  items.forEach(e => (byDate[e.date]=byDate[e.date]||[]).push(e));
   const today = fmt(new Date());
   let rows = "";
   Object.keys(byDate).sort().forEach(d => {{
     const dow = cn[new Date(d+"T00:00:00").getDay()];
     const tag = d===today ? " · 今日" : "";
-    rows += `<tr class="dh-row"><td colspan="7">${{d}} 周${{dow}} · ${{byDate[d].length}} 家${{tag}}</td></tr>`;
+    rows += `<tr class="dh-row"><td colspan="7" style="cursor:pointer" onclick="openDay('${{d}}')">${{d}} 周${{dow}} · ${{byDate[d].length}} 家${{tag}} · 点击展开</td></tr>`;
     byDate[d].forEach(e => {{
       const meta = POOL[e.symbol]||[];
       const s = surprise(e.eps, e.epsEstimated);
-      const sCls = s===null?"muted":(s>=0?"beat":"miss");
-      const sStr = s===null?"—":(s>=0?"+":"")+s.toFixed(1)+"%";
+      const sCls = s==null?"muted":(s>=0?"beat":"miss");
+      const sStr = s==null?"—":(s>=0?"+":"")+s.toFixed(1)+"%";
       const t = (e.time||"").toLowerCase();
-      const tStr = t==="bmo"?"<span style=\\"color:#58a6ff\\">BMO</span>":t==="amc"?"<span style=\\"color:#f59e0b\\">AMC</span>":"<span class=muted>DMH</span>";
-      rows += `<tr><td><b>${{e.symbol}}</b></td><td class="muted">${{meta[0]||""}}</td><td>${{tStr}}</td><td>${{epsFmt(e.epsEstimated)}}</td><td>${{epsFmt(e.eps)}}</td><td class="${{sCls}}">${{sStr}}</td><td class="muted">${{e.revenueEstimated?(e.revenueEstimated/1e9).toFixed(2)+"B":"—"}}</td></tr>`;
+      const tStr = t==="bmo"?"<span style=\\"color:#58a6ff\\">BMO</span>":t==="amc"?"<span style=\\"color:#f59e0b\\">AMC</span>":"<span class=muted>—</span>";
+      rows += `<tr><td><b>${{e.symbol}}</b></td><td class="muted">${{meta[0]||""}}</td><td>${{tStr}}</td><td>${{epsFmt(e.epsEstimated)}}</td><td>${{epsFmt(e.eps)}}</td><td class="${{sCls}}">${{sStr}}</td><td class="muted">${{revFmt(e.revenueEstimated)}}</td></tr>`;
     }});
   }});
   if (!rows) rows = `<tr><td colspan="7" style="text-align:center;padding:30px;color:#8b949e">本月无池内公司业绩</td></tr>`;
   $("#lst").innerHTML = `<table><thead><tr><th>代码</th><th>子行业</th><th>时点</th><th>EPS 预期</th><th>EPS 实际</th><th>超预期</th><th>营收预期</th></tr></thead><tbody>${{rows}}</tbody></table>`;
 }}
 
+function openDay(date) {{
+  const events = BY_DATE[date] || [];
+  const evs = groupFilter
+    ? events.filter(e => POOL[e.symbol] && POOL[e.symbol][1] === groupFilter)
+    : events;
+  evs.sort((a,b) => {{
+    const o = {{bmo:0,dmh:1,amc:2}};
+    return (o[(a.time||"").toLowerCase()]||1) - (o[(b.time||"").toLowerCase()]||1);
+  }});
+  const dow = cn[new Date(date+"T00:00:00").getDay()];
+  $("#dlg-title").textContent = `📅 ${{date}} 周${{dow}} · ${{evs.length}} 家硬件公司业绩`;
+  $("#dlg-sub").textContent = groupFilter ? `仅显示「${{groupFilter}}」大类` : "全部 4 大板块";
+  $("#dlg-body").innerHTML = evs.map(e => renderCard(e)).join("");
+  $("#modal").classList.add("show");
+  document.body.style.overflow = "hidden";
+}}
+
+function renderCard(e) {{
+  const meta = POOL[e.symbol] || ["",""];
+  const ind = meta[0], grp = meta[1];
+  const t = (e.time||"").toLowerCase();
+  const timing = t==="bmo" ? '<span class="timing bmo">BMO 盘前</span>'
+    : t==="amc" ? '<span class="timing amc">AMC 盘后</span>'
+    : '<span class="timing dmh">时点未知</span>';
+  const s = surprise(e.eps, e.epsEstimated);
+  const sCls = s==null ? "" : (s>=0?"beat":"miss");
+  const sStr = s==null ? "—" : (s>=0?"+":"")+s.toFixed(1)+"%";
+
+  const p = PROFILES[e.symbol] || {{}};
+  const name = p.name ? escapeHTML(p.name) : e.symbol;
+  const desc = p.description
+    ? `<div class="ec-desc">${{escapeHTML(p.description)}}</div>`
+    : `<div class="ec-desc muted">暂无公司简介（运行 fetch_earnings_history.py --profiles 拉取）。</div>`;
+  const img = p.image
+    ? `<img src="${{escapeHTML(p.image)}}" alt="${{escapeHTML(e.symbol)}}" onerror="this.style.display='none'">`
+    : `<img src="data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><rect width=%2240%22 height=%2240%22 fill=%22%231c2128%22/></svg>" alt="">`;
+
+  const footParts = [];
+  if (p.sector) footParts.push(`<span>🏢 ${{escapeHTML(p.sector)}}${{p.industry?` · ${{escapeHTML(p.industry)}}`:""}}</span>`);
+  if (p.country) footParts.push(`<span>🌍 ${{escapeHTML(p.country)}}</span>`);
+  if (p.exchange) footParts.push(`<span>📊 ${{escapeHTML(p.exchange)}}</span>`);
+  if (p.fullTimeEmployees) footParts.push(`<span>👥 ${{Number(p.fullTimeEmployees).toLocaleString()}} 员工</span>`);
+  if (p.ipoDate) footParts.push(`<span>📅 IPO ${{escapeHTML(p.ipoDate)}}</span>`);
+  if (p.ceo) footParts.push(`<span>👤 ${{escapeHTML(p.ceo)}}</span>`);
+  if (p.website) footParts.push(`<a href="${{escapeHTML(p.website)}}" target="_blank" rel="noopener">🔗 官网</a>`);
+  footParts.push(`<a href="https://finance.yahoo.com/quote/${{encodeURIComponent(e.symbol)}}" target="_blank" rel="noopener">📈 Yahoo</a>`);
+  footParts.push(`<a href="earnings.html#${{encodeURIComponent(e.symbol)}}" target="_blank">🗂️ 全部历史</a>`);
+
+  return `<div class="ec">
+    <div class="ec-head">
+      ${{img}}
+      <div class="ti">
+        <div class="sym"><a href="https://finance.yahoo.com/quote/${{encodeURIComponent(e.symbol)}}" target="_blank" rel="noopener">${{escapeHTML(e.symbol)}}</a> · ${{name}}</div>
+        <div class="ind">中文行业 <b>${{escapeHTML(ind)}}</b> / <b>${{escapeHTML(grp)}}</b></div>
+      </div>
+      ${{timing}}
+    </div>
+    <div class="ec-eps">
+      <div><div class="lbl">EPS 预期</div><div class="v">${{epsFmt(e.epsEstimated)}}</div></div>
+      <div><div class="lbl">EPS 实际</div><div class="v">${{epsFmt(e.eps)}}</div></div>
+      <div><div class="lbl">超预期</div><div class="v ${{sCls}}">${{sStr}}</div></div>
+      <div><div class="lbl">营收预期</div><div class="v">${{revFmt(e.revenueEstimated)}}</div></div>
+      <div><div class="lbl">营收实际</div><div class="v">${{revFmt(e.revenue)}}</div></div>
+    </div>
+    ${{desc}}
+    <div class="ec-foot">${{footParts.join("")}}</div>
+  </div>`;
+}}
+
+function closeDialog() {{
+  $("#modal").classList.remove("show");
+  document.body.style.overflow = "";
+}}
+
 async function load() {{
-  const y = cur.getFullYear(), m = cur.getMonth();
-  const from = fmt(new Date(y, m, 1));
-  const to = fmt(new Date(y, m+1, 0));
   $("#status").className = "";
-  $("#status").textContent = `⏳ 拉取 ${{from}} ~ ${{to}}…`;
-  $("#cal").style.display = "none";
-  $("#lst").style.display = "none";
   try {{
-    const items = await fetchRange(from, to);
-    const poolHits = items.length;
-    $("#status").textContent = `✅ ${{from}} ~ ${{to}} · 池内命中 ${{poolHits}} 条业绩`;
-    renderCal(items);
-    renderList(items);
+    if (!Object.keys(HISTORY).length) {{
+      const r = await fetch("earnings_history.json", {{cache: "no-cache"}});
+      if (!r.ok) throw new Error("earnings_history.json HTTP "+r.status);
+      HISTORY = await r.json();
+      buildIndex();
+      // 异步加载 profiles，失败也不阻塞渲染
+      fetch("company_profiles.json", {{cache: "no-cache"}})
+        .then(r => r.ok ? r.json() : {{}})
+        .then(p => {{ PROFILES = p; }})
+        .catch(() => {{}});
+    }}
+    const monthHits = renderCal();
+    renderList();
+    const y = cur.getFullYear(), m = cur.getMonth();
+    const monthStr = `${{y}}-${{String(m+1).padStart(2,"0")}}`;
+    $("#status").textContent = `✅ ${{monthStr}} · 池内命中 ${{monthHits}} 条业绩 · 共 ${{Object.keys(HISTORY).length}} 个 ticker 数据库`;
     $("#cal").style.display = view==="cal" ? "grid" : "none";
     $("#lst").style.display = view==="lst" ? "block" : "none";
   }} catch(err) {{
     $("#status").className = "err";
-    $("#status").textContent = `❌ FMP 拉取失败: ${{err.message}}（免费版限 250 次/天，可能已用尽或 key 无效）`;
+    $("#status").innerHTML = `❌ 加载失败: ${{escapeHTML(err.message)}}。<br>如果 earnings_history.json 不存在，去 GitHub Actions → Run workflow → earnings_mode=full 触发首次回填。`;
   }}
 }}
 
@@ -1590,6 +1743,10 @@ document.querySelectorAll(".btn.vw").forEach(b => b.onclick = () => {{
 $("#prev").onclick = () => {{ cur.setMonth(cur.getMonth()-1); load(); }};
 $("#next").onclick = () => {{ cur.setMonth(cur.getMonth()+1); load(); }};
 $("#cur").onclick = () => {{ cur = new Date(); cur.setDate(1); load(); }};
+$("#dlg-close").onclick = closeDialog;
+$("#modal").onclick = (e) => {{ if (e.target.id === "modal") closeDialog(); }};
+document.addEventListener("keydown", e => {{ if (e.key === "Escape") closeDialog(); }});
+window.openDay = openDay;  // 给 list 视图的 dh-row onclick 调用
 
 load();
 </script>
