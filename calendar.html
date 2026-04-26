@@ -82,7 +82,7 @@ h1{font-size:1.45rem;margin-bottom:4px}
 <div id="lst" class="list"></div>
 
 <div class="foot">
-<b>说明</b>：业绩日历从 FMP <code>/api/v3/earning_calendar</code> 直接拉取，过滤到本站覆盖的 314 只硬件板块标的。颜色标识：<b style="color:#1f6feb">BMO 盘前发布</b> / <b style="color:#f59e0b">AMC 盘后发布</b> / <span class="muted">DMH 盘中或未知</span>。鼠标悬停 ticker 查看 EPS 预期/实际/超预期。FMP API 免费版有调用频率限制（250/天），如出现 403/429 请稍后刷新。
+<b>说明</b>：业绩日历从 FMP <code>/stable/earnings-calendar</code> 直接拉取，过滤到本站覆盖的 314 只硬件板块标的。颜色标识：<b style="color:#1f6feb">BMO 盘前发布</b> / <b style="color:#f59e0b">AMC 盘后发布</b> / <span class="muted">DMH 盘中或未知</span>。鼠标悬停 ticker 查看 EPS 预期/实际/超预期。FMP API 免费版有调用频率限制（250/天），如出现 403/429 请稍后刷新。
 </div>
 
 <script>
@@ -102,7 +102,7 @@ const cn = ["日","一","二","三","四","五","六"];
 async function fetchRange(from, to) {
   const k = from+"_"+to;
   if (cache[k]) return cache[k];
-  const url = `https://financialmodelingprep.com/api/v3/earning_calendar?from=${from}&to=${to}&apikey=${KEY}`;
+  const url = `https://financialmodelingprep.com/stable/earnings-calendar?from=${from}&to=${to}&apikey=${KEY}`;
   const r = await fetch(url);
   if (!r.ok) throw new Error("HTTP "+r.status);
   const j = await r.json();
