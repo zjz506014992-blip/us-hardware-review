@@ -116,6 +116,27 @@ us-hardware-review/
 
 每天选 **当日涨跌幅最大 / 最具叙事价值的 6-8 只**，可以跨子行业。
 
+### 5.1 卡片数量动态规则
+- 默认 **6-8 张**
+- 当日有 `|dp| > 30%` 的中盘以上异动股（`cap > $30 亿` = 3000 $M）→ **必加 1 张**
+- 总卡片数硬上限 **10 张**（防止单日稿件失控）
+- 候选挑选算法：FMP JSON 算 Top 25 by `|dp|` 和 Top 25 by `|dp| × cap`，两个榜单交集优先；小市值（<$30亿）仅在 `|dp| > 10%` + 有可验证催化时纳入
+
+### 5.2 内容更新策略（按当日新闻浓度）
+| 当日类型 | 判断 | 更新颗粒 |
+|---|---|---|
+| 强催化日 | 池内有财报 / 大型行业事件 / 大单 / 评级变动潮 / SOX ±2% 以上 | 完整重写 fund / sellside / bull / bear / catalysts / technical |
+| 介于两者 | 大盘 ±0.5–2% 普通波动 | 更新 dp/close/cap + fund 第一段（点出当日驱动）+ technical |
+| 平淡日 | 大盘 ±0.5% 内 + 无明显催化 | 只更新 dp/close/cap 数字 + technical，保留长期叙事框架 |
+
+### 5.3 数据真实性硬规则
+- `dp` / `close` / `cap` **必须从 FMP JSON 取实数**，不造数据、不四舍五入掩盖
+- `cap` 单位是 $M，显示亿美元用 `cap / 100`（例：cap=4144 → "$4,144 亿"；cap=50620 → "$5.06 万亿"）
+- 卖方评级（`sellside`）若 WebSearch 无法验证当日确实发生：
+  - 要么 **省略整个 sellside 字段**
+  - 要么写一条："暂无评级变动 / 当日卖方静默"
+  - **绝对不要编造**目标价或评级动作
+
 ## 6. NEWS_TIERS 4 层 schema
 
 ```python
@@ -236,42 +257,17 @@ NEWS_TIERS = {
 ```text
 今天美股硬件板块收盘复盘。
 
-【第 0 步：进仓库 + 强制读 CLAUDE.md】
+【启动 — 只做这两件事，其他都按 CLAUDE.md】
 1. cd /home/user/us-hardware-review && git pull origin main
-   （GitHub Actions 已在 UTC 22:30 自动拉好当日 FMP 数据；routine 已绑仓库，git push 走 OAuth 代理无需 token）
-2. 用 Read 工具完整读 CLAUDE.md（1300+ 行，一次读完不要分段）。
-   本提示词刻意保持简短，所有细节（INDUSTRY_MAP / KEY_STOCKS schema / NEWS_TIERS schema / 颜色约定 / 避坑规则 / 历史教训）以 CLAUDE.md 为准。
-   提示词与 CLAUDE.md 冲突时，以 CLAUDE.md 为准。
+2. 用 Read 工具完整读取 CLAUDE.md（一次读完，1300+ 行）
 
-【按 CLAUDE.md 第 4 节 8 步流程执行】
-1. ls -t confirmed_*.json | head -1 → 读最新 JSON（cap 单位是 $M，不是亿）
-2. 读 _meta.json 看当日 stats（up/down/flat/cap_w/arith）
-3. 用 Python 算出 Top 25 by |dp| 和 Top 25 by |dp|×cap，确定 6-9 只重点解读候选
-4. 用 WebSearch 验证当日：
-   - 大盘指数（SPX/NDX/DJI/RUT/VIX/DXY/US10Y/WTI）
-   - 半导体 ETF（SOX/SOXX/SMH/XSD/PSI）
-   - GICS 11 SPDR ETF
-   - 当日 Top 5 异动股的真实催化（财报、分析师评级、产品发布）
-5. 编辑 gen.py 的 5 个数据 dict（**只动 dict，别动函数体**）：
-   - BROAD_INDICES (line ~13)
-   - SEMI_INDICES (line ~24)
-   - GICS_INDICES (line ~33)
-   - KEY_STOCKS (line ~65) — dp/close/cap 必须从 FMP cache 读实数
-   - NEWS_TIERS (line ~362) — 4 层 Tier 各 3-5 条
-6. python gen.py → 验证终端输出："Stocks: 314, Up/Down/Flat: X/Y/Z, cap-w: N.NN%"
-7. 提交 + 推送（沙箱 code-sign 服务通常返回 missing source，禁用签名）：
-   git add gen.py *.html _meta.json
-   git -c commit.gpgsign=false commit -m "feat: {DATE} review (cap-w +X.XX%, 一句话核心叙事)"
-   git push origin main
+【然后严格按 CLAUDE.md 第 4 节执行 8 步工作流，包含 commit + push】
 
-【硬规则】
-- 颜色：🔴 红涨绿跌（中国习惯，dp_color() 已封装，不要改）
-- KEY_STOCKS 必须从 FMP JSON 取 dp/close/cap 实数；卖方评级若 WebSearch 无法验证当日存在，省略 sellside 或写"暂无评级变动"
-- 非异动 + 新闻平淡的日子，KEY_STOCKS 可只更新数字、保留长期叙事框架
-- KEY_STOCKS 数量动态：默认 6-8 张；当日有 |dp|>30% 的中盘以上异动股（cap > $30亿）必加 1 张
-- commit 前 git status --short 确认无意外文件（confirmed_*.json 已由 Actions 提交，不要重复 stage）
-- commit 信息中文标题（feat:/fix:/auto: 前缀），简洁说明意图
-- 若 git push 报 403 / Authentication failed → OAuth 代理出故障，临时切 PAT 路线（见 CLAUDE.md 11.4 兜底方案）
+【最高指令】
+- 任何业务规则、流程、数据来源、输出格式、颜色约定、避坑、commit 信息格式 — **全部以 CLAUDE.md 为准**
+- 本提示词只负责启动，刻意不重复任何业务规则（避免与 CLAUDE.md drift）
+- 本提示词与 CLAUDE.md 冲突时，以 CLAUDE.md 为准
+- 用户后续维护：只需修改 GitHub 上的 CLAUDE.md，不必动这个提示词
 
 【发布地址】https://zjz506014992-blip.github.io/us-hardware-review/
 ```
