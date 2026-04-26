@@ -4,6 +4,7 @@
 import json, hashlib
 
 DATE = "2026-04-24"
+FMP_API_KEY = "TFlPg3ERKdBHDHnIH0qdC71330WvHsY3"
 
 # 当日宏观/指数数据（每日手动更新或 FMP 自动拉取）
 # 格式: [(代码, 名称, 收盘, 涨跌%, 备注)]
@@ -851,6 +852,7 @@ tr:hover td{{background:#1c2128}}
 <div class="navlinks">
   <a href="index.html">← 历史存档</a>
   <a href="stocks-{DATE}.html">📋 全部个股数据</a>
+  <a href="calendar.html">📅 业绩日历</a>
 </div>
 
 <div class="stats">
@@ -1263,7 +1265,8 @@ tr:hover td{{background:#161b22}}
 </head>
 <body>
 <h1>🖥️ 美股硬件板块复盘 — 历史存档</h1>
-<div class="sub">覆盖 316 只股票 · 24 个子行业 · 4 大板块 · 点击日期查看当日完整复盘</div>
+<div class="sub">覆盖 314 只股票 · 24 个子行业 · 4 大板块 · 点击日期查看当日完整复盘</div>
+<div style="margin-bottom:18px"><a href="calendar.html" style="display:inline-block;background:#1f6feb;color:#fff;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:.88rem;font-weight:600">📅 业绩日历（FMP 实时）</a></div>
 <table>
   <thead>
     <tr><th>日期</th><th>市值加权均</th><th>上涨</th><th>下跌</th><th>平盘</th><th>总数</th></tr>
@@ -1277,6 +1280,264 @@ tr:hover td{{background:#161b22}}
         f.write(html)
     print(f"index.html updated, {len(dates)} dates listed")
 
+def write_calendar_page():
+    """生成 calendar.html — 客户端直连 FMP earnings calendar，过滤到 314 池"""
+    pool_pairs = []
+    for ind, syms in INDUSTRY_MAP.items():
+        grp = SUB_TO_GROUP[ind]
+        for sym in syms:
+            pool_pairs.append(f'"{sym}":["{ind}","{grp}"]')
+    pool_js = '{' + ','.join(pool_pairs) + '}'
+    total_n = sum(len(v) for v in INDUSTRY_MAP.values())
+
+    html = f'''<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>美股硬件板块 · 业绩日历</title>
+<style>
+*{{box-sizing:border-box;margin:0;padding:0}}
+body{{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;padding:24px 16px;max-width:1280px;margin:0 auto}}
+h1{{font-size:1.45rem;margin-bottom:4px}}
+.sub{{color:#8b949e;font-size:.85rem;margin-bottom:18px}}
+.bar{{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px;padding:12px;background:#161b22;border:1px solid #21262d;border-radius:8px}}
+.bar .lbl{{color:#8b949e;font-size:.78rem;margin-right:4px}}
+.btn{{background:#21262d;border:1px solid #30363d;color:#e6edf3;padding:6px 12px;border-radius:6px;font-size:.82rem;cursor:pointer}}
+.btn:hover{{background:#30363d}}
+.btn.act{{background:#1f6feb;border-color:#1f6feb;color:#fff}}
+.legend{{margin-left:auto;display:flex;gap:14px;font-size:.78rem;color:#8b949e}}
+.legend span::before{{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:middle}}
+.lg-bmo::before{{background:#1f6feb}}
+.lg-amc::before{{background:#f59e0b}}
+.lg-dmh::before{{background:#8b949e}}
+#status{{color:#8b949e;font-size:.85rem;padding:10px 0}}
+#status.err{{color:#f85149}}
+.grid{{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}}
+.dh{{padding:8px;text-align:center;font-size:.72rem;color:#8b949e;text-transform:uppercase;letter-spacing:.05em}}
+.dh.we{{color:#484f58}}
+.cell{{background:#161b22;border:1px solid #21262d;border-radius:6px;min-height:110px;padding:8px;display:flex;flex-direction:column;gap:4px}}
+.cell.we{{background:#0d1117;opacity:.5}}
+.cell.tdy{{border-color:#1f6feb;border-width:2px}}
+.cell.past{{opacity:.55}}
+.cell .dn{{font-size:.78rem;color:#8b949e;display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}}
+.cell.tdy .dn{{color:#58a6ff;font-weight:700}}
+.cell .cnt{{background:#21262d;color:#8b949e;font-size:.66rem;padding:0 5px;border-radius:8px}}
+.tk{{display:inline-block;padding:1px 5px;border-radius:3px;font-size:.7rem;font-weight:600;color:#fff;cursor:pointer;text-decoration:none}}
+.tk.bmo{{background:#1f6feb}}
+.tk.amc{{background:#f59e0b;color:#1a1a1a}}
+.tk.dmh{{background:#8b949e}}
+.tk:hover{{outline:1px solid #fff}}
+.list{{display:none;background:#161b22;border:1px solid #21262d;border-radius:8px;overflow:hidden}}
+.list table{{width:100%;border-collapse:collapse;font-size:.85rem}}
+.list th{{background:#21262d;color:#8b949e;padding:9px 12px;text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;font-weight:600}}
+.list td{{padding:10px 12px;border-bottom:1px solid #21262d}}
+.list tr:hover td{{background:#1c2128}}
+.list .dh-row td{{background:#0d1117;font-weight:600;color:#58a6ff;font-size:.82rem}}
+.beat{{color:#3fb950}}
+.miss{{color:#f85149}}
+.muted{{color:#8b949e}}
+.foot{{margin-top:18px;padding:12px;background:#161b22;border:1px solid #21262d;border-radius:8px;font-size:.78rem;color:#8b949e;line-height:1.7}}
+.foot a{{color:#58a6ff;text-decoration:none}}
+.nav{{display:flex;gap:6px;margin-left:auto}}
+@media(max-width:760px){{.grid{{grid-template-columns:repeat(7,1fr);gap:3px}}.cell{{min-height:80px;padding:5px}}.tk{{font-size:.62rem;padding:1px 3px}}.legend{{width:100%;margin-left:0;margin-top:6px}}}}
+</style>
+</head>
+<body>
+<h1>📅 美股硬件板块 · 业绩日历</h1>
+<div class="sub"><a href="index.html" style="color:#58a6ff;text-decoration:none">← 返回历史存档</a> · 数据源 FMP · 仅显示池内 {total_n} 只股票 · 客户端直连，每次打开拉最新</div>
+
+<div class="bar">
+  <span class="lbl">大类：</span>
+  <button class="btn grp act" data-g="">全部</button>
+  <button class="btn grp" data-g="半导体核心">半导体核心</button>
+  <button class="btn grp" data-g="硬件系统">硬件系统</button>
+  <button class="btn grp" data-g="元器件制造">元器件制造</button>
+  <button class="btn grp" data-g="分销渠道">分销渠道</button>
+  <span class="lbl" style="margin-left:14px">视图：</span>
+  <button class="btn vw act" data-v="cal">日历</button>
+  <button class="btn vw" data-v="lst">列表</button>
+  <div class="nav">
+    <button class="btn" id="prev">← 上月</button>
+    <button class="btn" id="cur">今日</button>
+    <button class="btn" id="next">下月 →</button>
+  </div>
+  <div class="legend">
+    <span class="lg-bmo">BMO 盘前</span>
+    <span class="lg-amc">AMC 盘后</span>
+    <span class="lg-dmh">DMH/未知</span>
+  </div>
+</div>
+
+<div id="status">⏳ 正在从 FMP 拉取业绩日历…</div>
+<div id="cal" class="grid" style="display:none"></div>
+<div id="lst" class="list"></div>
+
+<div class="foot">
+<b>说明</b>：业绩日历从 FMP <code>/api/v3/earning_calendar</code> 直接拉取，过滤到本站覆盖的 314 只硬件板块标的。颜色标识：<b style="color:#1f6feb">BMO 盘前发布</b> / <b style="color:#f59e0b">AMC 盘后发布</b> / <span class="muted">DMH 盘中或未知</span>。鼠标悬停 ticker 查看 EPS 预期/实际/超预期。FMP API 免费版有调用频率限制（250/天），如出现 403/429 请稍后刷新。
+</div>
+
+<script>
+const KEY = "{FMP_API_KEY}";
+const POOL = {pool_js};
+const POOL_SET = new Set(Object.keys(POOL));
+let cur = new Date();
+cur.setDate(1);
+let groupFilter = "";
+let view = "cal";
+let cache = {{}};
+
+const $ = s => document.querySelector(s);
+const fmt = d => d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const cn = ["日","一","二","三","四","五","六"];
+
+async function fetchRange(from, to) {{
+  const k = from+"_"+to;
+  if (cache[k]) return cache[k];
+  const url = `https://financialmodelingprep.com/api/v3/earning_calendar?from=${{from}}&to=${{to}}&apikey=${{KEY}}`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error("HTTP "+r.status);
+  const j = await r.json();
+  if (!Array.isArray(j)) throw new Error(j["Error Message"] || JSON.stringify(j).slice(0,200));
+  const filtered = j.filter(e => POOL_SET.has(e.symbol));
+  cache[k] = filtered;
+  return filtered;
+}}
+
+function tkClass(t) {{
+  t = (t||"").toLowerCase();
+  if (t==="bmo") return "bmo";
+  if (t==="amc") return "amc";
+  return "dmh";
+}}
+
+function epsFmt(v) {{ return (v===null||v===undefined||v==="") ? "—" : Number(v).toFixed(2); }}
+function surprise(act, est) {{
+  if (act===null||est===null||act===undefined||est===undefined||est===0) return null;
+  return ((act-est)/Math.abs(est)*100);
+}}
+
+function tooltipText(e) {{
+  const meta = POOL[e.symbol];
+  const ind = meta ? meta[0] : "";
+  const est = epsFmt(e.epsEstimated);
+  const act = epsFmt(e.eps);
+  const s = surprise(e.eps, e.epsEstimated);
+  const sStr = s===null ? "—" : (s>=0?"+":"")+s.toFixed(1)+"%";
+  return `${{e.symbol}} · ${{ind}}\\n时点: ${{(e.time||"unknown").toUpperCase()}}\\nEPS 预期: ${{est}}\\nEPS 实际: ${{act}}\\n超预期: ${{sStr}}\\n营收预期: ${{e.revenueEstimated?(e.revenueEstimated/1e9).toFixed(2)+"B":"—"}}`;
+}}
+
+function renderCal(items) {{
+  const y = cur.getFullYear(), m = cur.getMonth();
+  const first = new Date(y, m, 1);
+  const lastD = new Date(y, m+1, 0).getDate();
+  const startDow = first.getDay();
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  const byDate = {{}};
+  items.forEach(e => {{
+    if (groupFilter && (!POOL[e.symbol] || POOL[e.symbol][1] !== groupFilter)) return;
+    (byDate[e.date] = byDate[e.date]||[]).push(e);
+  }});
+
+  let html = "";
+  for (let i=0;i<7;i++) html += `<div class="dh ${{i===0||i===6?"we":""}}">${{cn[i]}}</div>`;
+  for (let i=0;i<startDow;i++) html += `<div class="cell we"></div>`;
+  for (let d=1;d<=lastD;d++) {{
+    const dt = new Date(y, m, d);
+    const ds = fmt(dt);
+    const dow = dt.getDay();
+    const we = dow===0||dow===6;
+    const isTdy = dt.getTime() === today.getTime();
+    const isPast = dt < today && !isTdy;
+    const evs = byDate[ds] || [];
+    evs.sort((a,b) => {{
+      const o = {{bmo:0,dmh:1,amc:2}};
+      return (o[(a.time||"").toLowerCase()]||1) - (o[(b.time||"").toLowerCase()]||1);
+    }});
+    let cls = "cell";
+    if (we) cls += " we";
+    if (isTdy) cls += " tdy";
+    else if (isPast) cls += " past";
+    let badges = evs.map(e => `<a class="tk ${{tkClass(e.time)}}" title="${{tooltipText(e).replace(/"/g,"&quot;")}}">${{e.symbol}}</a>`).join(" ");
+    const cnt = evs.length ? `<span class="cnt">${{evs.length}}</span>` : "";
+    html += `<div class="${{cls}}"><div class="dn"><span>${{d}}</span>${{cnt}}</div><div>${{badges}}</div></div>`;
+  }}
+  $("#cal").innerHTML = html;
+}}
+
+function renderList(items) {{
+  const filtered = items.filter(e => !groupFilter || (POOL[e.symbol] && POOL[e.symbol][1] === groupFilter));
+  filtered.sort((a,b) => a.date.localeCompare(b.date) || (a.symbol < b.symbol ? -1 : 1));
+  const byDate = {{}};
+  filtered.forEach(e => (byDate[e.date]=byDate[e.date]||[]).push(e));
+  const today = fmt(new Date());
+  let rows = "";
+  Object.keys(byDate).sort().forEach(d => {{
+    const dow = cn[new Date(d+"T00:00:00").getDay()];
+    const tag = d===today ? " · 今日" : "";
+    rows += `<tr class="dh-row"><td colspan="7">${{d}} 周${{dow}} · ${{byDate[d].length}} 家${{tag}}</td></tr>`;
+    byDate[d].forEach(e => {{
+      const meta = POOL[e.symbol]||[];
+      const s = surprise(e.eps, e.epsEstimated);
+      const sCls = s===null?"muted":(s>=0?"beat":"miss");
+      const sStr = s===null?"—":(s>=0?"+":"")+s.toFixed(1)+"%";
+      const t = (e.time||"").toLowerCase();
+      const tStr = t==="bmo"?"<span style=\\"color:#58a6ff\\">BMO</span>":t==="amc"?"<span style=\\"color:#f59e0b\\">AMC</span>":"<span class=muted>DMH</span>";
+      rows += `<tr><td><b>${{e.symbol}}</b></td><td class="muted">${{meta[0]||""}}</td><td>${{tStr}}</td><td>${{epsFmt(e.epsEstimated)}}</td><td>${{epsFmt(e.eps)}}</td><td class="${{sCls}}">${{sStr}}</td><td class="muted">${{e.revenueEstimated?(e.revenueEstimated/1e9).toFixed(2)+"B":"—"}}</td></tr>`;
+    }});
+  }});
+  if (!rows) rows = `<tr><td colspan="7" style="text-align:center;padding:30px;color:#8b949e">本月无池内公司业绩</td></tr>`;
+  $("#lst").innerHTML = `<table><thead><tr><th>代码</th><th>子行业</th><th>时点</th><th>EPS 预期</th><th>EPS 实际</th><th>超预期</th><th>营收预期</th></tr></thead><tbody>${{rows}}</tbody></table>`;
+}}
+
+async function load() {{
+  const y = cur.getFullYear(), m = cur.getMonth();
+  const from = fmt(new Date(y, m, 1));
+  const to = fmt(new Date(y, m+1, 0));
+  $("#status").className = "";
+  $("#status").textContent = `⏳ 拉取 ${{from}} ~ ${{to}}…`;
+  $("#cal").style.display = "none";
+  $("#lst").style.display = "none";
+  try {{
+    const items = await fetchRange(from, to);
+    const poolHits = items.length;
+    $("#status").textContent = `✅ ${{from}} ~ ${{to}} · 池内命中 ${{poolHits}} 条业绩`;
+    renderCal(items);
+    renderList(items);
+    $("#cal").style.display = view==="cal" ? "grid" : "none";
+    $("#lst").style.display = view==="lst" ? "block" : "none";
+  }} catch(err) {{
+    $("#status").className = "err";
+    $("#status").textContent = `❌ FMP 拉取失败: ${{err.message}}（免费版限 250 次/天，可能已用尽或 key 无效）`;
+  }}
+}}
+
+document.querySelectorAll(".btn.grp").forEach(b => b.onclick = () => {{
+  document.querySelectorAll(".btn.grp").forEach(x => x.classList.remove("act"));
+  b.classList.add("act");
+  groupFilter = b.dataset.g;
+  load();
+}});
+document.querySelectorAll(".btn.vw").forEach(b => b.onclick = () => {{
+  document.querySelectorAll(".btn.vw").forEach(x => x.classList.remove("act"));
+  b.classList.add("act");
+  view = b.dataset.v;
+  $("#cal").style.display = view==="cal" ? "grid" : "none";
+  $("#lst").style.display = view==="lst" ? "block" : "none";
+}});
+$("#prev").onclick = () => {{ cur.setMonth(cur.getMonth()-1); load(); }};
+$("#next").onclick = () => {{ cur.setMonth(cur.getMonth()+1); load(); }};
+$("#cur").onclick = () => {{ cur = new Date(); cur.setDate(1); load(); }};
+
+load();
+</script>
+</body>
+</html>'''
+    with open('/home/user/work/calendar.html', 'w', encoding='utf-8') as f:
+        f.write(html)
+    print(f"calendar.html written, {len(html)} bytes, pool {total_n} stocks")
+
 if __name__ == '__main__':
     data = main()
     t = data['totals']
@@ -1285,3 +1546,4 @@ if __name__ == '__main__':
     write_stocks_page(data['stocks'], DATE)
     meta = update_meta(data['totals'])
     write_index(meta)
+    write_calendar_page()
