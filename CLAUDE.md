@@ -17,10 +17,11 @@
 us-hardware-review/
 ├── gen.py                       # 主生成器（~1900 行），生成所有 HTML
 ├── fetch_fmp.py                 # 每日 FMP 行情，写 confirmed_{DATE}.json
-├── fetch_earnings_history.py    # 业绩历史维护（delta / refresh-recent / full）
-├── calendar.html                # 业绩日历（客户端直连 FMP /stable/earnings-calendar）
+├── fetch_earnings_history.py    # 业绩历史 + 公司 profile 维护（delta / refresh-recent / full / profiles）
+├── calendar.html                # 业绩日历（加载 earnings_history.json + company_profiles.json，点格弹框）
 ├── earnings.html                # 业绩历史搜索表（客户端加载 earnings_history.json）
 ├── earnings_history.json        # 314 池近 25-30 年业绩（首次 --full 回填，之后日增量）
+├── company_profiles.json        # 314 公司 profile（name/desc/industry/website/image，每周日刷新）
 ├── index.html                   # 历史存档目录
 ├── {DATE}.html                  # 当日复盘页（一天一份）
 ├── stocks-{DATE}.html           # 当日全部 314 只股票表
@@ -202,12 +203,13 @@ NEWS_TIERS = {
 
 ## 10. FMP API 详情
 
-- **Key**：存在 GitHub Secrets `FMP_API_KEY`，也硬编码在 `gen.py` 第 7 行（用于 `calendar.html` 客户端 fetch）
+- **Key**：存在 GitHub Secrets `FMP_API_KEY`，也硬编码在 `gen.py` 第 9 行（**注意**：当前 calendar.html / earnings.html 都改成读本地 JSON 不再客户端调 FMP，但 gen.py 模板里的 KEY 常量保留以备未来需要）
 - **端点**：必须用 `/stable/...`（v3 在 2025-08-31 deprecated 返回 403）
   - 批量 quote：`https://financialmodelingprep.com/stable/batch-quote?symbols=AAPL,NVDA&apikey=KEY`
   - 单 quote：`https://financialmodelingprep.com/stable/quote?symbol=AAPL&apikey=KEY`
-  - 业绩日历：`https://financialmodelingprep.com/stable/earnings-calendar?from=YYYY-MM-DD&to=YYYY-MM-DD&apikey=KEY`（响应 schema：symbol / date / eps / epsEstimated / time / revenue / revenueEstimated；time 取值 bmo/amc/null）
-  - 单股历史业绩：`https://financialmodelingprep.com/stable/earnings?symbol=AAPL&limit=120&apikey=KEY`（同上 schema；`limit=120` ≈ 30 年季报）
+  - 业绩日历：`https://financialmodelingprep.com/stable/earnings-calendar?from=YYYY-MM-DD&to=YYYY-MM-DD&apikey=KEY`（响应 schema：symbol / date / eps / epsEstimated / time / revenue / revenueEstimated；time 取值 bmo/amc/null）⚠️ **此端点会漏数据**（实测 2026-04-28 池内 14 家全漏），需要用下面的 per-symbol 端点兜底
+  - 单股历史业绩：`https://financialmodelingprep.com/stable/earnings?symbol=AAPL&limit=120&apikey=KEY`（同上 schema 但 **time 字段总是 null**；`limit=120` ≈ 30 年季报）—— 这是 calendar 漏数据时的兜底，per-symbol 调用更全
+  - 公司 profile：`https://financialmodelingprep.com/stable/profile-symbol?symbol=AAPL&apikey=KEY`（返回 companyName / description / industry / sector / country / website / image / exchange / ipoDate / ceo / fullTimeEmployees / marketCap）
 - **频率限制**：付费 tier 已开通，免费版 250 次/天（兜底）
 - **关键字段**：`symbol / price / changesPercentage / marketCap / dayHigh / dayLow / previousClose / volume / timestamp`
 
@@ -215,10 +217,11 @@ NEWS_TIERS = {
 
 - 文件：`.github/workflows/daily.yml`
 - Cron：`30 22 * * 1-5`（UTC 22:30 工作日，= 美东 18:30 EDT / 17:30 EST 收盘后）
-- 步骤：`fetch_fmp.py`（行情）→ `fetch_earnings_history.py`（业绩历史增量；周日额外跑 refresh-recent）→ `gen.py`（重生成全部 HTML）→ commit & push
+- 步骤：`fetch_fmp.py`（行情）→ `fetch_earnings_history.py`（业绩历史增量；周日额外跑 refresh-recent + profiles）→ `fetch_earnings_history.py --profiles`（公司简介，仅周日 / 缺失 / 强制时跑）→ `gen.py`（重生成全部 HTML）→ commit & push
 - 手动触发输入：
   - `review_date`：强制指定交易日 YYYY-MM-DD
   - `earnings_mode`：`delta`（默认）/ `refresh-recent`（重拉近 180 天纠错）/ `full`（**首次回填**，313 calls，仅手动触发）
+  - `fetch_profiles`：勾选则强制刷新 `company_profiles.json`（313 calls，平时只在周日 / 文件缺失时自动跑）
 - 自动 commit message 格式：`auto: FMP daily fetch {DATE} (hit {N}/313)`
 - **PAT 权限注意**：从 CLI push 工作流文件需要 `workflow` scope，本地 PAT 不一定有 → 修改 `daily.yml` 时优先在 GitHub 网页编辑
 
@@ -307,8 +310,8 @@ NEWS_TIERS = {
 - [ ] GICS 11 ETF / VIX / DXY / 10Y / WTI 也接 FMP 自动拉
 - [x] 业绩日历端点从 v3 迁到 stable（2026-04-26 完成，calendar.html 切到 `/stable/earnings-calendar`）
 - [x] 业绩历史可搜索表（2026-04-26 完成；`earnings.html` + `fetch_earnings_history.py` + `earnings_history.json`；首次需手动 `workflow_dispatch` → `earnings_mode=full` 触发回填，之后日增量）
+- [x] calendar.html 改读本地 `earnings_history.json`，修复 calendar 端点漏数据问题（2026-04-26 完成；同时点击日期格弹出当天所有公司业绩 + `company_profiles.json` 公司简介）
 - [ ] AI 自动生成新闻摘要（方式 B，把 Anthropic API 接进 GitHub Actions）
-- [ ] 业绩日历加 BMO/AMC tooltip 显示历史 EPS surprise（earnings.html 已经从 history JSON 实现这个能力，calendar.html 可以共享数据源）
 
 ---
 
