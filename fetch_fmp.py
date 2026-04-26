@@ -76,11 +76,26 @@ def detect_trading_date(quotes):
     return datetime.fromtimestamp(max(timestamps), tz=et).strftime('%Y-%m-%d')
 
 
+def pick(q, *keys):
+    """从 q 里按顺序取第一个非 None 的字段（兼容 v3 / stable 字段名差异）"""
+    for k in keys:
+        v = q.get(k)
+        if v is not None:
+            return v
+    return None
+
+
 def main():
     print(f"Fetching FMP /quote for {len(TICKERS)} tickers...")
     quotes = fetch_quote_batch(TICKERS)
     if not quotes:
         sys.exit("ERROR: no quotes returned from FMP")
+
+    # 诊断：打印第一条响应的所有字段，便于发现新端点的 schema
+    sample_sym, sample_q = next(iter(quotes.items()))
+    print(f"\n=== SAMPLE RESPONSE [{sample_sym}] ===")
+    print(json.dumps(sample_q, indent=2, ensure_ascii=False, default=str))
+    print("=== END SAMPLE ===\n")
 
     trading_date = detect_trading_date(quotes)
     print(f"Trading date: {trading_date}")
@@ -89,18 +104,20 @@ def main():
     missing = []
     for sym in TICKERS:
         q = quotes.get(sym)
-        if not q or q.get('price') in (None, 0):
+        price = pick(q or {}, 'price', 'lastSalePrice', 'last')
+        if not q or price in (None, 0):
             missing.append(sym)
             continue
-        cap_raw = q.get('marketCap') or 0
+        cap_raw = pick(q, 'marketCap', 'marketCapitalization') or 0
+        dp = pick(q, 'changesPercentage', 'changePercentage', 'changePercent', 'percentageChange') or 0
         confirmed[sym] = {
-            'close': round(q['price'], 2),
-            'dp': round(q.get('changesPercentage') or 0, 2),
-            'cap': max(round(cap_raw / 1e6), 1),  # $M, 至少 1 防 sqrt 崩溃
-            'high': q.get('dayHigh'),
-            'low': q.get('dayLow'),
-            'prev_close': q.get('previousClose'),
-            'volume': q.get('volume'),
+            'close': round(price, 2),
+            'dp': round(dp, 2),
+            'cap': max(round(cap_raw / 1e6), 1),
+            'high': pick(q, 'dayHigh', 'high'),
+            'low': pick(q, 'dayLow', 'low'),
+            'prev_close': pick(q, 'previousClose', 'prevClose'),
+            'volume': pick(q, 'volume', 'lastSaleVolume'),
         }
 
     out = {

@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """生成 美股硬件板块复盘 HTML（含 ECharts treemap + Chart.js 图表）"""
-import json, hashlib
+import json, hashlib, os
+
+REPO_DIR = os.path.dirname(os.path.abspath(__file__))
 
 DATE = "2026-04-24"
 FMP_API_KEY = "TFlPg3ERKdBHDHnIH0qdC71330WvHsY3"
@@ -1173,7 +1175,7 @@ new Chart(document.getElementById('scatter'), {{
 </body>
 </html>'''
 
-    out = f'/home/user/work/{DATE}.html'
+    out = os.path.join(REPO_DIR, f'{DATE}.html')
     with open(out, 'w', encoding='utf-8') as f:
         f.write(html)
     print(f"{DATE}.html written, {len(html)} bytes")
@@ -1229,14 +1231,13 @@ function filterTable() {{
 </script>
 </body>
 </html>'''
-    out = f'/home/user/work/stocks-{date}.html'
+    out = os.path.join(REPO_DIR, f'stocks-{date}.html')
     with open(out, 'w', encoding='utf-8') as f:
         f.write(html)
     print(f"stocks-{date}.html written, {len(all_stocks)} stocks")
 
 def update_meta(totals):
-    import os
-    meta_path = '/home/user/work/_meta.json'
+    meta_path = os.path.join(REPO_DIR, '_meta.json')
     if os.path.exists(meta_path):
         with open(meta_path, encoding='utf-8') as f:
             meta = json.load(f)
@@ -1298,7 +1299,7 @@ tr:hover td{{background:#161b22}}
 <div style="margin-top:20px;color:#8b949e;font-size:.82rem">数据来源：Finnhub /quote + WebSearch 公开市场数据交叉核对</div>
 </body>
 </html>'''
-    with open('/home/user/work/index.html', 'w', encoding='utf-8') as f:
+    with open(os.path.join(REPO_DIR, 'index.html'), 'w', encoding='utf-8') as f:
         f.write(html)
     print(f"index.html updated, {len(dates)} dates listed")
 
@@ -1556,7 +1557,7 @@ load();
 </script>
 </body>
 </html>'''
-    with open('/home/user/work/calendar.html', 'w', encoding='utf-8') as f:
+    with open(os.path.join(REPO_DIR, 'calendar.html'), 'w', encoding='utf-8') as f:
         f.write(html)
     print(f"calendar.html written, {len(html)} bytes, pool {total_n} stocks")
 
