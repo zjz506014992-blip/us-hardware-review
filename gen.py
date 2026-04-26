@@ -66,7 +66,7 @@ KEY_STOCKS = [
 {
 'sym': 'INTC',
 'title': '24 年蛰伏后的世纪转身（+23.60%）',
-'dp': 23.60, 'close': 82.55, 'cap': '$3,470 亿',
+'dp': 23.60, 'close': 82.54, 'cap': '$4,144 亿',
 'vol': '$26.8B（5 倍 90 日均值）', 'range52w': '$18.51 – $82.85',
 'fund': 'Q1 2026 非 GAAP EPS $0.29（市场预期 $0.01，超 29 倍），营收 $13.58B（YoY +7%、QoQ +12%，预期 $12.42B）。数据中心+AI 业务（DCAI）营收 $5.1B，同比 +22%、超预期 $700M，AI 加速业务（Gaudi 3 + Falcon Shores）首次贡献正向毛利。客户端业务（CCG）营收 $7.8B，同比持平但 ASP 提升 8%（Lunar Lake 出货）。Foundry 业务亏损收窄至 $1.1B（前季 $2.4B），Intel 18A 工艺良率 52%，提前达标 Lip-Bu Tan 上任时承诺。Q2 营收指引 $13.8–14.8B（中值 $14.3B vs 预期 $13.07B），EPS $0.20 vs 预期 $0.09。2026 全年 capex 上调至 $9.1B（前 $8.0B），WFE 资本开支翻倍。',
 'sellside': [
@@ -99,8 +99,8 @@ KEY_STOCKS = [
 },
 {
 'sym': 'ARM',
-'title': 'AGI CPU 战略升级，从 IP 到整机的估值锚切换（+14.31%）',
-'dp': 14.31, 'close': 232.35, 'cap': '$2,440 亿',
+'title': 'AGI CPU 战略升级，从 IP 到整机的估值锚切换（+14.76%）',
+'dp': 14.76, 'close': 234.81, 'cap': '$2,494 亿',
 'vol': '$8.4B（3.2 倍 90 日均值）', 'range52w': '$92.18 – $235.40',
 'fund': 'ARM 公布首款自研 AGI CPU 数据中心芯片（代号 "Neoverse N3 Ultra"），目标 2027 年 Q4 流片、2028 年起贡献"实质性"营收，2031 年 AGI CPU 业务营收目标 $15B（占公司营收 $25B 的 60%）。这标志公司从纯 IP 授权商（royalty-only）正式升级为整机方案商（chip-as-a-product），毛利率从当前 96% IP 模式过渡到 65–70% 芯片模式，但 ASP 提升 10x（单价 $50K+ vs IP $5/CPU）。授权业务（Royalty）Q4 FY26 营收 $700M，YoY +28%（v9 架构占比首次突破 30%）；License 业务 $560M，YoY +20%（AAPL/QCOM/Microsoft 续约提价）。AI/HPC 客户群快速扩张：Meta 内部芯片（MTIA v2）、Google Axion、Microsoft Cobalt、AWS Graviton4 全部基于 ARM Neoverse；总数据中心市占率从 2024 年 8% 提升至 2026 年 18%。',
 'sellside': [
@@ -137,8 +137,8 @@ KEY_STOCKS = [
 },
 {
 'sym': 'AMD',
-'title': 'INTC 业绩外溢的最大受益者，5/5 财报前抢跑（+13.90%）',
-'dp': 13.90, 'close': 347.77, 'cap': '$5,650 亿',
+'title': 'INTC 业绩外溢的最大受益者，5/5 财报前抢跑（+13.91%）',
+'dp': 13.91, 'close': 347.81, 'cap': '$5,671 亿',
 'vol': '$18.2B（4.1 倍 90 日均值）', 'range52w': '$118.50 – $352.40',
 'fund': '当日 AMD 无任何公司新闻发布，纯粹受 INTC Q1 业绩外溢驱动。市场反推：INTC 边缘 AI CPU 推理需求论调若成立，AMD EPYC（数据中心 CPU 份额已从 2024 年 18% 升至 2026 年 33%）+ Instinct MI350（AI 加速）将获得更高 ASP 弹性。基本面持续强劲：MI350X 系列（CDNA4 架构）已被 OpenAI、Microsoft、Meta、Oracle 四大客户下单，2026 年 AI 业务营收指引上修至 $9.5B（前 $7.0B），同比 +295%；EPYC Turin（Zen 5）服务器份额持续扩张，超大规模云厂商采购占比 65%。Q1 2026 财报（5/5 盘后）市场预期：营收 $7.85B（YoY +35%）、EPS $0.95（YoY +52%），关键看点是 AI 业务能否突破 $2.5B 季度（前季 $2.0B）。Lisa Su 此前在 Computex 2025 暗示 MI350 出货 ramp 速度"超越内部预期"。',
 'sellside': [
@@ -174,10 +174,10 @@ KEY_STOCKS = [
 },
 {
 'sym': 'QCOM',
-'title': 'INTC 同盟军，半年 -13% 后单日修复 10pp（+10.30%）',
-'dp': 10.30, 'close': 144.85, 'cap': '$1,550 亿',
+'title': 'INTC 同盟军，半年 -13% 后单日修复 11pp（+11.12%）',
+'dp': 11.12, 'close': 148.85, 'cap': '$1,590 亿',
 'vol': '$5.2B（2.8 倍 90 日均值）', 'range52w': '$132.40 – $185.50',
-'fund': 'INTC 边缘 AI 推理论调外溢至移动 SoC 与 PC 芯片，QCOM 作为最大受益者单日大幅反弹。基本面：QCT（芯片业务，占营收 85%）2026Q1 预期营收 $9.6B、YoY +18%，其中手机业务 $6.0B（华为/小米回流 + 中端 Snapdragon 8 Elite Gen 2 拉动 ASP）+ 汽车业务 $1.0B（Snapdragon Cockpit 已配套全球 27 家车厂、连续 4 季双位数增长）+ IoT/PC 业务 $1.5B（Snapdragon X Elite 在 Microsoft Surface/Dell/HP 出货量翻倍）。QTL（IP 授权）业务 $1.6B（华为复授权 + 苹果 5G 调制解调器续约至 2027）。FY26 全年营收预期 $42.5B（+10% YoY）、EPS $11.20。X Elite 第二代（Oryon V3）2026H2 推出，对标 AAPL M4，成为 Microsoft Copilot+ PC 的核心硬件。手机芯片在中国市场份额从 2024 年 28% 升至 2026 年 38%（联发科同期下滑）。',
+'fund': 'INTC 边缘 AI 推理论调外溢至移动 SoC 与 PC 芯片，QCOM 作为最大受益者单日大幅反弹 +11.12%。基本面：QCT（芯片业务，占营收 85%）2026Q1 预期营收 $9.6B、YoY +18%，其中手机业务 $6.0B（华为/小米回流 + 中端 Snapdragon 8 Elite Gen 2 拉动 ASP）+ 汽车业务 $1.0B（Snapdragon Cockpit 已配套全球 27 家车厂、连续 4 季双位数增长）+ IoT/PC 业务 $1.5B（Snapdragon X Elite 在 Microsoft Surface/Dell/HP 出货量翻倍）。QTL（IP 授权）业务 $1.6B（华为复授权 + 苹果 5G 调制解调器续约至 2027）。FY26 全年营收预期 $42.5B（+10% YoY）、EPS $11.20。X Elite 第二代（Oryon V3）2026H2 推出，对标 AAPL M4，成为 Microsoft Copilot+ PC 的核心硬件。手机芯片在中国市场份额从 2024 年 28% 升至 2026 年 38%（联发科同期下滑）。',
 'sellside': [
   {'firm': 'Bernstein', 'rating': '增持', 'tp': '$165 → $185', 'view': 'PC 业务（X Elite）成为新增长曲线，估值锚应包含 PC SoC 份额'},
   {'firm': 'TD Cowen', 'rating': '买入', 'tp': '$170', 'view': 'Apple 调制解调器续约至 2027 大幅缓解市场担忧'},
@@ -210,8 +210,8 @@ KEY_STOCKS = [
 },
 {
 'sym': 'NVDA',
-'title': '$5T 王座重回，电力锁定 + 板块轮动至落后者（+4.83%）',
-'dp': 4.83, 'close': 209.29, 'cap': '$5.1 万亿',
+'title': '$5T 王座重回，电力锁定 + 板块轮动至落后者（+4.32%）',
+'dp': 4.32, 'close': 208.27, 'cap': '$5.06 万亿',
 'vol': '$32.4B（1.5 倍 90 日均值）', 'range52w': '$96.30 – $213.50',
 'fund': '当日两大催化：(1) 与 Oklo 公司签订核电采购协议（PPA）— Oklo 将于 2028 年起向 NVDA 数据中心提供 12 GW 小型模块化反应堆（SMR）电力，确认 AI 数据中心电力瓶颈的"长期方案"；(2) 市值重新突破 $5 万亿（前期 4 月初曾触及 $5.2T 但回落）。基本面持续强劲：CY1Q26 财报（5/28 盘后）市场预期营收 $48.5B（YoY +60%）、EPS $0.95（YoY +75%），其中数据中心 $42B（YoY +73%）、汽车 $750M（YoY +50%）。Blackwell Ultra（B300）已全面 ramp，Q1 出货 35 万颗（GB300 服务器），毛利率 76%（vs Hopper H100 的 78%）。Rubin（R100）2026Q4 流片，2027Q1 出货，性能较 Blackwell Ultra 提升 2.5x。Networking 业务（NVLink Switch + InfiniBand）单季营收突破 $5B，Spectrum-X 以太网在超大规模数据中心的渗透率达 40%。机器人业务（Isaac）在 Q1 财报或首次披露独立营收（市场预期 $200M）。',
 'sellside': [
@@ -248,8 +248,8 @@ KEY_STOCKS = [
 },
 {
 'sym': 'SMCI',
-'title': 'AI 服务器急先锋，财务阴影下的高弹性 Beta（+9.08%）',
-'dp': 9.08, 'close': 29.18, 'cap': '$185 亿',
+'title': 'AI 服务器急先锋，财务阴影下的高弹性 Beta（+8.71%）',
+'dp': 8.71, 'close': 29.08, 'cap': '$174 亿',
 'vol': '$1.8B（2.5 倍 90 日均值）', 'range52w': '$17.50 – $48.20',
 'fund': '当日 SMCI 无任何公司新闻发布，纯粹跟随 NVDA/AMD 算力链情绪。基本面：GB300 服务器（Blackwell Ultra）订单可见度高，Q2 FY26（5 月底前公布）市场预期营收 $7.5B（YoY +75%、QoQ +18%）、EPS $0.65（YoY +25%）。AI 服务器业务占比已升至 78%（vs 2024 年 45%），其中超大规模客户（Meta/CoreWeave/Oracle/Tesla xAI）订单占 60%。液冷服务器（DLC）出货占比从 2024 年 15% 升至 2026 年 35%，毛利率较风冷高 2-3pp。但财务问题仍未完全摆脱：(1) 2024 年延迟年报（Hindenburg 做空报告）后已重新提交，但 SEC 仍在审查关联方交易；(2) 大股东 Charles Liang 仍掌握 35% 投票权，公司治理被持续质疑；(3) 应收账款周转天数从 60 天升至 95 天，反映客户付款延迟。机构持仓比例从 2024 年 68% 跌至 42%，部分大型基金已清仓。',
 'sellside': [
@@ -285,8 +285,8 @@ KEY_STOCKS = [
 },
 {
 'sym': 'SNDK',
-'title': '存储周期顶配，AI NAND 需求指数级放大（+5.10%）',
-'dp': 5.10, 'close': 995.01, 'cap': '$720 亿',
+'title': '存储周期顶配，AI NAND 需求指数级放大（+6.16%）',
+'dp': 6.16, 'close': 989.90, 'cap': '$1,461 亿',
 'vol': '$3.8B（1.8 倍 90 日均值）', 'range52w': '$252.10 – $1,025.50',
 'fund': 'SanDisk 自 2024 年 10 月从 WDC 拆分独立上市以来，YTD +295%、自 IPO +485%。基本面驱动：(1) AI 数据中心 NAND 需求指数级放大 — 训练用 SSD（24-32 TB QLC）需求 YoY +180%，推理用 SSD 需求 YoY +95%；(2) NAND 现货价格 Q1 2026 累计上涨 35%，企业级 SSD（QLC）ASP 上涨 42%；(3) 中国厂商（YMTC）受出口管制持续受限，Mass Production 192 层产品仅在中国销售；(4) 三星 / SK Hynix / Kioxia 三巨头联合控制 NAND 全球 60% 产能。SNDK 自身：FY26 全年营收预期 $11.2B（YoY +95%）、EPS $24.50。Q1 FY26（已公布）营收 $2.8B（YoY +135%），其中数据中心 SSD 占比从 2024 年 28% 升至 50%。BiCS9（218 层）QLC 已在 Meta/Microsoft 大规模出货。新品路线图：BiCS10（300+ 层）2026Q4 流片，2027Q2 出货。',
 'sellside': [
@@ -321,10 +321,10 @@ KEY_STOCKS = [
 },
 {
 'sym': 'AVGO',
-'title': '板块普涨日唯一掉队大票，技术性整理（-0.11%）',
-'dp': -0.11, 'close': 419.49, 'cap': '$1.95 万亿',
+'title': '板块普涨日相对落后，ASIC 客户集中度担忧持续（+0.67%）',
+'dp': 0.67, 'close': 422.76, 'cap': '$2.00 万亿',
 'vol': '$15.2B（1.0 倍 90 日均值）', 'range52w': '$210.50 – $445.20',
-'fund': '当日板块普涨情境下 AVGO 单日反向，反映几个结构性担忧的显化。基本面：FY26 全年营收预期 $62B（YoY +24%）、EPS $7.20，AI 收入（ASIC + Networking）2026 年指引 $32B（YoY +60%）。但市场担忧三个层面：(1) ASIC 客户集中度风险 — Google TPU 占 AVGO ASIC 营收 60%、Meta MTIA 占 25%、Apple 自研芯片占 10%，三大客户合计 95%，单一客户波动直接影响整体；(2) Google TPU v7（Trillium）2026Q3 发布后，部分推理工作负载或转向自研而非 AVGO 设计；(3) 软件业务（VMware）整合协同效应低于预期，FY26 营收增长仅 +5%（vs 收购时承诺的 +12%）。市场对 AVGO 估值锚的核心争议：是否应按 NVDA 同类 AI 加速企业（PE 38x）估值，还是回到传统半导体 + 软件混合估值（PE 25x）。当前 PE 32x，处于估值争议中枢。Networking 业务（Tomahawk 5/6 交换芯片）受 NVDA Spectrum-X 以太网竞争加剧，市占率从 2024 年 75% 跌至 2026 年 60%。',
+'fund': '当日板块普涨情境下 AVGO 仅 +0.67%，显著跑输板块均涨幅 +3.26%、SOX +5.0%，反映几个结构性担忧的显化。基本面：FY26 全年营收预期 $62B（YoY +24%）、EPS $7.20，AI 收入（ASIC + Networking）2026 年指引 $32B（YoY +60%）。但市场担忧三个层面：(1) ASIC 客户集中度风险 — Google TPU 占 AVGO ASIC 营收 60%、Meta MTIA 占 25%、Apple 自研芯片占 10%，三大客户合计 95%，单一客户波动直接影响整体；(2) Google TPU v7（Trillium）2026Q3 发布后，部分推理工作负载或转向自研而非 AVGO 设计；(3) 软件业务（VMware）整合协同效应低于预期，FY26 营收增长仅 +5%（vs 收购时承诺的 +12%）。市场对 AVGO 估值锚的核心争议：是否应按 NVDA 同类 AI 加速企业（PE 38x）估值，还是回到传统半导体 + 软件混合估值（PE 25x）。当前 PE 32x，处于估值争议中枢。Networking 业务（Tomahawk 5/6 交换芯片）受 NVDA Spectrum-X 以太网竞争加剧，市占率从 2024 年 75% 跌至 2026 年 60%。',
 'sellside': [
   {'firm': 'Bernstein', 'rating': '增持', 'tp': '$485', 'view': 'AI ASIC 业务长期价值仍被低估，但需观察客户集中度演变'},
   {'firm': 'Truist', 'rating': '买入', 'tp': '$475', 'view': 'Google TPU v7 仍由 AVGO 设计 + 制造，长期合作未变'},
@@ -355,6 +355,40 @@ KEY_STOCKS = [
   '<b>2027 年</b>：Meta MTIA v3 + AVGO 设计的关键节点',
 ],
 'technical': '反复测试 $445 历史高点未果，呈现头部信号。RSI 55（中性），20 日均线 $425 + 50 日均线 $410 形成支撑带。短期支撑 $410（50 日均线）/ $390（缺口下沿）；阻力位 $445（前高）/ $475（机构目标价中枢）。期权 IV 35%（vs 平均 30%），波动相对有限。',
+},
+{
+'sym': 'MXL',
+'title': '当日全池涨幅冠军，光模块 DSP 转身（+76.12%）',
+'dp': 76.12, 'close': 60.32, 'cap': '$54 亿',
+'vol': '$1.6B（17 倍 90 日均值）', 'range52w': '$11.20 – $63.52',
+'fund': '当日单日涨 +76.12%、放量 17x，是全池 313 只里的涨幅冠军。催化是 4/23 盘后 Q1 2026 财报：营收 $137.2M（YoY +43%、QoQ +12%）、Non-GAAP EPS $0.22（市场预期 $0.19）。但真正引爆股价的是指引大幅上修 — 公司将 FY26 光数据中心（Optical DC）业务营收目标从 ~$125M 上调至 $160M（+28%），并明确"超大规模客户已下大额订单"。两条核心产品线披露：(1) Keystone 800G/1.6T 光模块 DSP 已被某 hyperscaler 锁定 2026H2 量产订单（管理层暗示 META 或 GOOG）；(2) Annapurna 铜缆 retimer（用于 GPU rack 内连接）受 NVDA Blackwell 服务器架构带动，订单可见度延展至 2027H1。MXL 此前从 INFN 收购光模块 IP 资产被市场认为"鸡肋"（2024 年合并后股价跌 65%），本次财报是该投资逻辑的首次正向验证。Q2 2026 营收指引 $145–155M（中值 +13% QoQ vs 共识 $140M）。',
+'sellside': [
+  {'firm': 'Needham', 'rating': '中性 → 买入', 'tp': '$25 → $75', 'view': '光数据中心业务从故事走向兑现，Keystone DSP 锁定 hyperscaler 是核心拐点'},
+  {'firm': 'Craig-Hallum', 'rating': '买入', 'tp': '$30 → $80', 'view': 'AI 算力对光互联需求被严重低估，MXL 是少数中盘弹性标的'},
+  {'firm': 'Roth MKM', 'rating': '中性 → 买入', 'tp': '$22 → $70', 'view': 'INFN 资产首次正向贡献，估值锚切换至 5x EV/Sales'},
+  {'firm': 'B. Riley', 'rating': '中性', 'tp': '$45 → $65', 'view': '认可短期催化，但 76% 单日涨幅已透支多数预期'},
+],
+'bull': [
+  '光数据中心营收指引上修 28%，AI 互联是确定性高增长赛道',
+  'Keystone 800G/1.6T DSP 已锁定 hyperscaler 大单，2026H2 ramp',
+  'Annapurna 铜缆 retimer 与 NVDA Blackwell 平台深度绑定，长期订单可见度高',
+  '从 INFN 收购的光模块 IP 资产首次贡献正向毛利',
+  '当前 PSR 4x（FY27），考虑光 DC 业务高增长仍有上修空间',
+],
+'bear': [
+  '单日 +76% 后短线获利盘巨大，5–10 个交易日内技术性回调概率高',
+  '光模块 DSP 市场竞争激烈（MRVL/CRDO/AVGO 同样布局），份额抢占需持续验证',
+  'INFN 整合后毛利率仍低于 50%（vs 同业 60%+），盈利能力修复需时间',
+  '管理层指引依赖少数 hyperscaler 客户，订单波动直接放大',
+  '52w 涨幅 +439%，估值已显著领先基本面兑现节奏',
+],
+'catalysts': [
+  '<b>5/30 Computex Taipei</b>：Keystone DSP 详细规格 + 光模块路线图发布',
+  '<b>Q2 2026 财报（7 月底）</b>：核心看 Optical DC 营收能否达到 $40M+ 季度',
+  '<b>2026H2</b>：hyperscaler 订单实际 ramp 节奏验证',
+  '<b>2027</b>：1.6T 光模块进入 hyperscaler 大规模部署窗口',
+],
+'technical': '突破 2024-09 高点 $35 + 历史新高，进入"价格发现"模式。RSI 95（极端超买），布林带上轨持续突破。短期支撑 $54（缺口下沿）/ $48（5 日均线）；阻力位 $65 / $80（Needham 目标价）。期权 IV 飙至 110%（vs 平均 55%），跨夜波动预期 ±12%。短线追高需谨慎，建议等待回调至 $50–55 区间确认支撑。',
 },
 ]
 
@@ -396,6 +430,7 @@ NEWS_TIERS = {
             {'src': 'AMD', 'title': 'DA Davidson 上调评级 + 目标价 $400', 'body': 'DA Davidson 评级从中性升至买入，目标价 $280 → $400。分析师 Tom Forte 直言"Intel 业绩是 AMD 营收大爆发的预演"，CPU AI 需求行业级共振。', 'impact': 'AMD 单日 +13.9% 主要催化'},
             {'src': 'ARM', 'title': '7 家券商联合上调评级，目标价中枢 $245', 'body': 'Citi/Guggenheim/Evercore ISI/Mizuho/Barclays/Needham/Susquehanna 同步上调，目标价中枢从 $200 升至 $245。', 'impact': 'ARM 单日 +14.31% 核心驱动'},
             {'src': 'INTC', 'title': '2026 capex 上调至 $9.1B（前 $8.0B）', 'body': 'Intel 在 Q1 财报会议上正式上调 2026 capex 至 $9.1B，主要用于 18A 工艺产能扩张 + Foundry 客户认证。', 'impact': 'AMAT/LRCX/KLAC/ASML/ENTG 全链共振'},
+            {'src': 'MXL', 'title': 'Q1 财报大超预期 + 光 DC 业务指引上修 28%，单日 +76.12%', 'body': 'MaxLinear Q1 2026 营收 $137.2M（+43% YoY）、Non-GAAP EPS $0.22 vs 预期 $0.19。FY26 光数据中心营收目标从 ~$125M 上调至 $160M。Keystone 800G/1.6T DSP 锁定 hyperscaler 2026H2 量产订单；Annapurna 铜缆 retimer 受 NVDA Blackwell 服务器架构带动。', 'impact': '当日全池涨幅冠军；MRVL/CRDO/AVGO 光模块 DSP 同业竞争格局重塑'},
         ],
     },
 }
