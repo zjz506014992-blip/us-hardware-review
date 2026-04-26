@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>美股硬件板块 · 业绩历史</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;padding:24px 16px;max-width:1400px;margin:0 auto}
+h1{font-size:1.45rem;margin-bottom:4px}
+.sub{color:#8b949e;font-size:.85rem;margin-bottom:18px}
+.sub a{color:#58a6ff;text-decoration:none}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px;padding:14px;background:#161b22;border:1px solid #21262d;border-radius:8px}
+.bar .lbl{color:#8b949e;font-size:.78rem;margin-right:4px}
+.bar input,.bar select{background:#0d1117;border:1px solid #30363d;color:#e6edf3;padding:7px 10px;border-radius:6px;font-size:.85rem;font-family:inherit}
+.bar input:focus,.bar select:focus{outline:none;border-color:#1f6feb}
+#q{min-width:240px}
+.btn{background:#21262d;border:1px solid #30363d;color:#e6edf3;padding:7px 14px;border-radius:6px;font-size:.82rem;cursor:pointer;font-family:inherit}
+.btn:hover{background:#30363d}
+.btn.act{background:#1f6feb;border-color:#1f6feb;color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto}
+#status{color:#8b949e;font-size:.85rem;padding:8px 0 14px}
+#status.err{color:#f85149}
+#status.ok b{color:#58a6ff}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.kpi .card{background:#161b22;border:1px solid #21262d;border-radius:8px;padding:12px 14px}
+.kpi .lbl{color:#8b949e;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.kpi .val{font-size:1.25rem;font-weight:700;color:#e6edf3}
+.tblwrap{background:#161b22;border:1px solid #21262d;border-radius:8px;overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{background:#1c2128;color:#8b949e;padding:11px 12px;text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;font-weight:600;cursor:pointer;user-select:none;position:sticky;top:0;z-index:1}
+th:hover{color:#e6edf3}
+th .arr{display:inline-block;width:10px;color:#58a6ff;margin-left:3px}
+td{padding:10px 12px;border-bottom:1px solid #21262d;white-space:nowrap}
+tr:hover td{background:#1c2128}
+.tk{display:inline-block;background:#21262d;color:#58a6ff;padding:2px 7px;border-radius:4px;font-weight:600;font-size:.78rem;cursor:pointer;text-decoration:none}
+.tk:hover{background:#30363d;color:#79c0ff}
+.tag-bmo{color:#58a6ff;font-weight:600}
+.tag-amc{color:#f59e0b;font-weight:600}
+.tag-dmh{color:#8b949e}
+.beat{color:#3fb950;font-weight:600}
+.miss{color:#f85149;font-weight:600}
+.muted{color:#8b949e}
+.future{background:#0d2818}
+.future:hover td{background:#103324}
+.dn{font-size:.7rem;color:#8b949e;margin-left:4px}
+.empty{padding:40px;text-align:center;color:#8b949e}
+.pgbar{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:#161b22;border:1px solid #21262d;border-top:none;border-radius:0 0 8px 8px;font-size:.82rem;color:#8b949e}
+.pgbar button{background:#21262d;border:1px solid #30363d;color:#e6edf3;padding:5px 11px;border-radius:5px;cursor:pointer;font-size:.78rem;margin:0 3px}
+.pgbar button:disabled{opacity:.4;cursor:not-allowed}
+.foot{margin-top:18px;padding:14px;background:#161b22;border:1px solid #21262d;border-radius:8px;font-size:.78rem;color:#8b949e;line-height:1.7}
+.foot code{background:#0d1117;padding:1px 5px;border-radius:3px}
+@media(max-width:760px){
+  body{padding:14px 8px}
+  .bar{padding:10px}
+  td,th{padding:8px 6px;font-size:.75rem}
+  #q{min-width:160px}
+}
+</style>
+</head>
+<body>
+<h1>🗂️ 美股硬件板块 · 业绩历史</h1>
+<div class="sub">
+  <a href="index.html">← 历史存档</a> ·
+  <a href="calendar.html">📅 业绩日历</a> ·
+  数据源 FMP · 覆盖池内 314 只 · 过去 25 年 + 未来已确认日期 · 工作日自动增量更新
+</div>
+
+<div style="background:#3d2a14;border:1px solid #8b6914;color:#e8c547;padding:10px 14px;border-radius:6px;margin-bottom:14px;font-size:.85rem">⚠️ <code>earnings_history.json</code> 尚未生成。请先在 GitHub Actions 手动触发 <code>workflow_dispatch</code> 跑一次 <code>--full</code> 回填。</div>
+
+<div class="bar">
+  <span class="lbl">搜索：</span>
+  <input id="q" placeholder="代码 / 子行业（NVDA、AI加速、半导体核心...）" autocomplete="off">
+  <select id="when">
+    <option value="all">全部时段</option>
+    <option value="future">仅未来</option>
+    <option value="recent">近 90 天</option>
+    <option value="1y">近 1 年</option>
+    <option value="5y">近 5 年</option>
+    <option value="10y">近 10 年</option>
+  </select>
+  <select id="grp">
+    <option value="">全部大类</option>
+    <option>半导体核心</option>
+    <option>硬件系统</option>
+    <option>元器件制造</option>
+    <option>分销渠道</option>
+  </select>
+  <select id="time">
+    <option value="">全部时点</option>
+    <option value="bmo">BMO 盘前</option>
+    <option value="amc">AMC 盘后</option>
+    <option value="dmh">DMH/未知</option>
+  </select>
+  <button class="btn" id="reset">↺ 重置</button>
+  <div class="chips">
+    <button class="btn chip" data-q="NVDA">NVDA</button>
+    <button class="btn chip" data-q="AAPL">AAPL</button>
+    <button class="btn chip" data-q="TSM">TSM</button>
+    <button class="btn chip" data-q="AVGO">AVGO</button>
+    <button class="btn chip" data-q="AMD">AMD</button>
+    <button class="btn chip" data-q="INTC">INTC</button>
+  </div>
+</div>
+
+<div id="status">⏳ 正在加载 earnings_history.json…</div>
+<div id="kpi" class="kpi" style="display:none"></div>
+
+<div class="tblwrap" id="tblwrap" style="display:none">
+  <table id="tbl">
+    <thead>
+      <tr>
+        <th data-k="date">日期 <span class="arr"></span></th>
+        <th data-k="symbol">代码 <span class="arr"></span></th>
+        <th data-k="industry">子行业 <span class="arr"></span></th>
+        <th data-k="time">时点 <span class="arr"></span></th>
+        <th data-k="epsEstimated" style="text-align:right">EPS 预期 <span class="arr"></span></th>
+        <th data-k="eps" style="text-align:right">EPS 实际 <span class="arr"></span></th>
+        <th data-k="surprise" style="text-align:right">超预期 <span class="arr"></span></th>
+        <th data-k="revenueEstimated" style="text-align:right">营收预期 <span class="arr"></span></th>
+        <th data-k="revenue" style="text-align:right">营收实际 <span class="arr"></span></th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+  <div class="pgbar">
+    <span id="pginfo"></span>
+    <span>
+      <button id="prev">← 上页</button>
+      <button id="next">下页 →</button>
+    </span>
+  </div>
+</div>
+
+<div class="foot">
+<b>说明</b>：本页直接加载 <code>earnings_history.json</code>（仓库内静态文件，无需调 API）。数据由 GitHub Actions 维护：每个交易日跑 <code>fetch_earnings_history.py</code> 增量合并近 30 天 + 未来 180 天的 <code>/stable/earnings-calendar</code>；每周日跑 <code>--refresh-recent 180</code> 校正订正过的 EPS；首次回填用 <code>--full</code>（手动 workflow_dispatch 触发）逐 ticker 拉 <code>/stable/earnings?symbol=X&limit=120</code>，覆盖近 25-30 年。
+未来未发布日期：行底色淡绿 · EPS/营收"实际"为空 · 仅显示分析师"预期"。
+</div>
+
+<script>
+const POOL = {"NVDA":["AI加速","半导体核心"],"AMD":["AI加速","半导体核心"],"AVGO":["AI加速","半导体核心"],"MRVL":["AI加速","半导体核心"],"CRDO":["AI加速","半导体核心"],"ALAB":["AI加速","半导体核心"],"INTC":["CPU处理器","半导体核心"],"ARM":["Fabless设计","半导体核心"],"QCOM":["Fabless设计","半导体核心"],"LSCC":["Fabless设计","半导体核心"],"SLAB":["Fabless设计","半导体核心"],"SITM":["Fabless设计","半导体核心"],"SIMO":["Fabless设计","半导体核心"],"SYNA":["Fabless设计","半导体核心"],"CEVA":["Fabless设计","半导体核心"],"CRUS":["Fabless设计","半导体核心"],"AMBA":["Fabless设计","半导体核心"],"MXL":["Fabless设计","半导体核心"],"HIMX":["Fabless设计","半导体核心"],"PI":["Fabless设计","半导体核心"],"SQNS":["Fabless设计","半导体核心"],"PXLW":["Fabless设计","半导体核心"],"RMBS":["Fabless设计","半导体核心"],"INDI":["Fabless设计","半导体核心"],"NVTS":["Fabless设计","半导体核心"],"QUIK":["Fabless设计","半导体核心"],"BZAI":["Fabless设计","半导体核心"],"VLN":["Fabless设计","半导体核心"],"MOBX":["Fabless设计","半导体核心"],"PRSO":["Fabless设计","半导体核心"],"GCTS":["Fabless设计","半导体核心"],"GSIT":["Fabless设计","半导体核心"],"SMTC":["Fabless设计","半导体核心"],"PDFS":["Fabless设计","半导体核心"],"LASR":["Fabless设计","半导体核心"],"ALMU":["Fabless设计","半导体核心"],"NA":["Fabless设计","半导体核心"],"TSM":["晶圆代工","半导体核心"],"UMC":["晶圆代工","半导体核心"],"GFS":["晶圆代工","半导体核心"],"TSEM":["晶圆代工","半导体核心"],"SKYT":["晶圆代工","半导体核心"],"MU":["存储器件","半导体核心"],"WDC":["存储器件","半导体核心"],"STX":["存储器件","半导体核心"],"SNDK":["存储器件","半导体核心"],"MRAM":["存储器件","半导体核心"],"DVLT":["存储器件","半导体核心"],"QMCO":["存储器件","半导体核心"],"TXN":["模拟电源","半导体核心"],"ADI":["模拟电源","半导体核心"],"MPWR":["模拟电源","半导体核心"],"ON":["模拟电源","半导体核心"],"NXPI":["模拟电源","半导体核心"],"MCHP":["模拟电源","半导体核心"],"STM":["模拟电源","半导体核心"],"DIOD":["模拟电源","半导体核心"],"POWI":["模拟电源","半导体核心"],"AOSL":["模拟电源","半导体核心"],"ALGM":["模拟电源","半导体核心"],"MX":["模拟电源","半导体核心"],"WOLF":["模拟电源","半导体核心"],"SWKS":["射频芯片","半导体核心"],"QRVO":["射频芯片","半导体核心"],"MTSI":["射频芯片","半导体核心"],"AMPG":["射频芯片","半导体核心"],"LGL":["射频芯片","半导体核心"],"AMAT":["半导体设备","半导体核心"],"LRCX":["半导体设备","半导体核心"],"KLAC":["半导体设备","半导体核心"],"ASML":["半导体设备","半导体核心"],"TER":["半导体设备","半导体核心"],"ONTO":["半导体设备","半导体核心"],"NVMI":["半导体设备","半导体核心"],"ENTG":["半导体设备","半导体核心"],"MKSI":["半导体设备","半导体核心"],"ACLS":["半导体设备","半导体核心"],"VECO":["半导体设备","半导体核心"],"COHU":["半导体设备","半导体核心"],"UCTT":["半导体设备","半导体核心"],"ACMR":["半导体设备","半导体核心"],"KLIC":["半导体设备","半导体核心"],"AEHR":["半导体设备","半导体核心"],"AEIS":["半导体设备","半导体核心"],"ICHR":["半导体设备","半导体核心"],"CAMT":["半导体设备","半导体核心"],"FORM":["半导体设备","半导体核心"],"PLAB":["半导体设备","半导体核心"],"CVV":["半导体设备","半导体核心"],"ASYS":["半导体设备","半导体核心"],"NVEC":["半导体设备","半导体核心"],"ATOM":["半导体设备","半导体核心"],"DAIO":["半导体设备","半导体核心"],"TRT":["半导体设备","半导体核心"],"SOTK":["半导体设备","半导体核心"],"INTT":["半导体设备","半导体核心"],"MPTI":["半导体设备","半导体核心"],"AMKR":["封测OSAT","半导体核心"],"ASX":["封测OSAT","半导体核心"],"IMOS":["封测OSAT","半导体核心"],"AXTI":["化合物光电","半导体核心"],"OLED":["化合物光电","半导体核心"],"LEDS":["化合物光电","半导体核心"],"SMTK":["化合物光电","半导体核心"],"CAN":["化合物光电","半导体核心"],"ICG":["化合物光电","半导体核心"],"EBON":["化合物光电","半导体核心"],"TBCH":["化合物光电","半导体核心"],"SELX":["化合物光电","半导体核心"],"SMCI":["AI服务器","硬件系统"],"DELL":["AI服务器","硬件系统"],"HPE":["AI服务器","硬件系统"],"NTAP":["AI服务器","硬件系统"],"PSTG":["AI服务器","硬件系统"],"IONQ":["AI服务器","硬件系统"],"RGTI":["AI服务器","硬件系统"],"OSS":["AI服务器","硬件系统"],"ANET":["网络设备","硬件系统"],"CSCO":["网络设备","硬件系统"],"JNPR":["网络设备","硬件系统"],"FFIV":["网络设备","硬件系统"],"EXTR":["网络设备","硬件系统"],"UI":["网络设备","硬件系统"],"CALX":["网络设备","硬件系统"],"NTCT":["网络设备","硬件系统"],"HLIT":["网络设备","硬件系统"],"ADTN":["网络设备","硬件系统"],"NTGR":["网络设备","硬件系统"],"SILC":["网络设备","硬件系统"],"ASNS":["网络设备","硬件系统"],"NTIP":["网络设备","硬件系统"],"CIEN":["光通信","硬件系统"],"COHR":["光通信","硬件系统"],"LITE":["光通信","硬件系统"],"VIAV":["光通信","硬件系统"],"FN":["光通信","硬件系统"],"AAOI":["光通信","硬件系统"],"CLFD":["光通信","硬件系统"],"OCC":["光通信","硬件系统"],"POET":["光通信","硬件系统"],"LPTH":["光通信","硬件系统"],"LWLG":["光通信","硬件系统"],"OPTX":["光通信","硬件系统"],"IPGP":["光通信","硬件系统"],"MSI":["无线通信","硬件系统"],"NOK":["无线通信","硬件系统"],"ERIC":["无线通信","硬件系统"],"VSAT":["无线通信","硬件系统"],"GILT":["无线通信","硬件系统"],"CRNT":["无线通信","硬件系统"],"AVNW":["无线通信","硬件系统"],"KVHI":["无线通信","硬件系统"],"CMTL":["无线通信","硬件系统"],"SATX":["无线通信","硬件系统"],"INSG":["无线通信","硬件系统"],"FKWL":["无线通信","硬件系统"],"SANG":["无线通信","硬件系统"],"BKTI":["无线通信","硬件系统"],"DGII":["无线通信","硬件系统"],"CMBM":["无线通信","硬件系统"],"COMM":["无线通信","硬件系统"],"MINM":["无线通信","硬件系统"],"UTSI":["无线通信","硬件系统"],"RBBN":["无线通信","硬件系统"],"AUDC":["无线通信","硬件系统"],"BB":["无线通信","硬件系统"],"MOB":["无线通信","硬件系统"],"CLRO":["无线通信","硬件系统"],"SYTA":["无线通信","硬件系统"],"FATN":["无线通信","硬件系统"],"AAPL":["消费电子","硬件系统"],"LPL":["消费电子","硬件系统"],"WETH":["消费电子","硬件系统"],"FGL":["消费电子","硬件系统"],"BOXL":["消费电子","硬件系统"],"WLDS":["消费电子","硬件系统"],"ZEPP":["消费电子","硬件系统"],"VUZI":["消费电子","硬件系统"],"IMTE":["消费电子","硬件系统"],"OST":["消费电子","硬件系统"],"REFR":["消费电子","硬件系统"],"GAUZ":["消费电子","硬件系统"],"SONM":["消费电子","硬件系统"],"HPQ":["PC与外设","硬件系统"],"LOGI":["PC与外设","硬件系统"],"CRSR":["PC与外设","硬件系统"],"XRX":["PC与外设","硬件系统"],"ARLO":["PC与外设","硬件系统"],"TACT":["PC与外设","硬件系统"],"KODK":["PC与外设","硬件系统"],"DBD":["PC与外设","硬件系统"],"SCKT":["PC与外设","硬件系统"],"IMMR":["PC与外设","硬件系统"],"ALOT":["PC与外设","硬件系统"],"MOVE":["PC与外设","硬件系统"],"APH":["连接器元件","元器件制造"],"TEL":["连接器元件","元器件制造"],"GLW":["连接器元件","元器件制造"],"LFUS":["连接器元件","元器件制造"],"VSH":["连接器元件","元器件制造"],"BDC":["连接器元件","元器件制造"],"KN":["连接器元件","元器件制造"],"CTS":["连接器元件","元器件制造"],"ROG":["连接器元件","元器件制造"],"BELFA":["连接器元件","元器件制造"],"RFIL":["连接器元件","元器件制造"],"SDST":["连接器元件","元器件制造"],"CCTG":["连接器元件","元器件制造"],"LNKS":["连接器元件","元器件制造"],"ELTK":["连接器元件","元器件制造"],"ELPW":["连接器元件","元器件制造"],"CPSH":["连接器元件","元器件制造"],"AIRG":["连接器元件","元器件制造"],"CLS":["EMS制造","元器件制造"],"JBL":["EMS制造","元器件制造"],"FLEX":["EMS制造","元器件制造"],"SANM":["EMS制造","元器件制造"],"PLXS":["EMS制造","元器件制造"],"TTMI":["EMS制造","元器件制造"],"BHE":["EMS制造","元器件制造"],"NSYS":["EMS制造","元器件制造"],"DSWL":["EMS制造","元器件制造"],"KTCC":["EMS制造","元器件制造"],"SGMA":["EMS制造","元器件制造"],"NEON":["EMS制造","元器件制造"],"KE":["EMS制造","元器件制造"],"HCAI":["EMS制造","元器件制造"],"WTO":["EMS制造","元器件制造"],"KEYS":["测试仪器","元器件制造"],"TRMB":["测试仪器","元器件制造"],"ZBRA":["测试仪器","元器件制造"],"CGNX":["测试仪器","元器件制造"],"NOVT":["测试仪器","元器件制造"],"OSIS":["测试仪器","元器件制造"],"BMI":["测试仪器","元器件制造"],"ITRI":["测试仪器","元器件制造"],"TDY":["测试仪器","元器件制造"],"VPG":["测试仪器","元器件制造"],"VNT":["测试仪器","元器件制造"],"MIR":["测试仪器","元器件制造"],"MASS":["测试仪器","元器件制造"],"FARO":["测试仪器","元器件制造"],"ASTC":["测试仪器","元器件制造"],"SHMD":["测试仪器","元器件制造"],"ELSE":["测试仪器","元器件制造"],"UUU":["测试仪器","元器件制造"],"PAR":["测试仪器","元器件制造"],"FEIM":["测试仪器","元器件制造"],"ZEO":["测试仪器","元器件制造"],"ENGS":["测试仪器","元器件制造"],"SNT":["测试仪器","元器件制造"],"NSSC":["安防识别","元器件制造"],"EVLV":["安防识别","元器件制造"],"SPCB":["安防识别","元器件制造"],"INVE":["安防识别","元器件制造"],"DGLY":["安防识别","元器件制造"],"WRAP":["安防识别","元器件制造"],"CMPO":["安防识别","元器件制造"],"LAES":["安防识别","元器件制造"],"VRME":["安防识别","元器件制造"],"SMX":["安防识别","元器件制造"],"SOBR":["安防识别","元器件制造"],"GNSS":["安防识别","元器件制造"],"PMTS":["安防识别","元器件制造"],"CXT":["安防识别","元器件制造"],"OUST":["传感LiDAR","元器件制造"],"AEVA":["传感LiDAR","元器件制造"],"LIDR":["传感LiDAR","元器件制造"],"INVZ":["传感LiDAR","元器件制造"],"MVIS":["传感LiDAR","元器件制造"],"ARBE":["传感LiDAR","元器件制造"],"RCAT":["传感LiDAR","元器件制造"],"DPRO":["传感LiDAR","元器件制造"],"ODYS":["传感LiDAR","元器件制造"],"KOPN":["传感LiDAR","元器件制造"],"LINK":["传感LiDAR","元器件制造"],"UMAC":["传感LiDAR","元器件制造"],"RVSN":["传感LiDAR","元器件制造"],"PRZO":["传感LiDAR","元器件制造"],"ONDS":["传感LiDAR","元器件制造"],"CODA":["传感LiDAR","元器件制造"],"MSAI":["传感LiDAR","元器件制造"],"MTEK":["传感LiDAR","元器件制造"],"SMRT":["工业IoT","元器件制造"],"AIOT":["工业IoT","元器件制造"],"ITRN":["工业IoT","元器件制造"],"LTRX":["工业IoT","元器件制造"],"TROO":["工业IoT","元器件制造"],"MEI":["工业IoT","元器件制造"],"PENG":["工业IoT","元器件制造"],"DAKT":["工业IoT","元器件制造"],"FCUV":["工业IoT","元器件制造"],"SGE":["工业IoT","元器件制造"],"CETX":["工业IoT","元器件制造"],"MKDW":["工业IoT","元器件制造"],"NNDM":["工业IoT","元器件制造"],"ENPH":["能源电池","元器件制造"],"NVX":["能源电池","元器件制造"],"ELBM":["能源电池","元器件制造"],"TOYO":["能源电池","元器件制造"],"ASTI":["能源电池","元器件制造"],"CDW":["分销渠道","分销渠道"],"SNX":["分销渠道","分销渠道"],"ARW":["分销渠道","分销渠道"],"AVT":["分销渠道","分销渠道"],"NSIT":["分销渠道","分销渠道"],"PLUS":["分销渠道","分销渠道"],"CNXN":["分销渠道","分销渠道"],"SCSC":["分销渠道","分销渠道"],"RELL":["分销渠道","分销渠道"],"IZM":["分销渠道","分销渠道"],"TAIT":["分销渠道","分销渠道"],"BOSC":["分销渠道","分销渠道"],"CLMB":["分销渠道","分销渠道"]};
+const PAGE_SIZE = 100;
+let RAW = {};      // sym -> [records]
+let FLAT = [];       // 扁平化后的 [{date, symbol, industry, group, time, eps, ...}]
+let view = [];
+let sortK = "date", sortDir = -1;  // 默认日期降序
+let page = 0;
+
+const $ = s => document.querySelector(s);
+
+function epsFmt(v) { return (v===null||v===undefined||v==="") ? "—" : Number(v).toFixed(2); }
+function revFmt(v) {
+  if (v===null||v===undefined||v===0||v==="") return "—";
+  const a = Math.abs(v);
+  if (a >= 1e12) return (v/1e12).toFixed(2)+"T";
+  if (a >= 1e9) return (v/1e9).toFixed(2)+"B";
+  if (a >= 1e6) return (v/1e6).toFixed(1)+"M";
+  return v.toLocaleString();
+}
+function surp(act, est) {
+  if (act==null||est==null||est===0) return null;
+  return ((act-est)/Math.abs(est)*100);
+}
+function timeTag(t) {
+  t = (t||"").toLowerCase();
+  if (t==="bmo") return '<span class="tag-bmo">BMO</span>';
+  if (t==="amc") return '<span class="tag-amc">AMC</span>';
+  return '<span class="tag-dmh">—</span>';
+}
+
+function flatten() {
+  const today = new Date().toISOString().slice(0,10);
+  FLAT = [];
+  for (const sym in RAW) {
+    const meta = POOL[sym];
+    if (!meta) continue;
+    for (const r of RAW[sym]) {
+      FLAT.push({
+        date: r.date,
+        symbol: sym,
+        industry: meta[0],
+        group: meta[1],
+        time: r.time,
+        eps: r.eps,
+        epsEstimated: r.epsEstimated,
+        revenue: r.revenue,
+        revenueEstimated: r.revenueEstimated,
+        surprise: surp(r.eps, r.epsEstimated),
+        future: r.date > today,
+      });
+    }
+  }
+}
+
+function applyFilters() {
+  const q = $("#q").value.trim().toUpperCase();
+  const when = $("#when").value;
+  const grp = $("#grp").value;
+  const tm = $("#time").value;
+  const cutoff = (days) => {
+    const d = new Date(); d.setDate(d.getDate()-days);
+    return d.toISOString().slice(0,10);
+  };
+
+  view = FLAT.filter(r => {
+    if (q) {
+      const hay = (r.symbol+" "+r.industry+" "+r.group).toUpperCase();
+      const terms = q.split(/\s+/).filter(Boolean);
+      if (!terms.every(t => hay.includes(t))) return false;
+    }
+    if (grp && r.group !== grp) return false;
+    if (tm) {
+      const t = (r.time||"").toLowerCase();
+      if (tm === "dmh") { if (t === "bmo" || t === "amc") return false; }
+      else if (t !== tm) return false;
+    }
+    if (when === "future") { if (!r.future) return false; }
+    else if (when === "recent") { if (r.date < cutoff(90)) return false; }
+    else if (when === "1y") { if (r.date < cutoff(365)) return false; }
+    else if (when === "5y") { if (r.date < cutoff(365*5)) return false; }
+    else if (when === "10y") { if (r.date < cutoff(365*10)) return false; }
+    return true;
+  });
+
+  view.sort((a,b) => {
+    let va = a[sortK], vb = b[sortK];
+    if (va == null && vb == null) return 0;
+    if (va == null) return 1;
+    if (vb == null) return -1;
+    if (typeof va === "string") return sortDir * va.localeCompare(vb);
+    return sortDir * (va - vb);
+  });
+
+  page = 0;
+  render();
+}
+
+function render() {
+  const total = view.length;
+  const totalPg = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  if (page >= totalPg) page = totalPg - 1;
+  if (page < 0) page = 0;
+  const slice = view.slice(page*PAGE_SIZE, (page+1)*PAGE_SIZE);
+
+  const future = view.filter(r => r.future).length;
+  const past = total - future;
+  const beats = view.filter(r => r.surprise != null && r.surprise > 0).length;
+  const misses = view.filter(r => r.surprise != null && r.surprise < 0).length;
+  const symbols = new Set(view.map(r => r.symbol)).size;
+  $("#kpi").style.display = "grid";
+  $("#kpi").innerHTML = `
+    <div class="card"><div class="lbl">命中记录</div><div class="val">${total.toLocaleString()}</div></div>
+    <div class="card"><div class="lbl">覆盖 ticker</div><div class="val">${symbols}</div></div>
+    <div class="card"><div class="lbl">已发布</div><div class="val">${past.toLocaleString()}</div></div>
+    <div class="card"><div class="lbl">未来</div><div class="val" style="color:#3fb950">${future.toLocaleString()}</div></div>
+    <div class="card"><div class="lbl">超预期 / 不及</div><div class="val"><span class="beat">${beats}</span> <span class="muted" style="font-weight:400">/</span> <span class="miss">${misses}</span></div></div>
+  `;
+
+  document.querySelectorAll("th").forEach(th => {
+    const a = th.querySelector(".arr");
+    if (!a) return;
+    a.textContent = th.dataset.k === sortK ? (sortDir < 0 ? "▼" : "▲") : "";
+  });
+
+  if (!total) {
+    $("#tbody").innerHTML = `<tr><td colspan="9" class="empty">无匹配记录。试试清空筛选或换关键字。</td></tr>`;
+  } else {
+    $("#tbody").innerHTML = slice.map(r => {
+      const sCls = r.surprise == null ? "muted" : (r.surprise >= 0 ? "beat" : "miss");
+      const sStr = r.surprise == null ? "—" : (r.surprise>=0?"+":"")+r.surprise.toFixed(1)+"%";
+      const fc = r.future ? " future" : "";
+      const dow = "日一二三四五六"[new Date(r.date+"T00:00:00").getDay()];
+      return `<tr class="${fc.trim()}">
+        <td>${r.date}<span class="dn">周${dow}</span></td>
+        <td><a class="tk" data-sym="${r.symbol}">${r.symbol}</a></td>
+        <td class="muted">${r.industry}</td>
+        <td>${timeTag(r.time)}</td>
+        <td style="text-align:right">${epsFmt(r.epsEstimated)}</td>
+        <td style="text-align:right">${epsFmt(r.eps)}</td>
+        <td style="text-align:right" class="${sCls}">${sStr}</td>
+        <td style="text-align:right" class="muted">${revFmt(r.revenueEstimated)}</td>
+        <td style="text-align:right">${revFmt(r.revenue)}</td>
+      </tr>`;
+    }).join("");
+  }
+
+  $("#pginfo").textContent = total ? `第 ${page+1} / ${totalPg} 页 · 共 ${total.toLocaleString()} 条` : "—";
+  $("#prev").disabled = page <= 0;
+  $("#next").disabled = page >= totalPg - 1;
+
+  document.querySelectorAll(".tk[data-sym]").forEach(a => {
+    a.onclick = () => { $("#q").value = a.dataset.sym; applyFilters(); };
+  });
+}
+
+async function init() {
+  try {
+    const r = await fetch("earnings_history.json", {cache: "no-cache"});
+    if (!r.ok) throw new Error("HTTP "+r.status);
+    RAW = await r.json();
+    flatten();
+    const sizeMB = (JSON.stringify(RAW).length / 1024 / 1024).toFixed(2);
+    const today = new Date().toISOString().slice(0,10);
+    const future = FLAT.filter(r => r.date > today).length;
+    $("#status").className = "ok";
+    $("#status").innerHTML = `✅ 加载完成 · <b>${Object.keys(RAW).length}</b> 个 ticker · <b>${FLAT.length.toLocaleString()}</b> 条业绩记录（含 <b>${future}</b> 个未来日期）· ${sizeMB} MB`;
+    $("#tblwrap").style.display = "block";
+    applyFilters();
+  } catch(err) {
+    $("#status").className = "err";
+    $("#status").innerHTML = `❌ 加载失败：${err.message}。<br>如果你刚部署，请先在 GitHub Actions 手动触发 <code>workflow_dispatch</code> 跑一次 <code>fetch_earnings_history.py --full</code> 回填。`;
+  }
+}
+
+document.querySelectorAll("th").forEach(th => {
+  th.onclick = () => {
+    const k = th.dataset.k;
+    if (!k) return;
+    if (sortK === k) sortDir = -sortDir;
+    else { sortK = k; sortDir = (k === "date" || k === "surprise") ? -1 : 1; }
+    applyFilters();
+  };
+});
+$("#q").oninput = () => applyFilters();
+$("#when").onchange = () => applyFilters();
+$("#grp").onchange = () => applyFilters();
+$("#time").onchange = () => applyFilters();
+$("#reset").onclick = () => {
+  $("#q").value = ""; $("#when").value = "all"; $("#grp").value = ""; $("#time").value = "";
+  sortK = "date"; sortDir = -1; applyFilters();
+};
+$("#prev").onclick = () => { page--; render(); window.scrollTo(0,0); };
+$("#next").onclick = () => { page++; render(); window.scrollTo(0,0); };
+document.querySelectorAll(".chip").forEach(b => {
+  b.onclick = () => { $("#q").value = b.dataset.q; applyFilters(); };
+});
+
+init();
+</script>
+</body>
+</html>
