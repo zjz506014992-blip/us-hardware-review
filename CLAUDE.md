@@ -236,9 +236,12 @@ NEWS_TIERS = {
 ```text
 今天美股硬件板块收盘复盘。
 
-【第一步：进仓库 + 拉最新】
-cd /home/user/us-hardware-review && git pull origin main
-（GitHub Actions 已在 UTC 22:30 自动拉好当日 FMP 数据；routine 已绑仓库，git push 走 OAuth 代理无需 token）
+【第 0 步：进仓库 + 强制读 CLAUDE.md】
+1. cd /home/user/us-hardware-review && git pull origin main
+   （GitHub Actions 已在 UTC 22:30 自动拉好当日 FMP 数据；routine 已绑仓库，git push 走 OAuth 代理无需 token）
+2. 用 Read 工具完整读 CLAUDE.md（1300+ 行，一次读完不要分段）。
+   本提示词刻意保持简短，所有细节（INDUSTRY_MAP / KEY_STOCKS schema / NEWS_TIERS schema / 颜色约定 / 避坑规则 / 历史教训）以 CLAUDE.md 为准。
+   提示词与 CLAUDE.md 冲突时，以 CLAUDE.md 为准。
 
 【按 CLAUDE.md 第 4 节 8 步流程执行】
 1. ls -t confirmed_*.json | head -1 → 读最新 JSON（cap 单位是 $M，不是亿）
