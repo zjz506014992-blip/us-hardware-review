@@ -1,0 +1,57 @@
+name: Daily FMP fetch + page rebuild
+
+on:
+  schedule:
+    - cron: '30 22 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      review_date:
+        description: '强制指定交易日 (YYYY-MM-DD)，留空则自动从 FMP 推断'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-fetch
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Fetch FMP /quote
+        id: fetch
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+          REVIEW_DATE: ${{ github.event.inputs.review_date }}
+        run: python fetch_fmp.py
+
+      - name: Generate pages
+        run: python gen.py
+
+      - name: Show diff
+        run: |
+          echo "Changed:"
+          git status --short
+          ls -la confirmed_*.json 2>/dev/null | tail -3 || true
+
+      - name: Commit & push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "No changes"; exit 0
+          fi
+          git add -A
+          git commit -m "auto: FMP daily fetch ${{ steps.fetch.outputs.date }} (hit ${{ steps.fetch.outputs.hit }}/313)"
+          for i in 1 2 3 4; do
+            git push origin main && break || sleep $((2**i))
+          done
