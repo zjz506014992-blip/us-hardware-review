@@ -89,21 +89,40 @@ us-hardware-review/
 2. **板块脉络**：强势板块 + 弱势板块 + 大盘 / SOX / NDX 数字
 3. **后市看点**：本周 / 本月关键数据 + 财报节点
 
-`themes`（3-5 个）：每天挑当日最有信号意义的板块联动。规则：
-- 强催化日（财报潮 / SOX ±2%+）：5 个主题
-- 平淡日：3 个主题
-- 仅纳入子行业 cap-w `|dp| ≥ 0.8%` 的板块（小波动不写）
-- 涉及板块 (`sectors`) 必须是 INDUSTRY_MAP 的 key（24 个之一），可跨多个
+`themes`（3-5 个）：每天挑当日最有信号意义的板块联动。
 
-每个 theme 必填字段：
-- `theme`: 标题，一句话点明逻辑（如 "CPU + AI 服务器联动：算力栈从 GPU 独大切换为三足鼎立"）
-- `sectors`: list[str]，涉及子行业
+#### 5 条 Theme 写作铁律（必须遵守）
+
+1. **数据真实性硬规则** — `driver` / `cross_sector` 里的所有 ticker 涨幅必须从当日 `confirmed_*.json` 取实数。**写完前必须 grep 一遍** `confirmed_{DATE}.json` 验证：
+   ```bash
+   python -c "import json; d=json.load(open('confirmed_{DATE}.json')); [print(s, d['data'][s]['dp']) for s in ['INTC','APH','GLW']]"
+   ```
+   过去翻车案例：把 APH 写成 +2.9% 实际 -0.31%、CIEN 写成 +4.1% 实际 +0.96% — 这种错数据让整个主题立不住。
+
+2. **板块 cap-w 阈值硬规则** — `sectors` 字段里的每个板块，**cap-w |dp| 必须 ≥ 0.8%**。如果板块只有 1 只票动而其他没动，不算 beta。`gen.py` 已加 sanity check：板块 |cap-w| < 0.8% 时渲染会显示 ⚠️ "未形成 beta" warning chip，stdout 也会打印警告 — 看到警告就**回头删掉那个板块或者整个主题重新选**。
+
+3. **不凑数原则** — 宁可写 single-sector theme（只一个板块），也不要硬拉一个 cap-w 不动的板块凑成"X+Y 联动"。**反例：** "光通信 + 连接器 beta"——光通信 +2.89% 是真 beta，连接器板块 +1.10% 跑输大盘 +3.26%、龙头 APH/TEL 还在跌，把连接器拉进来就是凑数，主题立不住。**正例：** "光通信板块 beta" 单板块即可，连接器在 cross_sector 里写明"明确不联动"。
+
+4. **跨标签真实经济概念** — 当一个真实经济概念跨越 INDUSTRY_MAP 多个标签（典型如 "CPU 设计"：INTC 在"CPU处理器"、ARM/QCOM 在"Fabless设计"、AMD 在"AI加速"），`sectors` 字段写全所有相关标签，**driver 必须明确说明"为什么这些标签放一起"**——不要写 "CPU + Fabless 板块 beta" 这种把 INDUSTRY_MAP 标签当主题名的偷懒写法，要写 "CPU 设计板块 beta" + driver 里点出"池里这些公司分布在 X/Y/Z 三个标签下，但本质是同一组 CPU/SoC 设计公司"。
+
+5. **特例点名（INDUSTRY_MAP 归类粗糙的票）** — 池子里有些票（典型 GLW 归"连接器元件"但 Corning 业务跨光纤/玻璃/陶瓷、AMD 归"AI 加速"但同时是 CPU 设计公司）当天驱动可能跨主题，driver 里要明确标注："虽然池里我们归类 X 子行业（因为 业务 Y），但当天 +N% 的实际驱动来自 Z 业务，**实质属于本主题**"。这种点名比例每天不超过 1-2 个，超过说明 INDUSTRY_MAP 该重新切了。
+
+#### 必填字段
+
+- `theme`: 标题，一句话点明唯一逻辑（**避免 "X+Y 板块联动" 模糊式标题，要 "XX 板块 beta：一句话点逻辑"**）
+- `sectors`: list[str]，涉及子行业（INDUSTRY_MAP 的 key，每个必须满足铁律 2 的阈值）
 - `sentiment`: "bull" 或 "bear"
 - `driver`: 共同驱动叙事，**200-400 字**，最核心
-- `cross_sector`: 跨板块联动，**50-150 字**，强制要写（不是可选）
+- `cross_sector`: 跨板块联动，**50-150 字**，强制要写（包括"明确不联动"的负面观察）
 - `duration`: 时效判断，30-80 字（短期催化 vs 长期趋势）
 
-写作风格：
+#### 主题数量规则
+
+- 强催化日（财报潮 / SOX ±2%+）：5 个主题
+- 平淡日：3 个主题
+
+#### 写作风格
+
 - 用具体数字（共识 EPS / 营收 / cap-w dp / top movers ±%）
 - 用具体公司动作（"X 公司 Q1 财报营收 $XB +X% YoY，引爆 Y 板块"）
 - 不写空话（避免"持续观察、关注后续"等模糊用语）
