@@ -6,7 +6,8 @@ import json, hashlib, os
 REPO_DIR = os.path.dirname(os.path.abspath(__file__))
 
 DATE = "2026-04-24"
-FMP_API_KEY = "TFlPg3ERKdBHDHnIH0qdC71330WvHsY3"
+# FMP_API_KEY: 从 GitHub Secrets / shell env 读, fetch_*.py 用 os.environ.get('FMP_API_KEY').
+# 这里不再硬编码 (calendar.html / earnings.html 已改为读本地 JSON, 客户端不再需要 key).
 
 # 当日宏观/指数数据（每日手动更新或 FMP 自动拉取）
 # 格式: [(代码, 名称, 收盘, 涨跌%, 备注)]
