@@ -150,6 +150,7 @@ const POOL_SET = new Set(Object.keys(POOL));
 let HISTORY = {};       // sym -> [records]
 let PROFILES = {};      // sym -> profile
 let BRIEFS = {};        // "SYM_DATE" -> {summary_cn, thesis_cn, ...}
+let CAPS = {};          // sym -> market cap ($M) 用于模态框排序
 let BY_DATE = {};       // "2026-04-29" -> [{symbol, time, eps, ...}, ...]
 let cur = new Date();
 cur.setDate(1);
@@ -281,9 +282,16 @@ function openDay(date) {
   const evs = groupFilter
     ? events.filter(e => POOL[e.symbol] && POOL[e.symbol][1] === groupFilter)
     : events;
+  // 按市值降序排（CAPS 单位 $M, 缺失视为 0 排到底）;
+  // 市值相同时再按 BMO/DMH/AMC 时点 + ticker 字母排序兜底
   evs.sort((a,b) => {
+    const ca = CAPS[a.symbol] || 0, cb = CAPS[b.symbol] || 0;
+    if (cb !== ca) return cb - ca;
     const o = {bmo:0,dmh:1,amc:2};
-    return (o[(a.time||"").toLowerCase()]||1) - (o[(b.time||"").toLowerCase()]||1);
+    const ta = o[(a.time||"").toLowerCase()] ?? 1;
+    const tb = o[(b.time||"").toLowerCase()] ?? 1;
+    if (ta !== tb) return ta - tb;
+    return a.symbol.localeCompare(b.symbol);
   });
   const dow = cn[new Date(date+"T00:00:00").getDay()];
   $("#dlg-title").textContent = `📅 ${date} 周${dow} · ${evs.length} 家硬件公司业绩`;
@@ -374,7 +382,7 @@ async function load() {
       if (!r.ok) throw new Error("earnings_history.json HTTP "+r.status);
       HISTORY = await r.json();
       buildIndex();
-      // 异步加载 profiles + briefs，失败也不阻塞渲染
+      // 异步加载 profiles + briefs + 当日 confirmed (用于市值排序)，失败也不阻塞渲染
       fetch("company_profiles.json", {cache: "no-cache"})
         .then(r => r.ok ? r.json() : {})
         .then(p => { PROFILES = p; })
@@ -382,6 +390,14 @@ async function load() {
       fetch("earnings_briefs.json", {cache: "no-cache"})
         .then(r => r.ok ? r.json() : {})
         .then(b => { BRIEFS = b; })
+        .catch(() => {});
+      fetch("confirmed_2026-04-24.json", {cache: "no-cache"})
+        .then(r => r.ok ? r.json() : null)
+        .then(j => {
+          if (j && j.data) {
+            for (const sym in j.data) { CAPS[sym] = j.data[sym].cap || 0; }
+          }
+        })
         .catch(() => {});
     }
     const monthHits = renderCal();
