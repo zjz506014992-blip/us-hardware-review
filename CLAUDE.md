@@ -78,6 +78,8 @@ us-hardware-review/
    | `BROAD_INDICES` | gen.py 第 11 行 | SPX/NDX/DJI/RUT/VIX/DXY/US10Y/WTI 收盘+涨跌 | WebSearch（FMP 没有指数实时） |
    | `SEMI_INDICES` | gen.py 第 23 行 | SOX/SOXX/SMH/XSD/PSI 收盘+涨跌 | WebSearch |
    | `GICS_INDICES` | gen.py 第 32 行 | XLK/XLC/XLY/XLF/XLI/XLB/XLRE/XLV/XLU/XLP/XLE 收盘+涨跌 | WebSearch |
+   | **`STYLE_FACTORS`** | gen.py 第 48 行起 | **IWF/IWD/MTUM/SPLV/QUAL/RSP 6 个因子 ETF 收盘+涨跌** | **WebSearch** |
+   | **`MARKET_STRUCTURE`** | gen.py 第 60 行起 | **`narrative` 字段：市场结构 + 风格因子综合解读 100-300 字** | **基于 4 个自动算的比值（普涨度 RSP/SPX、科技强度 NDX/SPX、半导体强度 SOX/NDX、硬件池强度 Pool/SOX）+ 风格因子领跑情况，自己写** |
    | `KEY_STOCKS` | gen.py 第 64 行起 | 8 张重点个股深度卡 | 从 FMP JSON 取 dp/close/cap，叙事自己写 |
    | **`SECTOR_BETA`** | gen.py 第 437 行起 | **当日核心叙事 (`tldr`) + 3-5 个板块联动主题 (`themes`)** | **从 FMP JSON 算子行业 cap-w 涨跌，叙事自己写。详见下方 schema** |
    | `NEWS_TIERS` | gen.py 接近末尾 | Tier 1（宏观/大盘）/ Tier 2（半导体深度）/ Tier 3（亚洲供应链）/ Tier 4（公司公告/分析师评级） | WebSearch + 你的判断 |
@@ -126,6 +128,23 @@ us-hardware-review/
 - 用具体数字（共识 EPS / 营收 / cap-w dp / top movers ±%）
 - 用具体公司动作（"X 公司 Q1 财报营收 $XB +X% YoY，引爆 Y 板块"）
 - 不写空话（避免"持续观察、关注后续"等模糊用语）
+
+### `MARKET_STRUCTURE` 写作要点
+
+`narrative` 字段（100-300 字，分 3 段）：
+
+**第 1 段：市场结构**（用 4 个比值，gen.py 自动算并显示在 KPI 卡里，narrative 里要把比值含义讲清）：
+- 普涨度 RSP/SPX：≥ 1 普涨；0.7-1 偏窄；< 0.7 极窄幅（仅头部权重股拉指数）
+- 科技强度 NDX/SPX：≥ 1.2 科技独强；0.8-1.2 跟涨；< 0.8 科技跑输
+- 半导体强度 SOX/NDX：≥ 2 远超；1.2-2 超配；0.8-1.2 跟涨；< 0.8 跑输
+- 硬件池强度 Pool/SOX：≥ 1 硬件池跑赢 SOX（中小盘强）；< 0.7 跑输（仅大盘股拉动）
+
+**第 2 段：风格因子**：哪个因子领跑（`STYLE_FACTORS` 排序后取最高），Growth vs Value 比值，今日是 Risk-On / Risk-Off / 防御抬升 哪种结构。常见组合：
+- 动量 + 成长 + 低波下行 → 典型 Risk-On
+- 价值 + 低波 + 质量上行 → Risk-Off / 防御
+- 动量 + 质量 + 价值同向 → 普涨基本面 rally
+
+**第 3 段：综合判断**：用一句话给出"今日属于哪一类历史模式"+ 后市风险点（如"窄幅领涨脆弱性，关注 MTUM 与 SOX 拐点"）
 
 5. **跑生成**：`python gen.py`
 
