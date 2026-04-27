@@ -1432,7 +1432,10 @@ h1{{font-size:1.45rem;margin-bottom:4px}}
 .ec-eps .v{{color:#e6edf3;font-weight:600;font-size:.95rem}}
 .ec-eps .beat{{color:#3fb950}}
 .ec-eps .miss{{color:#f85149}}
-.ec-desc{{color:#c9d1d9;font-size:.85rem;line-height:1.65;margin-bottom:8px}}
+.ec-section{{margin-bottom:10px}}
+.ec-stitle{{font-size:.78rem;color:#79c0ff;font-weight:600;margin-bottom:4px;text-transform:none;letter-spacing:0}}
+.ec-stitle.thesis{{color:#3fb950}}
+.ec-desc{{color:#c9d1d9;font-size:.85rem;line-height:1.7;white-space:pre-wrap}}
 .ec-desc.muted{{color:#8b949e;font-style:italic}}
 .ec-foot{{display:flex;flex-wrap:wrap;gap:14px;font-size:.75rem;color:#8b949e;padding-top:8px;border-top:1px solid #21262d}}
 .ec-foot a{{color:#58a6ff;text-decoration:none}}
@@ -1500,6 +1503,7 @@ const POOL = {pool_js};
 const POOL_SET = new Set(Object.keys(POOL));
 let HISTORY = {{}};       // sym -> [records]
 let PROFILES = {{}};      // sym -> profile
+let BRIEFS = {{}};        // "SYM_DATE" -> {{summary_cn, thesis_cn, ...}}
 let BY_DATE = {{}};       // "2026-04-29" -> [{{symbol, time, eps, ...}}, ...]
 let cur = new Date();
 cur.setDate(1);
@@ -1540,7 +1544,7 @@ function buildIndex() {{
     for (const r of HISTORY[sym]) {{
       if (!r.date) continue;
       (BY_DATE[r.date] = BY_DATE[r.date] || []).push({{
-        symbol: sym, time: r.time, eps: r.eps, epsEstimated: r.epsEstimated,
+        symbol: sym, date: r.date, time: r.time, eps: r.eps, epsEstimated: r.epsEstimated,
         revenue: r.revenue, revenueEstimated: r.revenueEstimated,
       }});
     }}
@@ -1655,10 +1659,25 @@ function renderCard(e) {{
   const sStr = s==null ? "—" : (s>=0?"+":"")+s.toFixed(1)+"%";
 
   const p = PROFILES[e.symbol] || {{}};
+  const b = BRIEFS[e.symbol + "_" + (e.date || "")] || BRIEFS[e.symbol] || {{}};
   const name = p.name ? escapeHTML(p.name) : e.symbol;
-  const desc = p.description
-    ? `<div class="ec-desc">${{escapeHTML(p.description)}}</div>`
-    : `<div class="ec-desc muted">暂无公司简介（运行 fetch_earnings_history.py --profiles 拉取）。</div>`;
+
+  // 公司简介: 优先中文 brief, fallback FMP 英文 description
+  let descHTML = "";
+  if (b.summary_cn) {{
+    descHTML = `<div class="ec-section"><div class="ec-stitle">📋 公司简介</div><div class="ec-desc">${{escapeHTML(b.summary_cn)}}</div></div>`;
+  }} else if (p.description) {{
+    descHTML = `<div class="ec-section"><div class="ec-stitle">📋 公司简介 <span class="muted" style="font-weight:400">（FMP 英文）</span></div><div class="ec-desc">${{escapeHTML(p.description)}}</div></div>`;
+  }} else {{
+    descHTML = `<div class="ec-section"><div class="ec-desc muted">暂无公司简介（待 fetch_earnings_history.py --profiles 拉取）。</div></div>`;
+  }}
+
+  // 投资看点: 仅在有 brief.thesis_cn 时显示
+  let thesisHTML = "";
+  if (b.thesis_cn) {{
+    thesisHTML = `<div class="ec-section"><div class="ec-stitle thesis">📊 本季投资看点</div><div class="ec-desc">${{escapeHTML(b.thesis_cn)}}</div></div>`;
+  }}
+
   const img = p.image
     ? `<img src="${{escapeHTML(p.image)}}" alt="${{escapeHTML(e.symbol)}}" onerror="this.style.display='none'">`
     : `<img src="data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><rect width=%2240%22 height=%2240%22 fill=%22%231c2128%22/></svg>" alt="">`;
@@ -1690,7 +1709,8 @@ function renderCard(e) {{
       <div><div class="lbl">营收预期</div><div class="v">${{revFmt(e.revenueEstimated)}}</div></div>
       <div><div class="lbl">营收实际</div><div class="v">${{revFmt(e.revenue)}}</div></div>
     </div>
-    ${{desc}}
+    ${{thesisHTML}}
+    ${{descHTML}}
     <div class="ec-foot">${{footParts.join("")}}</div>
   </div>`;
 }}
@@ -1708,10 +1728,14 @@ async function load() {{
       if (!r.ok) throw new Error("earnings_history.json HTTP "+r.status);
       HISTORY = await r.json();
       buildIndex();
-      // 异步加载 profiles，失败也不阻塞渲染
+      // 异步加载 profiles + briefs，失败也不阻塞渲染
       fetch("company_profiles.json", {{cache: "no-cache"}})
         .then(r => r.ok ? r.json() : {{}})
         .then(p => {{ PROFILES = p; }})
+        .catch(() => {{}});
+      fetch("earnings_briefs.json", {{cache: "no-cache"}})
+        .then(r => r.ok ? r.json() : {{}})
+        .then(b => {{ BRIEFS = b; }})
         .catch(() => {{}});
     }}
     const monthHits = renderCal();
