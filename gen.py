@@ -45,6 +45,24 @@ GICS_INDICES = [
     ('XLE',  '能源 Energy',          '$92.60',  -1.55, '油价回落 -1.8%'),
 ]
 
+# 风格因子 ETF（5 因子 + 等权基准）—— 看今日哪个因子领跑、市场是普涨还是窄涨
+# 格式同 BROAD_INDICES: (代码, 名称, 收盘, 涨跌%, 备注)
+STYLE_FACTORS = [
+    ('IWF',  'Russell 1000 Growth',     '$430.20', 2.30,  '成长因子 — 大盘成长'),
+    ('IWD',  'Russell 1000 Value',      '$192.10', 0.45,  '价值因子 — 大盘价值'),
+    ('MTUM', 'iShares Momentum Factor', '$220.50', 3.15,  '动量因子 — 强者恒强'),
+    ('SPLV', 'S&P 500 Low Volatility',  '$72.80',  -0.25, '低波因子 — 防御'),
+    ('QUAL', 'iShares Quality Factor',  '$160.40', 1.65,  '质量因子 — 高 ROE / 低杠杆'),
+    ('RSP',  'S&P 500 Equal Weight',    '$175.20', 0.80,  '等权基准 — 普涨/窄涨标尺'),
+]
+
+# 市场结构与风格因子叙事（每日 routine 维护 narrative，4 个比值由 gen.py 自动算）
+# narrative: 综合解读 100-200 字，连接"普涨/窄涨"+"科技独强/全跟"+"半导体相对科技强弱"
+#            +"今日哪个风格因子领跑"，给出一句宏观判断
+MARKET_STRUCTURE = {
+    'narrative': '<b>市场结构</b>：当日 RSP 等权 +0.80% vs SPX +1.50%，比值 0.53 → <b>明显窄幅领涨</b>，市值前列大盘股贡献了大部分指数涨幅；NDX +1.90% / SPX +1.50% = 1.27x，<b>科技独强</b>但非孤立行情；SOX +5.00% / NDX +1.90% = 2.63x，<b>半导体远超科技整体</b>，是当日真正的领涨核心；硬件池 cap-w +3.26% / SOX +5.00% = 0.65x，跑输 SOX 但跑赢科技整体，反映半导体大盘股（INTC/AMD/ARM/QCOM 等大权重）领涨而中小盘硬件涨幅相对温和。<br><br><b>风格因子</b>：动量因子 (MTUM) +3.15% 单日领跑，明确印证"强者恒强"行情——AI 算力链龙头（NVDA/AMD/INTC）连续创新高带动动量因子。成长 (IWF +2.30%) 远超价值 (IWD +0.45%)，<b>Growth>Value 5x</b>，典型 Risk-On；低波因子 (SPLV) -0.25% 微跌，资金从防御标的轮出。质量因子 (QUAL +1.65%) 中性表现，市场不严格挑剔基本面。<br><br><b>综合判断</b>：典型晚周期 Risk-On + 动量驱动 + 半导体单点炸裂的组合，与历史"FOMC 鸽派路径强化 + 财报季 beat + AI capex 持续超预期"的组合相似（如 2023Q3、2024Q2）。短期需警惕窄幅领涨的脆弱性 —— 一旦 SOX/NDX 单日大跌将拖累整个 momentum 资金流，建议关注 MTUM 与 SOX 的相对强弱拐点。',
+}
+
 # 行业大会日历（常量，每年初维护一次）
 INDUSTRY_EVENTS = [
     ('2026-01-06', '2026-01-09', 'CES 2026 拉斯维加斯', '消费电子大展，AI PC/Robot/汽车'),
@@ -972,6 +990,70 @@ def write_html(data):
     else:
         sector_analysis += ' 板块间无明显风格分化，市场整体方向性较弱。'
 
+    # === 市场结构 4 个比值（B 板块轮动周期） + 风格因子表（C 因子）自动算 ===
+    style_rows = ''.join(idx_row(t) for t in STYLE_FACTORS)
+    style_sorted = sorted(STYLE_FACTORS, key=lambda x: -x[3])
+    style_winner = style_sorted[0]  # 今日领跑因子
+    style_loser = style_sorted[-1]  # 今日垫底因子
+
+    # 取关键比值（用 dict 取值容错，缺失值显示 —）
+    spx_dp = next((t[3] for t in BROAD_INDICES if t[0] == 'SPX'), None)
+    ndx_dp = next((t[3] for t in BROAD_INDICES if t[0] == 'NDX'), None)
+    sox_dp = next((t[3] for t in SEMI_INDICES if t[0] == 'SOX'), None)
+    rsp_dp = next((t[3] for t in STYLE_FACTORS if t[0] == 'RSP'), None)
+    pool_dp = totals.get('cap_w')
+
+    def safe_ratio(num, den):
+        if num is None or den is None or den == 0: return None
+        return num / den
+
+    breadth_ratio = safe_ratio(rsp_dp, spx_dp)      # RSP/SPX 普涨度（>1 普涨，<0.7 窄幅）
+    tech_ratio = safe_ratio(ndx_dp, spx_dp)         # NDX/SPX 科技独强度
+    semi_ratio = safe_ratio(sox_dp, ndx_dp)         # SOX/NDX 半导体相对科技
+    pool_ratio = safe_ratio(pool_dp, sox_dp)        # Pool/SOX 硬件池相对半导体大盘
+
+    def kpi_card(label, num, den, ratio, num_label, den_label, interp_func):
+        if ratio is None:
+            return f'<div class="card"><div class="lbl">{label}</div><div class="val muted">—</div></div>'
+        col = '#e57373' if ratio >= 1 else ('#43a047' if ratio < 0.5 else '#c9d1d9')
+        interp = interp_func(ratio)
+        n_str = f'{num:+.2f}%' if num is not None else '—'
+        d_str = f'{den:+.2f}%' if den is not None else '—'
+        return f'''<div class="card">
+  <div class="lbl">{label}</div>
+  <div style="font-size:1.4rem;font-weight:700;color:{col};margin-top:4px">{ratio:.2f}x</div>
+  <div style="font-size:.72rem;color:#8b949e;margin-top:2px">{num_label} {n_str} ÷ {den_label} {d_str}</div>
+  <div style="font-size:.74rem;color:#c9d1d9;margin-top:6px;padding-top:6px;border-top:1px solid #30363d">{interp}</div>
+</div>'''
+
+    breadth_kpi = kpi_card(
+        '📊 普涨度 RSP/SPX', rsp_dp, spx_dp, breadth_ratio, 'RSP', 'SPX',
+        lambda r: '<b>普涨</b>（等权 ≥ 大盘加权）' if r >= 1 else (
+                  '<b>偏窄</b>（中小盘跟不上）' if r >= 0.7 else
+                  '<b>极窄幅</b>（仅头部权重股拉指数）'),
+    )
+    tech_kpi = kpi_card(
+        '🚀 科技强度 NDX/SPX', ndx_dp, spx_dp, tech_ratio, 'NDX', 'SPX',
+        lambda r: '<b>科技独强</b>（NDX 领跑）' if r >= 1.2 else (
+                  '<b>科技跟涨</b>（与大盘同步）' if r >= 0.8 else
+                  '<b>科技跑输</b>（其他板块强）'),
+    )
+    semi_kpi = kpi_card(
+        '⚡ 半导体强度 SOX/NDX', sox_dp, ndx_dp, semi_ratio, 'SOX', 'NDX',
+        lambda r: '<b>半导体远超</b>（AI 算力领涨）' if r >= 2 else (
+                  '<b>半导体超配</b>（强于科技整体）' if r >= 1.2 else
+                  '<b>半导体跟涨</b>（与科技同节奏）' if r >= 0.8 else
+                  '<b>半导体跑输</b>（板块走弱）'),
+    )
+    pool_kpi = kpi_card(
+        '🖥️ 硬件池强度 Pool/SOX', pool_dp, sox_dp, pool_ratio, 'Pool', 'SOX',
+        lambda r: '<b>硬件池跑赢 SOX</b>（中小盘强于大盘）' if r >= 1 else (
+                  '<b>跟随 SOX</b>（同节奏）' if r >= 0.7 else
+                  '<b>跑输 SOX</b>（半导体大盘股领涨而中小盘跟不上）'),
+    )
+    market_structure_kpis = breadth_kpi + tech_kpi + semi_kpi + pool_kpi
+    market_structure_narrative = MARKET_STRUCTURE.get('narrative', '<i style="color:#8b949e">市场结构叙事维护中…</i>')
+
     html = f'''<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -1082,6 +1164,26 @@ tr:hover td{{background:#1c2128}}
   <div style="margin-top:14px;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px;font-size:.87rem;color:#c9d1d9;line-height:1.7">
     <b style="color:#e6edf3">🎯 跨行业风格分析：</b>
     {sector_analysis}
+  </div>
+</div>
+
+<div class="section">
+  <div class="title">🔄 市场结构 + 风格因子（板块轮动周期 + 5 因子领跑判断）</div>
+
+  <div style="font-size:.82rem;color:#8b949e;margin-bottom:8px;font-weight:600">📐 4 个比值快照（自动算）</div>
+  <div class="stats" style="margin-bottom:18px">
+    {market_structure_kpis}
+  </div>
+
+  <div style="font-size:.82rem;color:#8b949e;margin:14px 0 6px;font-weight:600">🎨 风格因子 ETF（5 因子 + 等权基准）</div>
+  <table>
+    <thead><tr><th>代码</th><th>名称</th><th>收盘</th><th>涨跌</th><th>备注</th></tr></thead>
+    <tbody>{style_rows}</tbody>
+  </table>
+
+  <div style="margin-top:14px;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:14px;font-size:.87rem;color:#c9d1d9;line-height:1.85">
+    <b style="color:#e6edf3">💬 综合解读：</b>
+    {market_structure_narrative}
   </div>
 </div>
 
