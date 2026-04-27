@@ -71,7 +71,7 @@ us-hardware-review/
 
 3. **看当日 stats**：读 `_meta.json` 最新一条，确认 cap_w / up / down 数字。
 
-4. **更新 gen.py 里的 4 块叙事数据**（**只动 dict，别动函数**）：
+4. **更新 gen.py 里的 5 块叙事数据**（**只动 dict，别动函数**）：
 
    | 块 | 行号附近 | 字段 | 数据源 |
    |---|---|---|---|
@@ -79,7 +79,34 @@ us-hardware-review/
    | `SEMI_INDICES` | gen.py 第 23 行 | SOX/SOXX/SMH/XSD/PSI 收盘+涨跌 | WebSearch |
    | `GICS_INDICES` | gen.py 第 32 行 | XLK/XLC/XLY/XLF/XLI/XLB/XLRE/XLV/XLU/XLP/XLE 收盘+涨跌 | WebSearch |
    | `KEY_STOCKS` | gen.py 第 64 行起 | 8 张重点个股深度卡 | 从 FMP JSON 取 dp/close/cap，叙事自己写 |
+   | **`SECTOR_BETA`** | gen.py 第 437 行起 | **当日核心叙事 (`tldr`) + 3-5 个板块联动主题 (`themes`)** | **从 FMP JSON 算子行业 cap-w 涨跌，叙事自己写。详见下方 schema** |
    | `NEWS_TIERS` | gen.py 接近末尾 | Tier 1（宏观/大盘）/ Tier 2（半导体深度）/ Tier 3（亚洲供应链）/ Tier 4（公司公告/分析师评级） | WebSearch + 你的判断 |
+
+### `SECTOR_BETA` 写作要点（最重要的叙事块）
+
+`tldr`（当日核心叙事）：300-500 字，用 `<br><br>` 分 3 段：
+1. **核心叙事**：今日最大事件 + 引爆点；强调"是 board beta 而非个股 alpha"
+2. **板块脉络**：强势板块 + 弱势板块 + 大盘 / SOX / NDX 数字
+3. **后市看点**：本周 / 本月关键数据 + 财报节点
+
+`themes`（3-5 个）：每天挑当日最有信号意义的板块联动。规则：
+- 强催化日（财报潮 / SOX ±2%+）：5 个主题
+- 平淡日：3 个主题
+- 仅纳入子行业 cap-w `|dp| ≥ 0.8%` 的板块（小波动不写）
+- 涉及板块 (`sectors`) 必须是 INDUSTRY_MAP 的 key（24 个之一），可跨多个
+
+每个 theme 必填字段：
+- `theme`: 标题，一句话点明逻辑（如 "CPU + AI 服务器联动：算力栈从 GPU 独大切换为三足鼎立"）
+- `sectors`: list[str]，涉及子行业
+- `sentiment`: "bull" 或 "bear"
+- `driver`: 共同驱动叙事，**200-400 字**，最核心
+- `cross_sector`: 跨板块联动，**50-150 字**，强制要写（不是可选）
+- `duration`: 时效判断，30-80 字（短期催化 vs 长期趋势）
+
+写作风格：
+- 用具体数字（共识 EPS / 营收 / cap-w dp / top movers ±%）
+- 用具体公司动作（"X 公司 Q1 财报营收 $XB +X% YoY，引爆 Y 板块"）
+- 不写空话（避免"持续观察、关注后续"等模糊用语）
 
 5. **跑生成**：`python gen.py`
 

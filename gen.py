@@ -436,6 +436,47 @@ NEWS_TIERS = {
     },
 }
 
+# 板块 Beta 解读（每日 routine 维护）
+# tldr: 当日核心叙事（300-500 字增强版，结构化阐述大盘 / 板块联动 / 后市看点）
+# themes: 3-5 个 sector beta 主题，挑当日最有信号意义的板块联动
+#         规则：仅纳入 cap-w |dp| ≥ 0.8% 的板块；强催化日可放 5 个，平淡日 3 个
+# 每个 theme 字段：
+#   theme: 主题名（一句话点明逻辑，如 "CPU + AI 服务器联动"）
+#   sectors: list[str] 涉及的子行业（必须是 INDUSTRY_MAP 的 key）
+#   sentiment: "bull" 或 "bear"（决定标题色，红=涨/绿=跌 中国习惯）
+#   driver: 共同驱动叙事，200-400 字（最核心）
+#   cross_sector: 跨板块联动观察，50-150 字（强制要写）
+#   duration: 时效判断，30-80 字（短期催化 vs 长期趋势）
+SECTOR_BETA = {
+    'tldr': '<b>核心叙事</b>：Intel Q1 2026 财报炸裂引爆全板块——EPS $0.29（共识 $0.01，超 29 倍）、营收 $13.58B、Q2 指引 $13.8–14.8B 三杀超预期，<b class="up">INTC +23.60%</b> 创 2000 年以来历史新高。这不是单只股票的 alpha，而是 <b>CPU 板块 beta 重新被市场定价</b>——Grace CPU 在 GB200 NVL72 单台 $30 万 BOM 占比 ~12%（36 颗 Grace × $1000），AI 算力栈从 "GPU 一家独大" 切换为 "CPU + GPU + Networking" 三足鼎立。<br><br><b>板块脉络</b>：<b class="up">CPU/Fabless 设计</b> 是当日最强 beta（INTC +23.6%、AMD +13.9%、ARM +14.31%、QCOM +10.30% 同向）；<b class="up">AI 服务器 ODM</b>（SMCI/DELL/HPE）次强，反映 GB200 量产订单；<b class="up">存储</b> (MU/STX/SNDK) 跟涨 4-6%，AI 服务器内存配比指数级跃升。SOX <b class="up">+5.0%</b> 录得史上最长 18 连阳；NDX <b class="up">+1.9%</b> 创新高。弱势板块仅 <b class="down">能源电池 -2.1%</b>（ENPH 业绩前抛压）。<br><br><b>后市看点</b>：5/6 ARM 财报（v9 royalty rate）+ 5/28 NVDA 财报（DCAI 营收 + Q2 指引），是验证 CPU beta 故事是否延续的关键节点；6 月 Computex 是 AI 服务器供应链全面定价窗口。',
+    'themes': [
+        {
+            'theme': '🔥 CPU + Fabless 设计板块 beta：AI 服务器算力栈从 "GPU 独大" 切换为 "CPU + GPU + Networking"',
+            'sectors': ['CPU处理器', 'Fabless设计'],
+            'sentiment': 'bull',
+            'driver': 'INTC Q1 2026 财报全面超预期（EPS $0.29 vs 共识 $0.01、营收 $13.58B、Q2 指引 $13.8–14.8B），DCAI 数据中心 + AI 业务营收 +35% YoY 是核心拉动。市场把这一信号外溢至整个 CPU/Fabless 设计板块——GB200 NVL72 单台配 36 颗 Grace CPU × $1000 + 72 颗 B200 GPU × $40000 + Spectrum-X 互联，CPU 在 AI 算力栈的话语权从 "辅助" 升级为 "三足鼎立"。AMD 受益 EPYC Turin 在超大规模云厂商订单延续（共识 Q1 26 数据中心营收 +85% YoY）；ARM 受益 v9 royalty rate 从 1.5% 提升至 2.5%（7 家券商联合上调目标价至 $245）；QCOM 受益 Snapdragon X Elite 在 Microsoft Surface/Dell/HP 出货翻倍（IoT/PC 业务 $1.5B +25% YoY）。整个板块从 2024 H2 至 2025 全年的 "AI = NVDA only" 单极叙事，切换至多极算力供给。',
+            'cross_sector': '联动板块：① <b>AI 服务器</b>（SMCI +5.4% / DELL +3.8% / HPE +3.2%）是直接受益方 ② <b>存储器件</b>（MU +4.3% / STX +5.2% / SNDK +6.1%）AI 服务器单机内存配比 1TB→4TB ③ <b>半导体设备</b>（KLAC +2.8% / AMAT +2.2% / LRCX +1.9%）2nm/HBM4 新一轮 capex 周期。这 4 个板块共同反映"AI 算力 capex 多元化扩张"主线。',
+            'duration': '本季业绩窗口期内强 catalyst（5/28 NVDA / 5/6 ARM / 6 月 Computex）；6-12 个月看 ASIC 化（Google TPU v7 / Meta MTIA / AWS Trainium 3）对通用 CPU/GPU 的替代速度，可能从 H2 26 开始反转。',
+        },
+        {
+            'theme': '🔥 光通信 + 连接器 beta：800G/1.6T 互联升级是 AI capex 的隐形大头',
+            'sectors': ['光通信', '连接器元件'],
+            'sentiment': 'bull',
+            'driver': 'MaxLinear (MXL +76.12%) 单日涨幅冠军引爆光通信叙事——Keystone 800G/1.6T DSP 锁定 hyperscaler 2026H2 量产订单 + Annapurna 铜缆 retimer 受 NVDA Blackwell 架构带动。市场重新认识到：在 AI 服务器 BOM 中，光模块 + 高速 cable 占比从 "辅助" 升至 ~15%（GB200 NVL72 内仅 NVLink cable 价值 $5 万/台），是仅次于 GPU 的第二大成本项。CIEN +4.1% / COHR +3.6% / FN +3.2% / CRDO +5.8% 集体跟涨。Amphenol (APH +2.9%) 作为 224G backplane connector 龙头，被 NVIDIA GB300 NVL72 锁定为独家供应。同时 Coherent 1.6T 光模块路线图被市场重新计入估值，2024-2025 因 NVDA Spectrum-X 替代 InfiniBand 担忧造成的折价正在修复。',
+            'cross_sector': '联动板块：① <b>EMS 制造</b>（CLS +3.2% / FLEX +2.4%）是 AI 服务器 ODM 直接受益 ② <b>测试仪器</b>（VIAV +2.1% / KEYS +1.8%）800G/1.6T 光模块测试设备需求 ③ <b>晶圆代工</b>（TSM +1.5%）所有光通信 DSP 都跑在 7nm/5nm 节点。形成 "AI 算力 capex → 光通信全产业链" 完整传导。',
+            'duration': '光模块 ASP 在 800G→1.6T 切换中提升 2.5 倍，Coherent / MXL / FN 等龙头 2026-2027 年订单可见度高；中期看光交换 (silicon photonics 集成度) 是否颠覆传统模块化路线。',
+        },
+        {
+            'theme': '🟢 户用太阳能 + 能源电池 beta：政策不确定性 + 业绩前抛压',
+            'sectors': ['能源电池'],
+            'sentiment': 'bear',
+            'driver': 'ENPH (-3.2%) 引领能源电池板块走弱，4/28 业绩前市场担忧三个层面：① 特朗普政府对 IRA 法案 30% ITC 税收抵免态度未明，住宅太阳能行业生死线 ② 加州 NEM 3.0 改革后装机大幅下滑，是否触底待 Q1 数据验证 ③ 部分零部件依赖中国，关税升级影响成本结构。NVX/ELBM/ASTI 等小盘储能厂商同步下跌 4-6%，反映板块整体的政策敏感度。这是当日全池极少数下跌板块（仅 -2.1% cap-w），与上涨主线形成对照。',
+            'cross_sector': '联动板块：① <b>消费电子</b> 中部分小盘（VUZI / WLDS）也因关税担忧下跌 ② <b>分销渠道</b>（PLUS / NSIT）服务于太阳能项目的 IT 分销商订单可见度下降。属于 "政策风险板块" 集群。',
+            'duration': '4/28 ENPH 财报是关键，若 EPS $0.43 共识达成 + Q2 指引平稳，可能触发短期反弹；中期看 IRA 法案修订进度（共和党控制国会下能否保留 ITC）。',
+        },
+    ],
+}
+
 # 内容在文件后部分批补充
 
 # 宏观日历（每周更新一次或 FMP 自动拉取）
@@ -804,6 +845,70 @@ def write_html(data):
 </div>'''
     key_stocks_html = '\n'.join(render_stock_card(s) for s in KEY_STOCKS) if KEY_STOCKS else '<div style="padding:30px;text-align:center;color:#8b949e">📝 重点个股深度解读维护中…</div>'
 
+    # === 子行业 Beta 计算（cap 加权 dp + top movers） ===
+    sector_betas = {}  # sub_industry -> {dp, n, group, members: [(sym, dp, cap), ...]}
+    for st in data['stocks']:
+        sub = st['ind']
+        sector_betas.setdefault(sub, {'group': SUB_TO_GROUP.get(sub, ''), 'members': []})
+        sector_betas[sub]['members'].append((st['s'], st['dp'], st['cap']))
+    for sub, info in sector_betas.items():
+        members = info['members']
+        total_cap = sum(c for _, _, c in members) or 1
+        info['dp'] = sum(dp * c for _, dp, c in members) / total_cap
+        info['n'] = len(members)
+        # top movers: 按 |dp| × log(cap) 排序，取 4-6 个
+        members.sort(key=lambda x: -abs(x[1]) * (x[2] ** 0.5))
+        info['top_movers'] = members[:6]
+
+    # 板块脉络条：cap-w |dp| ≥ 0.8% 的板块，强弱各取 Top 5
+    sectors_sorted = sorted(sector_betas.items(), key=lambda kv: -kv[1]['dp'])
+    bull_sectors = [(s, i) for s, i in sectors_sorted if i['dp'] >= 0.8][:5]
+    bear_sectors = [(s, i) for s, i in sectors_sorted if i['dp'] <= -0.8][-5:][::-1]
+
+    def render_pulse_chip(sub, info, color):
+        movers = ' · '.join(f'{m[0]} {"+" if m[1]>=0 else ""}{m[1]:.1f}%' for m in info['top_movers'][:4])
+        sign = '+' if info['dp'] >= 0 else ''
+        return f'''<div style="background:#161b22;border:1px solid #30363d;border-left:3px solid {color};border-radius:6px;padding:9px 13px;margin-bottom:6px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+    <span style="font-weight:700;color:#e6edf3;font-size:.92rem">{sub} <span style="color:{color};font-size:1rem">{sign}{info['dp']:.2f}%</span></span>
+    <span style="font-size:.72rem;color:#8b949e">{info['group']} · {info['n']} 只</span>
+  </div>
+  <div style="font-size:.78rem;color:#c9d1d9;margin-top:4px">{movers}</div>
+</div>'''
+
+    pulse_html = ''
+    if bull_sectors or bear_sectors:
+        pulse_html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">'
+        pulse_html += '<div><div style="font-weight:700;color:#e57373;margin-bottom:8px;font-size:.92rem">🔴 强势板块 Top 5（cap-w +0.8% 以上）</div>'
+        pulse_html += ''.join(render_pulse_chip(s, i, '#e57373') for s, i in bull_sectors) or '<div style="color:#8b949e;font-size:.85rem;padding:10px">无显著强势板块</div>'
+        pulse_html += '</div><div><div style="font-weight:700;color:#43a047;margin-bottom:8px;font-size:.92rem">🟢 弱势板块 Top 5（cap-w -0.8% 以下）</div>'
+        pulse_html += ''.join(render_pulse_chip(s, i, '#43a047') for s, i in bear_sectors) or '<div style="color:#8b949e;font-size:.85rem;padding:10px">无显著弱势板块</div>'
+        pulse_html += '</div></div>'
+
+    # Beta 主题解读：从 SECTOR_BETA['themes'] 渲染
+    def render_beta_theme(t):
+        is_bull = t.get('sentiment') == 'bull'
+        col = '#e57373' if is_bull else '#43a047'
+        # 取主题涉及板块的 cap-w dp 与 top movers
+        sectors_html_parts = []
+        for sub in t.get('sectors', []):
+            info = sector_betas.get(sub)
+            if not info: continue
+            sign = '+' if info['dp'] >= 0 else ''
+            mv = ' · '.join(f'<span style="color:{"#e57373" if m[1]>=0 else "#43a047"}">{m[0]} {"+" if m[1]>=0 else ""}{m[1]:.1f}%</span>' for m in info['top_movers'][:5])
+            sectors_html_parts.append(f'<div style="margin-bottom:6px"><b style="color:#79c0ff">{sub}</b> <span style="color:{col};font-weight:600">{sign}{info["dp"]:.2f}%</span> <span style="color:#8b949e;font-size:.78rem">({info["n"]} 只)</span><br><span style="font-size:.82rem">{mv}</span></div>')
+        sectors_block = '\n'.join(sectors_html_parts) or '<div style="color:#8b949e">板块数据缺失</div>'
+        return f'''<div style="background:#0d1117;border:1px solid #30363d;border-left:4px solid {col};border-radius:6px;padding:14px 16px;margin-bottom:14px">
+  <div style="font-size:1.02rem;font-weight:700;color:#e6edf3;margin-bottom:10px;line-height:1.5">{t['theme']}</div>
+  <div style="background:#161b22;border-radius:4px;padding:10px 12px;margin-bottom:10px">{sectors_block}</div>
+  <div style="margin-bottom:8px"><span style="color:#79c0ff;font-weight:600;font-size:.82rem">💡 共同驱动</span><p style="margin-top:4px;font-size:.85rem;line-height:1.7;color:#c9d1d9">{t['driver']}</p></div>
+  <div style="margin-bottom:8px"><span style="color:#79c0ff;font-weight:600;font-size:.82rem">🔗 跨板块联动</span><p style="margin-top:4px;font-size:.85rem;line-height:1.7;color:#c9d1d9">{t['cross_sector']}</p></div>
+  <div style="background:#161b22;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">⏱️ 时效判断：</b>{t['duration']}</div>
+</div>'''
+
+    beta_themes_html = '\n'.join(render_beta_theme(t) for t in SECTOR_BETA.get('themes', [])) if SECTOR_BETA.get('themes') else '<div style="padding:20px;text-align:center;color:#8b949e">📝 板块 Beta 解读维护中…</div>'
+    tldr_html = SECTOR_BETA.get('tldr', '<i style="color:#8b949e">当日核心叙事维护中…</i>')
+
     # 新闻按 Tier 渲染
     tier_colors = {'tier1': '#58a6ff', 'tier2': '#e57373', 'tier3': '#ffd54f', 'tier4': '#a5d6a7'}
     news_html_parts = []
@@ -927,7 +1032,7 @@ tr:hover td{{background:#1c2128}}
 
 <div class="section">
   <div class="title">🔥 当日核心叙事</div>
-  <p style="line-height:1.7;color:#c9d1d9">Intel Q1 2026 财报炸裂引爆全板块：EPS $0.29（预期 $0.01，超 29 倍）、营收 $13.58B、Q2 指引 $13.8–14.8B，三杀超预期。<b class="up">INTC +23.60%</b> 创 2000 年以来历史新高；<b class="up">AMD +13.90%</b>、<b class="up">ARM +14.31%</b>、<b class="up">QCOM +10.30%</b>、<b class="up">NVDA +4.83%</b> 重回 $5T 市值。SOX 指数 18 连阳，刷新历史最长连涨纪录。</p>
+  <div style="line-height:1.85;color:#c9d1d9;font-size:.92rem">{tldr_html}</div>
 </div>
 
 <div class="section">
@@ -987,6 +1092,17 @@ tr:hover td{{background:#1c2128}}
     <b style="color:#e6edf3">🎯 跨行业风格分析：</b>
     {sector_analysis}
   </div>
+</div>
+
+<div class="section">
+  <div class="title">⚡ 板块脉络（cap-w 涨跌 Top 5 自动算）</div>
+  {pulse_html}
+</div>
+
+<div class="section">
+  <div class="title">📊 板块 Beta 解读 · 跨子行业联动主题</div>
+  <p style="font-size:.8rem;color:#8b949e;margin-bottom:12px">挑当日最有信号意义的 3-5 个板块联动主题。每个主题包含：涉及板块（cap-w 涨跌 + top movers）+ 共同驱动 + 跨板块联动 + 时效判断。<b style="color:#79c0ff">这里的 beta 故事比单只个股 alpha 更重要</b>。</p>
+  {beta_themes_html}
 </div>
 
 <div class="section">
