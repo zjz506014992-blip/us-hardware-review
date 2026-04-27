@@ -89,14 +89,64 @@ us-hardware-review/
    git status --short
    ```
 
-7. **提交 + 推送**：
+7. **更新 `earnings_briefs.json`（增量补全未来 7 天的中文 brief）**：
    ```bash
-   git add gen.py {DATE}.html stocks-{DATE}.html index.html _meta.json
+   # 找未来 7 天的池内业绩 + 已有 brief 的覆盖率
+   python <<'PY'
+   import json
+   from datetime import datetime, timedelta
+   today = datetime.now().date()
+   end = today + timedelta(days=7)
+   with open('earnings_history.json') as f: hist = json.load(f)
+   with open('earnings_briefs.json') as f: briefs = json.load(f)
+   missing = []
+   for sym, recs in hist.items():
+       for r in recs:
+           d = r.get('date', '')
+           if today.isoformat() <= d <= end.isoformat():
+               key = f"{sym}_{d}"
+               if key not in briefs:
+                   missing.append((d, sym, r.get('epsEstimated'), r.get('revenueEstimated')))
+   missing.sort(key=lambda x: (x[0], -(x[3] or 0)))
+   print(f"未来 7 天缺 brief 的: {len(missing)} 家")
+   for d, s, e, rev in missing[:30]:
+       rev_s = f"${rev/1e9:.1f}B" if rev and rev>=1e9 else (f"${rev/1e6:.0f}M" if rev else "—")
+       print(f"  {d}  {s:6s}  EPS_est={e}  rev_est={rev_s}")
+   PY
+   ```
+   - 对每只缺失的 ticker，写一份中文 brief（schema 见下面"earnings_briefs.json schema"）
+   - 大盘股（rev > $1B）写详细版（thesis 6 条看点），中小盘短一些（3-4 条）
+   - 必要时 WebSearch 当季 earnings preview 验证关键数字
+
+8. **提交 + 推送**：
+   ```bash
+   git add gen.py {DATE}.html stocks-{DATE}.html index.html _meta.json earnings_briefs.json
    git commit -m "feat: {DATE} review (cap-w +X.XX%, key takeaway 一句话)"
    git push origin main
    ```
 
-8. **告诉用户**：发布地址 + 关键变化（哪只大涨、哪只大跌、风格切换等）
+9. **告诉用户**：发布地址 + 关键变化（哪只大涨、哪只大跌、风格切换等）+ 本次新补了几家 brief
+
+---
+
+### `earnings_briefs.json` schema
+
+按 `{symbol}_{date}` 键，例如 `"AAPL_2026-04-30"`：
+
+```json
+{
+  "summary_cn": "中文公司简介，3-5 句，业务模式 / 客户结构 / 竞争格局 / 中国敞口。150-300 字。",
+  "thesis_cn": "本季 (季度标识) 关键看点：\n1) 营收/EPS 共识 — $X.XB、EPS $X.XX\n2) 关键催化 1 —— ...\n3) 关键催化 2 —— ...\n4) 风险点 —— ...\n5) ...\n6) ...",
+  "researched_at": "YYYY-MM-DD",
+  "version": 1
+}
+```
+
+写作要点：
+- 中文为主，技术术语英文保留 (PCIe / HBM / CoWoS / ODM / EMS / OSAT 等)
+- thesis 第一条永远是 "营收/EPS 共识"，不要瞎编投行评级或目标价
+- 数字必须用 FMP `earnings_history.json` 的实数，绝不造数据
+- 微盘股 (无 EPS 共识) 写"分析师覆盖少 + 关注业务进展"即可
 
 ## 5. KEY_STOCKS 卡片 schema（每只股票一个 dict）
 
