@@ -394,7 +394,7 @@ NEWS_TIERS = {
 - routine 是幂等的：下次定时触发时，第 3 步会重新检查 commit 状态
   · 已 commit 过 → 退出
   · 没 commit / commit 不全 → 在已有进度上续做（git status 查 staged/modified files 决定从哪步续）
-- 兜底 routine：在 Claude Code on the Web 多配一个 routine，触发时间 +1.5 小时（北京 8:30am），
+- 兜底 routine：在 Claude Code on the Web 多配一个 routine，触发时间 +30 分钟（北京 7:30am），
   跑同一个提示词，靠幂等检查决定退出还是补跑
 
 【遇到 API error 处理】
@@ -415,11 +415,11 @@ NEWS_TIERS = {
 
 ### 11.5.1 兜底 routine（防 API error 中断）
 
-主 routine 北京 7:00am 跑；**配第二个兜底 routine 北京 8:30am 跑**，提示词完全相同。靠**幂等检查**避免重复工作：
-- 主 routine 成功完成 → 8:30 兜底 routine 第 3 步发现 commit 已存在，**直接退出**（无成本）
-- 主 routine 中途 API error → 8:30 兜底 routine 接着跑，最终页面在 9:00 前更新
+主 routine 北京 7:00am 跑；**配第二个兜底 routine 北京 7:30am 跑**，提示词完全相同。靠**幂等检查**避免重复工作：
+- 主 routine 成功完成 → 7:30 兜底 routine 第 3 步发现 commit 已存在，**直接退出**（无成本）
+- 主 routine 中途 API error → 7:30 兜底 routine 接着跑，最终页面在 8:00-8:30 前更新
 
-如果 API error 频繁，可以再加第三个兜底（如 10:00am）。每次成功只需要一次跑通。
+如果 API error 频繁，可以再加第三个兜底（如 8:00am）。每次成功只需要一次跑通。
 
 ## 12. 历史教训（API timeout / 报错的根因）
 
