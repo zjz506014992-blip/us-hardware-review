@@ -382,15 +382,29 @@ NEWS_TIERS = {
 ```text
 今天美股硬件板块收盘复盘。
 
-【启动 — 只做这两件事，其他都按 CLAUDE.md】
+【启动 — 按顺序做以下 4 件事，其他都按 CLAUDE.md】
 1. cd /home/user/us-hardware-review && git pull origin main
 2. 用 Read 工具完整读取 CLAUDE.md（一次读完，1300+ 行）
+3. 【幂等检查】查最新 confirmed_*.json 对应日期 X，再查 git log 是否已有 "feat: X" 的 commit。
+   - 若已有 → routine 已成功跑过，**直接退出**（避免重复 commit）
+   - 若没有 → 继续第 4 步
+4. 严格按 CLAUDE.md 第 4 节执行 8 步工作流，包含 commit + push
 
-【然后严格按 CLAUDE.md 第 4 节执行 8 步工作流，包含 commit + push】
+【失败重启策略 — 若 mid-session 被 API error 中断】
+- routine 是幂等的：下次定时触发时，第 3 步会重新检查 commit 状态
+  · 已 commit 过 → 退出
+  · 没 commit / commit 不全 → 在已有进度上续做（git status 查 staged/modified files 决定从哪步续）
+- 兜底 routine：在 Claude Code on the Web 多配一个 routine，触发时间 +1.5 小时（北京 8:30am），
+  跑同一个提示词，靠幂等检查决定退出还是补跑
+
+【遇到 API error 处理】
+- 不要 panic。把错误本身（错误类型、上一步在做什么、文件大致改到哪）记到 CLAUDE.md 第 12 节"历史教训"末尾
+- 然后退出 routine（不是修复后再继续）—— 让幂等检查 + 兜底 routine 来补救
+- 这样错误经验积累，下次遇到能用 CLAUDE.md 的避坑表预防
 
 【最高指令】
 - 任何业务规则、流程、数据来源、输出格式、颜色约定、避坑、commit 信息格式 — **全部以 CLAUDE.md 为准**
-- 本提示词只负责启动，刻意不重复任何业务规则（避免与 CLAUDE.md drift）
+- 本提示词只负责启动 + 幂等 + 错误记录策略，业务规则一概不重复（避免与 CLAUDE.md drift）
 - 本提示词与 CLAUDE.md 冲突时，以 CLAUDE.md 为准
 - 用户后续维护：只需修改 GitHub 上的 CLAUDE.md，不必动这个提示词
 
@@ -399,17 +413,31 @@ NEWS_TIERS = {
 
 如果发现 routine 跑出来质量有问题（漏选某只异动股、误填假评级、新闻不准），**直接更新这个 routine 提示词** + 同步更新 CLAUDE.md 第 4 节流程，让两边一致。
 
+### 11.5.1 兜底 routine（防 API error 中断）
+
+主 routine 北京 7:00am 跑；**配第二个兜底 routine 北京 8:30am 跑**，提示词完全相同。靠**幂等检查**避免重复工作：
+- 主 routine 成功完成 → 8:30 兜底 routine 第 3 步发现 commit 已存在，**直接退出**（无成本）
+- 主 routine 中途 API error → 8:30 兜底 routine 接着跑，最终页面在 9:00 前更新
+
+如果 API error 频繁，可以再加第三个兜底（如 10:00am）。每次成功只需要一次跑通。
+
 ## 12. 历史教训（API timeout / 报错的根因）
 
-| 症状 | 根因 | 解决 |
-|---|---|---|
-| API stream idle timeout | 一次 Edit 太大（>10KB）或 Bash 输出太长 | 小批量、用数据结构而非 inline HTML |
-| `Edit string not found` | old_string 包含 typo 或不可见字符 | 用 grep 先确认文件实际内容 |
-| HTML 结构错乱 | 用 display:none hack 包裹旧块 | 直接删掉旧块，别藏 |
-| GitHub Pages 显示旧版 | CDN 缓存 | 等 1-2 分钟，或加 `?v=N` query param |
-| 工作流 push 被拒 | PAT 缺 `workflow` scope | 用 GitHub 网页编辑 yaml |
-| FMP 403 Forbidden | 用了 v3 端点 | 切到 `/stable/...` |
-| `Stocks: 314, ... Up/Down/Flat: 1/0/313` | FMP 字段名差异，dp 全 0 | `pick()` 函数已加 fallback，看 SAMPLE RESPONSE 日志确认字段名 |
+> **怎么记**：每次 routine 遇到 API error 就在表格末尾加一行：日期 + 症状 + 根因 + 解决。
+> 这张表是给未来 Claude 看的"避坑指南"，记得越多下次撞同样问题概率越低。
+
+| 日期 | 症状 | 根因 | 解决 |
+|---|---|---|---|
+| 持续 | API stream idle timeout | 一次 Edit 太大（>10KB）或 Bash 输出太长 | 小批量、用数据结构而非 inline HTML |
+| 持续 | `Edit string not found` | old_string 包含 typo 或不可见字符 | 用 grep 先确认文件实际内容 |
+| 持续 | HTML 结构错乱 | 用 display:none hack 包裹旧块 | 直接删掉旧块，别藏 |
+| 持续 | GitHub Pages 显示旧版 | CDN 缓存 | 等 1-2 分钟，或加 `?v=N` query param、或浏览器强刷 Cmd/Ctrl+Shift+R |
+| 持续 | 工作流 push 被拒 | PAT 缺 `workflow` scope | 用 GitHub 网页编辑 yaml |
+| 持续 | FMP 403 Forbidden | 用了 v3 端点 | 切到 `/stable/...` |
+| 持续 | `Stocks: 314, ... Up/Down/Flat: 1/0/313` | FMP 字段名差异，dp 全 0 | `pick()` 函数已加 fallback，看 SAMPLE RESPONSE 日志确认字段名 |
+| 2026-04-28 | routine 中断后页面"叙事是 4/24 / 数字是 4/27" | mid-session API error 让 routine 没 commit；GH Actions auto 只覆盖数字、不更新 narrative | (1) 增加幂等检查 + 兜底 routine（11.5.1）(2) 接 FMP 自动拉指数/ETF/风格因子，减少手动维护点 |
+| 2026-04-28 | KEY_STOCKS 卡片 8 张连续 Edit 接近 30KB 总输出 | 单次 Edit 单卡 ~3KB 安全，但 8 张连续大 Edit 增加超时概率 | 中间穿插简短 Read/Bash 操作，避免连续 8 个大 Edit；或用 Write 一次性替换整段 list 反而更稳 |
+| 2026-04-28 | 写新一天 narrative 时不小心把 24 号的 KEY_STOCKS 整段 dict 留着 | 复制粘贴脏数据；Edit 没匹配到旧 sym 块就漏改 | 改完后 `grep "'sym': '"` 数一下 sym 是否符合预期数量（默认 6-8 个，不应有当日不该有的票） |
 
 ## 13. 用户偏好
 
@@ -422,10 +450,12 @@ NEWS_TIERS = {
 
 ## 14. 当前未完成 / TODO（更新这里以告知未来 Claude）
 
-- [ ] GICS 11 ETF / VIX / DXY / 10Y / WTI 也接 FMP 自动拉
+- [x] GICS 11 ETF / VIX / DXY / 10Y / WTI 也接 FMP 自动拉（2026-04-28 完成；`fetch_fmp.py` 加 `MACRO_SYMBOLS` 字典 + `fetch_macros()` 函数；写 `confirmed_macros_{DATE}.json`；`gen.py` 加 `_load_macros_cache()` 自动覆盖 BROAD/SEMI/GICS/STYLE_FACTORS dicts。**首次生效**：下次 GitHub Actions 跑 `fetch_fmp.py` 后 macros 文件出现，gen.py 自动接管。指数符号 `^GSPC/^NDX/^DJI/^RUT/^VIX/^TNX/^SOX` + 商品 `CLUSD/DX-Y.NYB`，部分指数若 FMP 不支持会落到 missing list 但不阻塞）
 - [x] 业绩日历端点从 v3 迁到 stable（2026-04-26 完成，calendar.html 切到 `/stable/earnings-calendar`）
 - [x] 业绩历史可搜索表（2026-04-26 完成；`earnings.html` + `fetch_earnings_history.py` + `earnings_history.json`；首次需手动 `workflow_dispatch` → `earnings_mode=full` 触发回填，之后日增量）
 - [x] calendar.html 改读本地 `earnings_history.json`，修复 calendar 端点漏数据问题（2026-04-26 完成；同时点击日期格弹出当天所有公司业绩 + `company_profiles.json` 公司简介）
+- [x] 兜底 routine 设计 + 幂等检查（2026-04-28 完成；详见 11.5.1）
+- [ ] 验证 FMP 是否支持所有 MACRO_SYMBOLS（首次跑 fetch_macros 后看 `missing` 列表，把不支持的 symbol 替换成 ETF proxy，比如 `^TNX` 不行就用 `IEF` 10Y 国债 ETF 代理）
 - [ ] AI 自动生成新闻摘要（方式 B，把 Anthropic API 接进 GitHub Actions）
 
 ---

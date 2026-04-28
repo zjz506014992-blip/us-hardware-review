@@ -569,6 +569,61 @@ if _FMP_DATE and _FMP_CACHE:
     DATE = _FMP_DATE
     CONFIRMED = {**CONFIRMED, **_FMP_CACHE}
 
+
+def _fmt_close(group, code, val):
+    """根据指数/ETF 类型格式化收盘价显示字符串"""
+    if val is None:
+        return '—'
+    if code in ('SPX', 'NDX', 'DJI', 'RUT', 'SOX'):
+        return f'{val:,.2f}'
+    if code == 'VIX' or code == 'DXY':
+        return f'{val:.2f}'
+    if code == 'US10Y':
+        return f'{val:.2f}%'
+    return f'${val:,.2f}'
+
+
+def _load_macros_cache():
+    """加载 confirmed_macros_{DATE}.json，返回 {code: (close_val, dp, group)}"""
+    import os, glob
+    repo_dir = os.path.dirname(os.path.abspath(__file__))
+    files = sorted(glob.glob(os.path.join(repo_dir, 'confirmed_macros_*.json')), reverse=True)
+    if not files:
+        return {}
+    try:
+        with open(files[0], encoding='utf-8') as f:
+            d = json.load(f)
+        # 跟当日 stock cache 同一日才生效（防 stale 数据混入）
+        if _FMP_DATE and d.get('date') != _FMP_DATE:
+            print(f"[FMP] macros file date {d.get('date')} != stocks date {_FMP_DATE}, skip macros override")
+            return {}
+        out = {}
+        for fmp_sym, rec in d.get('data', {}).items():
+            out[rec['code']] = (rec.get('close'), rec.get('dp'), rec.get('group'))
+        return out
+    except Exception as e:
+        print(f"[FMP] macros cache load failed ({e}), keep hardcoded BROAD/SEMI/GICS/STYLE")
+        return {}
+
+
+_FMP_MACROS = _load_macros_cache()
+if _FMP_MACROS:
+    print(f"[FMP] using macros cache: {len(_FMP_MACROS)} indices/ETFs/factors")
+    def _override(idx_list):
+        out = []
+        for code, name, _close, _dp, hint in idx_list:
+            m = _FMP_MACROS.get(code)
+            if m and m[0] is not None:
+                close_str = _fmt_close(m[2], code, m[0])
+                out.append((code, name, close_str, m[1], hint))
+            else:
+                out.append((code, name, _close, _dp, hint))
+        return out
+    BROAD_INDICES = _override(BROAD_INDICES)
+    SEMI_INDICES = _override(SEMI_INDICES)
+    GICS_INDICES = _override(GICS_INDICES)
+    STYLE_FACTORS = _override(STYLE_FACTORS)
+
 # 子行业基础参数 (avg, std, base_price_min, base_price_max)
 SECTOR_PARAMS = {
 'AI加速':       (5.0, 4.0),
