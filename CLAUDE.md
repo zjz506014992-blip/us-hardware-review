@@ -59,30 +59,51 @@ us-hardware-review/
 
 ## 4. 你每日要做的事（核心工作流）
 
+> **架构升级（2026-04-28）**：叙事数据已从 `gen.py` 内嵌迁移到独立 `narrative_{DATE}.json` 文件。
+> 每天 routine **只新建一个 JSON 文件，不再 Edit `gen.py`**。指数/ETF 由 FMP 自动拉。
+> 这从根本上解决了"昨天的叙事 + 今天的数字"问题——`gen.py` 没有内嵌 narrative 可继承。
+
 当用户说"**今天复盘**"或类似话时，按顺序执行：
 
 1. **拉取最新代码**：`git pull origin main`（确保 GitHub Actions 跑出来的新数据已经到本地）
 
 2. **找最新 FMP 数据**：
    ```bash
-   ls -t confirmed_*.json | head -1
+   ls -t confirmed_*.json | head -1   # 当日股票数据
+   ls -t confirmed_macros_*.json 2>/dev/null | head -1   # 当日指数/ETF/风格因子
    ```
-   读这个 JSON。
+   读这两个 JSON（macros 文件由 GH Actions 自动拉，可能首次缺，缺则跳过）。
 
 3. **看当日 stats**：读 `_meta.json` 最新一条，确认 cap_w / up / down 数字。
 
-4. **更新 gen.py 里的 5 块叙事数据**（**只动 dict，别动函数**）：
+4. **创建当日 narrative JSON**：`narrative_{DATE}.json`（**这是唯一的叙事载体，不再动 gen.py**）
 
-   | 块 | 行号附近 | 字段 | 数据源 |
-   |---|---|---|---|
-   | `BROAD_INDICES` | gen.py 第 11 行 | SPX/NDX/DJI/RUT/VIX/DXY/US10Y/WTI 收盘+涨跌 | WebSearch（FMP 没有指数实时） |
-   | `SEMI_INDICES` | gen.py 第 23 行 | SOX/SOXX/SMH/XSD/PSI 收盘+涨跌 | WebSearch |
-   | `GICS_INDICES` | gen.py 第 32 行 | XLK/XLC/XLY/XLF/XLI/XLB/XLRE/XLV/XLU/XLP/XLE 收盘+涨跌 | WebSearch |
-   | **`STYLE_FACTORS`** | gen.py 第 48 行起 | **IWF/IWD/MTUM/SPLV/QUAL/RSP 6 个因子 ETF 收盘+涨跌** | **WebSearch** |
-   | **`MARKET_STRUCTURE`** | gen.py 第 60 行起 | **`narrative` 字段：市场结构 + 风格因子综合解读 100-300 字** | **基于 4 个自动算的比值（普涨度 RSP/SPX、科技强度 NDX/SPX、半导体强度 SOX/NDX、硬件池强度 Pool/SOX）+ 风格因子领跑情况，自己写** |
-   | `KEY_STOCKS` | gen.py 第 64 行起 | 8 张重点个股深度卡 | 从 FMP JSON 取 dp/close/cap，叙事自己写 |
-   | **`SECTOR_BETA`** | gen.py 第 437 行起 | **当日核心叙事 (`tldr`) + 3-5 个板块联动主题 (`themes`)** | **从 FMP JSON 算子行业 cap-w 涨跌，叙事自己写。详见下方 schema** |
-   | `NEWS_TIERS` | gen.py 接近末尾 | Tier 1（宏观/大盘）/ Tier 2（半导体深度）/ Tier 3（亚洲供应链）/ Tier 4（公司公告/分析师评级） | WebSearch + 你的判断 |
+   schema：
+   ```json
+   {
+     "date": "YYYY-MM-DD",
+     "researched_at": "YYYY-MM-DD",
+     "version": 1,
+     "market_structure": {"narrative": "<b>市场结构</b>：... 100-300 字 3 段叙事 ..."},
+     "key_stocks": [ {sym, title, dp, close, cap, vol, range52w, fund, sellside, bull, bear, catalysts, technical}, ... 6-8 张 ],
+     "sector_beta": {"tldr": "...", "themes": [ {theme, sectors, sentiment, driver, cross_sector, duration}, ... 3-5 个 ]},
+     "news_tiers": {
+       "tier1": {"name": "...", "desc": "...", "items": [{src, title, body, impact}, ...]},
+       "tier2": {...}, "tier3": {...}, "tier4": {...}
+     }
+   }
+   ```
+
+   **强烈推荐**：从最近一个 `narrative_*.json` 复制做模板，改字段而不是从零写：
+   ```bash
+   PREV=$(ls -t narrative_*.json | head -1)
+   cp "$PREV" narrative_{NEW_DATE}.json
+   # 然后 Edit 改 date / 各字段
+   ```
+
+   各块写作要点见下方 schema 详解（`SECTOR_BETA` / `KEY_STOCKS` / `NEWS_TIERS` / `MARKET_STRUCTURE`）。
+
+   **指数/ETF/风格因子**（BROAD_INDICES / SEMI_INDICES / GICS_INDICES / STYLE_FACTORS）**不再手动维护**——`fetch_fmp.py` 每天自动拉到 `confirmed_macros_{DATE}.json`，`gen.py` 自动覆盖显示。如果某些指数 FMP 不支持（首次跑后看 missing 列表），把它们替换成 ETF proxy（如 `^TNX` → `IEF`）。
 
 ### `SECTOR_BETA` 写作要点（最重要的叙事块）
 
@@ -185,7 +206,8 @@ us-hardware-review/
 
 8. **提交 + 推送**：
    ```bash
-   git add gen.py {DATE}.html stocks-{DATE}.html index.html _meta.json earnings_briefs.json
+   # 注意：现在主要是 narrative_{DATE}.json，gen.py 默认无需改动
+   git add narrative_{DATE}.json {DATE}.html stocks-{DATE}.html index.html _meta.json earnings_briefs.json
    git commit -m "feat: {DATE} review (cap-w +X.XX%, key takeaway 一句话)"
    git push origin main
    ```
@@ -390,12 +412,22 @@ NEWS_TIERS = {
    - 若没有 → 继续第 4 步
 4. 严格按 CLAUDE.md 第 4 节执行 8 步工作流，包含 commit + push
 
+【架构提醒（2026-04-28 升级）】
+- 叙事数据已从 gen.py 迁到 narrative_{DATE}.json，每天**只新建一个 JSON 文件**
+- gen.py 默认不动；指数/ETF 由 confirmed_macros_*.json 自动覆盖
+- 强烈建议：cp 上一个 narrative_*.json 作模板再改字段，比从空白写更稳
+
 【失败重启策略 — 若 mid-session 被 API error 中断】
 - routine 是幂等的：下次定时触发时，第 3 步会重新检查 commit 状态
   · 已 commit 过 → 退出
   · 没 commit / commit 不全 → 在已有进度上续做（git status 查 staged/modified files 决定从哪步续）
 - 兜底 routine：在 Claude Code on the Web 多配一个 routine，触发时间 +30 分钟（北京 7:30am），
   跑同一个提示词，靠幂等检查决定退出还是补跑
+
+【执行节奏 — 防 stream timeout】
+- narrative_{DATE}.json 用一次 Write 写完整文件，不要分多次 Edit（旧版痛点）
+- KEY_STOCKS 8 张卡片：先用 Bash 算好 dp/close/cap，再一次性构造完整 JSON
+- WebSearch 每批最多 3 个并发；写完 JSON 后 Bash 跑 `python3 gen.py | tail -3` 验证一次
 
 【遇到 API error 处理】
 - 不要 panic。把错误本身（错误类型、上一步在做什么、文件大致改到哪）记到 CLAUDE.md 第 12 节"历史教训"末尾
@@ -438,6 +470,7 @@ NEWS_TIERS = {
 | 2026-04-28 | routine 中断后页面"叙事是 4/24 / 数字是 4/27" | mid-session API error 让 routine 没 commit；GH Actions auto 只覆盖数字、不更新 narrative | (1) 增加幂等检查 + 兜底 routine（11.5.1）(2) 接 FMP 自动拉指数/ETF/风格因子，减少手动维护点 |
 | 2026-04-28 | KEY_STOCKS 卡片 8 张连续 Edit 接近 30KB 总输出 | 单次 Edit 单卡 ~3KB 安全，但 8 张连续大 Edit 增加超时概率 | 中间穿插简短 Read/Bash 操作，避免连续 8 个大 Edit；或用 Write 一次性替换整段 list 反而更稳 |
 | 2026-04-28 | 写新一天 narrative 时不小心把 24 号的 KEY_STOCKS 整段 dict 留着 | 复制粘贴脏数据；Edit 没匹配到旧 sym 块就漏改 | 改完后 `grep "'sym': '"` 数一下 sym 是否符合预期数量（默认 6-8 个，不应有当日不该有的票） |
+| 2026-04-28 | 同上：mid-session 中断后页面"叙事是 4/24 / 数字是 4/27"持续生效 | gen.py 内嵌 narrative 在 routine 没成功 commit 时被 GH Actions 自动 commit 顺带带出来，污染当日页面 | **架构改造**：叙事抽到 `narrative_{DATE}.json` + gen.py 清空 stub。新策略下：routine 没成功 = 当日页面显示"维护中"占位，不会出现"昨日叙事 + 今日数字"的混乱状态 |
 
 ## 13. 用户偏好
 
@@ -450,6 +483,7 @@ NEWS_TIERS = {
 
 ## 14. 当前未完成 / TODO（更新这里以告知未来 Claude）
 
+- [x] **架构升级：叙事数据抽到 `narrative_{DATE}.json`**（2026-04-28 完成；gen.py `_load_narrative()` 加载并覆盖 KEY_STOCKS / SECTOR_BETA / NEWS_TIERS / MARKET_STRUCTURE 4 块；gen.py 内嵌 narrative 已清空成 stub。**根本解决 mid-session API error 后"昨日叙事 + 今日数字"问题**——每天 routine 一次 Write 创建 JSON，不再 Edit 大文件、不再多次连续大 Edit）
 - [x] GICS 11 ETF / VIX / DXY / 10Y / WTI 也接 FMP 自动拉（2026-04-28 完成；`fetch_fmp.py` 加 `MACRO_SYMBOLS` 字典 + `fetch_macros()` 函数；写 `confirmed_macros_{DATE}.json`；`gen.py` 加 `_load_macros_cache()` 自动覆盖 BROAD/SEMI/GICS/STYLE_FACTORS dicts。**首次生效**：下次 GitHub Actions 跑 `fetch_fmp.py` 后 macros 文件出现，gen.py 自动接管。指数符号 `^GSPC/^NDX/^DJI/^RUT/^VIX/^TNX/^SOX` + 商品 `CLUSD/DX-Y.NYB`，部分指数若 FMP 不支持会落到 missing list 但不阻塞）
 - [x] 业绩日历端点从 v3 迁到 stable（2026-04-26 完成，calendar.html 切到 `/stable/earnings-calendar`）
 - [x] 业绩历史可搜索表（2026-04-26 完成；`earnings.html` + `fetch_earnings_history.py` + `earnings_history.json`；首次需手动 `workflow_dispatch` → `earnings_mode=full` 触发回填，之后日增量）
