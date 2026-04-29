@@ -204,7 +204,8 @@ CONFIRMED = {
 def _load_fmp_cache():
     import os, glob
     repo_dir = os.path.dirname(os.path.abspath(__file__))
-    files = sorted(glob.glob(os.path.join(repo_dir, 'confirmed_*.json')), reverse=True)
+    files = sorted([f for f in glob.glob(os.path.join(repo_dir, 'confirmed_*.json'))
+                    if 'macros' not in os.path.basename(f)], reverse=True)
     if not files:
         return None, {}
     try:

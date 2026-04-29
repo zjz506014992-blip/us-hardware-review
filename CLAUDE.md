@@ -471,6 +471,8 @@ NEWS_TIERS = {
 | 2026-04-28 | KEY_STOCKS 卡片 8 张连续 Edit 接近 30KB 总输出 | 单次 Edit 单卡 ~3KB 安全，但 8 张连续大 Edit 增加超时概率 | 中间穿插简短 Read/Bash 操作，避免连续 8 个大 Edit；或用 Write 一次性替换整段 list 反而更稳 |
 | 2026-04-28 | 写新一天 narrative 时不小心把 24 号的 KEY_STOCKS 整段 dict 留着 | 复制粘贴脏数据；Edit 没匹配到旧 sym 块就漏改 | 改完后 `grep "'sym': '"` 数一下 sym 是否符合预期数量（默认 6-8 个，不应有当日不该有的票） |
 | 2026-04-28 | 同上：mid-session 中断后页面"叙事是 4/24 / 数字是 4/27"持续生效 | gen.py 内嵌 narrative 在 routine 没成功 commit 时被 GH Actions 自动 commit 顺带带出来，污染当日页面 | **架构改造**：叙事抽到 `narrative_{DATE}.json` + gen.py 清空 stub。新策略下：routine 没成功 = 当日页面显示"维护中"占位，不会出现"昨日叙事 + 今日数字"的混乱状态 |
+| 2026-04-29 | gen.py 加载 confirmed 时 KeyError('cap') 退回到硬编码数据 → 页面变成 4/27 旧数据 | `glob('confirmed_*.json')` 把 `confirmed_macros_*.json` 也匹配上了，且字典序 'm' > 数字 → 倒序首位是 macros 文件，没有 'cap' 字段 | 在 line 207 加 `if 'macros' not in os.path.basename(f)` 过滤。fetch_macros 升级首次落 macros 文件后立即触发，是新文件命名 + glob 模式的回归 bug |
+| 2026-04-29 | 4/28 routine 写 narrative 时连续 2 次 stream API error | 一次 Write 整个 50KB JSON 文件 + 连续多个大 Write 让 prompt 累积过大 | **新策略 — Python builder 增量法**：cp 上一日模板 → 写多个 < 8KB 的 `_b{N}_xxx.py` builder 脚本（每个加载 JSON、改字段、dump），分阶段 Bash 跑。每个 builder 只 Write 一次小文件，Bash 跑完立即清理。已用此法成功生成 4/28 narrative。优于"一次 Write 大 JSON" |
 
 ## 13. 用户偏好
 
