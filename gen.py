@@ -321,6 +321,23 @@ if _NARRATIVE:
     if _NARRATIVE.get('news_tiers'):
         NEWS_TIERS = _NARRATIVE['news_tiers']
 
+
+# === earnings_history.json 加载（用于 30 日业绩日历 + 未来 5 交易日观察）===
+def _load_earnings_history():
+    p = os.path.join(REPO_DIR, 'earnings_history.json')
+    if not os.path.exists(p):
+        return {}
+    try:
+        with open(p, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"[earnings_history] load failed: {e}")
+        return {}
+
+
+_EARNINGS_HISTORY = _load_earnings_history()
+
+
 # 子行业基础参数 (avg, std, base_price_min, base_price_max)
 SECTOR_PARAMS = {
 'AI加速':       (5.0, 4.0),
@@ -492,6 +509,237 @@ def add_colors_to_tree(node):
     else:
         node['itemStyle'] = {'color': dp_color(node['dp'])}
     return node
+
+
+def _business_days_after(start_iso, n):
+    """返回 start_iso 之后 n 个工作日的 ISO 字符串列表（仅 Mon-Fri，不考虑节假日）。"""
+    from datetime import date as _date, timedelta
+    d = _date.fromisoformat(start_iso)
+    days = []
+    while len(days) < n:
+        d = d + timedelta(days=1)
+        if d.weekday() < 5:
+            days.append(d.isoformat())
+    return days
+
+
+def _fmt_md(d):
+    """date -> '5/7' 形式（不补 0）。"""
+    return f'{d.month}/{d.day}'
+
+
+def _eps_str(v):
+    if isinstance(v, (int, float)):
+        return f'${v:.2f}' if v >= 0 else f'-${abs(v):.2f}'
+    return '—'
+
+
+def _rev_str(v):
+    if isinstance(v, (int, float)):
+        if v >= 1e9:
+            return f'${v/1e9:.2f}B'
+        if v >= 1e6:
+            return f'${v/1e6:.0f}M'
+        if v >= 1e3:
+            return f'${v/1e3:.0f}K'
+        return f'${v:.0f}'
+    return '—'
+
+
+def _time_cn(t):
+    if t == 'bmo':
+        return '盘前'
+    if t == 'amc':
+        return '盘后'
+    return '—'
+
+
+def _render_earnings_calendar(date_str, big_caps):
+    """30 日业绩日历——从 earnings_history.json 动态生成，按周分组。"""
+    from datetime import date as _date, timedelta
+    from collections import defaultdict
+    today = _date.fromisoformat(date_str)
+    end = today + timedelta(days=30)
+    next5_set = set(_business_days_after(date_str, 5))
+
+    pool_syms = {s for syms in INDUSTRY_MAP.values() for s in syms if s != 'NA'}
+
+    by_date = defaultdict(list)
+    for sym, recs in _EARNINGS_HISTORY.items():
+        if sym not in pool_syms:
+            continue
+        for r in recs:
+            d = r.get('date', '')
+            if not d:
+                continue
+            try:
+                ed = _date.fromisoformat(d)
+            except Exception:
+                continue
+            if today < ed <= end:
+                by_date[d].append({
+                    'sym': sym,
+                    'time': r.get('time'),
+                    'eps': r.get('epsEstimated'),
+                    'rev': r.get('revenueEstimated'),
+                })
+
+    by_week = defaultdict(list)
+    for d in sorted(by_date.keys()):
+        ed = _date.fromisoformat(d)
+        monday = ed - timedelta(days=ed.weekday())
+        by_week[monday].append(d)
+
+    weekday_cn = ['一', '二', '三', '四', '五', '六', '日']
+    rows = []
+    total_count = 0
+    for i, monday in enumerate(sorted(by_week.keys())):
+        fri = monday + timedelta(days=4)
+        is_priority = any(d in next5_set for d in by_week[monday])
+        prio_tag = ' ⚡ 高优先级' if is_priority else ''
+        rows.append(
+            f'<tr><td colspan="6" style="background:#21262d;color:#58a6ff;font-weight:700">'
+            f'第 {i+1} 周（{_fmt_md(monday)} – {_fmt_md(fri)}）{prio_tag}</td></tr>'
+        )
+        items = []
+        for d in by_week[monday]:
+            for rec in by_date[d]:
+                rec2 = dict(rec)
+                rec2['date'] = d
+                items.append(rec2)
+        items.sort(key=lambda x: (
+            x['date'],
+            0 if x['sym'] in big_caps else 1,
+            -(x.get('rev') or 0),
+        ))
+        for r in items:
+            total_count += 1
+            ed = _date.fromisoformat(r['date'])
+            wd = weekday_cn[ed.weekday()]
+            sym_disp = f'<b>{r["sym"]}</b>' if r['sym'] in big_caps else r['sym']
+            zap = ' ⚡' if r['date'] in next5_set else ''
+            ind = SYM_TO_IND.get(r['sym'], '—')
+            rows.append(
+                f'<tr><td>{_fmt_md(ed)} {wd}</td><td>{sym_disp}{zap}</td>'
+                f'<td>{_time_cn(r.get("time"))}</td>'
+                f'<td>{_eps_str(r.get("eps"))}</td>'
+                f'<td>{_rev_str(r.get("rev"))}</td>'
+                f'<td style="color:#8b949e">{ind}</td></tr>'
+            )
+
+    if not rows:
+        rows.append('<tr><td colspan="6" style="text-align:center;color:#8b949e;padding:18px">未来 30 日内池内暂无已确认业绩</td></tr>')
+    body = '\n      '.join(rows)
+    return f'''<div class="section">
+  <div class="title">📅 30 日业绩日历（池内公司）</div>
+  <table>
+    <thead><tr><th>日期</th><th>代码</th><th>时段</th><th>EPS 预期</th><th>营收预期</th><th>子行业</th></tr></thead>
+    <tbody>
+      {body}
+    </tbody>
+  </table>
+  <p style="margin-top:10px;font-size:.82rem;color:#8b949e">⚡ 标记为未来 5 个交易日内的池内业绩。共池内 {total_count} 家公司在 30 日内披露（数据来源 FMP earnings_history）。</p>
+</div>'''
+
+
+def _render_forward_5d(date_str, big_caps):
+    """未来 5 交易日观察——池内业绩 + 宏观 + 行业大会，全部按 DATE 动态生成。"""
+    from datetime import date as _date
+    from collections import defaultdict
+    days = _business_days_after(date_str, 5)
+    if not days:
+        return ''
+    weekday_cn = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+    pool_syms = {s for syms in INDUSTRY_MAP.values() for s in syms if s != 'NA'}
+
+    pool_earn = defaultdict(list)
+    for sym, recs in _EARNINGS_HISTORY.items():
+        if sym not in pool_syms:
+            continue
+        for r in recs:
+            d = r.get('date', '')
+            if d in days:
+                pool_earn[d].append({
+                    'sym': sym, 'time': r.get('time'),
+                    'eps': r.get('epsEstimated'), 'rev': r.get('revenueEstimated'),
+                })
+
+    macro_by_date = defaultdict(list)
+    for d, ev, note in MACRO_EVENTS:
+        if d in days:
+            macro_by_date[d].append((ev, note))
+
+    indu_by_date = defaultdict(list)
+    for s_iso, e_iso, name, look in INDUSTRY_EVENTS:
+        sd = _date.fromisoformat(s_iso)
+        ed_ = _date.fromisoformat(e_iso)
+        for d in days:
+            dd = _date.fromisoformat(d)
+            if sd <= dd <= ed_:
+                indu_by_date[d].append((name, look))
+
+    rows = []
+    total_earn = 0
+    for d in days:
+        ed = _date.fromisoformat(d)
+        wd = weekday_cn[ed.weekday()]
+
+        earn_items = pool_earn.get(d, [])
+        earn_items.sort(key=lambda x: (0 if x['sym'] in big_caps else 1, -(x.get('rev') or 0)))
+        total_earn += len(earn_items)
+        if earn_items:
+            shown = earn_items[:8]
+            chip_lines = []
+            for r in shown:
+                sym = r['sym']
+                bold = sym in big_caps
+                sym_html = f'<b class="up">{sym}</b>' if bold else sym
+                t = _time_cn(r.get('time'))
+                eps_part = _eps_str(r.get('eps'))
+                rev_part = _rev_str(r.get('rev'))
+                meta = ' / '.join(x for x in [t if t != '—' else '', f'EPS {eps_part}' if eps_part != '—' else '', f'Rev {rev_part}' if rev_part != '—' else ''] if x)
+                if meta:
+                    chip_lines.append(f'{sym_html}<br><span style="font-size:.74rem;color:#8b949e">{meta}</span>')
+                else:
+                    chip_lines.append(sym_html)
+            extra = ''
+            if len(earn_items) > len(shown):
+                extra = f'<div style="font-size:.74rem;color:#8b949e;margin-top:4px">+{len(earn_items)-len(shown)} 家</div>'
+            earn_cell = ''.join(f'<div style="margin-bottom:6px">{c}</div>' for c in chip_lines) + extra
+        else:
+            earn_cell = '<span style="color:#8b949e">—</span>'
+
+        macro_items = macro_by_date.get(d, [])
+        if macro_items:
+            macro_cell = '<br>'.join(f'<b>{ev}</b><br><span style="font-size:.78rem;color:#8b949e">{note}</span>' for ev, note in macro_items)
+        else:
+            macro_cell = '<span style="color:#8b949e">—</span>'
+
+        indu_items = indu_by_date.get(d, [])
+        if indu_items:
+            indu_cell = '<br>'.join(f'<b>{name}</b><br><span style="font-size:.78rem;color:#8b949e">{look}</span>' for name, look in indu_items)
+        else:
+            indu_cell = '<span style="color:#8b949e">—</span>'
+
+        rows.append(
+            f'<tr><td><b>{_fmt_md(ed)} {wd}</b></td>'
+            f'<td>{earn_cell}</td><td>{macro_cell}</td><td>{indu_cell}</td></tr>'
+        )
+
+    body = '\n      '.join(rows)
+    rng = f'{_fmt_md(_date.fromisoformat(days[0]))} – {_fmt_md(_date.fromisoformat(days[-1]))}'
+    return f'''<div class="section">
+  <div class="title">🔭 未来 5 交易日观察（{rng}）</div>
+  <table>
+    <thead><tr><th style="min-width:90px">日期</th><th>池内业绩</th><th>宏观数据</th><th>行业事件 / 大会</th></tr></thead>
+    <tbody>
+      {body}
+    </tbody>
+  </table>
+  <p style="margin-top:10px;font-size:.82rem;color:#8b949e">共池内 {total_earn} 家公司在未来 5 交易日内披露业绩。宏观日历来自 MACRO_EVENTS（每周维护），行业大会来自 INDUSTRY_EVENTS。</p>
+  <div style="margin-top:8px;font-size:.82rem;color:#8b949e">⏰ 时间转换：美东 → 北京 +12h（夏令时）；盘前 = 北京 21:00 前；盘后 = 北京次日凌晨 04:00 起</div>
+</div>'''
+
 
 def write_html(data):
     import math
@@ -759,6 +1007,11 @@ def write_html(data):
     market_structure_kpis = breadth_kpi + tech_kpi + semi_kpi + pool_kpi
     market_structure_narrative = MARKET_STRUCTURE.get('narrative', '<i style="color:#8b949e">市场结构叙事维护中…</i>')
 
+    # 业绩日历 + 未来 5 交易日观察（基于 DATE 动态生成，避免日期 stale）
+    big_caps = {s['s'] for s in stocks if s.get('cap', 0) >= 30000}  # cap > $30B 的池内大盘股
+    earnings_calendar_html = _render_earnings_calendar(DATE, big_caps)
+    forward_5d_html = _render_forward_5d(DATE, big_caps)
+
     html = f'''<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -913,104 +1166,9 @@ tr:hover td{{background:#1c2128}}
   </div>
 </div>
 
-<div class="section">
-  <div class="title">📅 30 日业绩日历（池内公司）</div>
-  <table>
-    <thead><tr><th>日期</th><th>代码</th><th>时段</th><th>EPS 预期</th><th>营收预期</th><th>看点</th></tr></thead>
-    <tbody>
-      <tr><td colspan="6" style="background:#21262d;color:#58a6ff;font-weight:700">第 1 周（4/27 – 5/1）⚡ 高优先级</td></tr>
-      <tr><td>4/28 二</td><td><b>AAPL</b> ⚡</td><td>盘后</td><td>$1.65</td><td>$109.69B</td><td>iPhone Q2 出货指引</td></tr>
-      <tr><td>4/29 三</td><td><b>QCOM</b> ⚡</td><td>盘后</td><td>$2.85</td><td>$11.2B</td><td>验证 INTC 边缘 AI 论调</td></tr>
-      <tr><td>4/29 三</td><td>NVMI ⚡</td><td>盘后</td><td>$0.78</td><td>$191M</td><td>设备链跟踪</td></tr>
-      <tr><td>4/30 四</td><td>LFUS ⚡</td><td>盘后</td><td>$2.10</td><td>$580M</td><td>—</td></tr>
-      <tr><td>5/1 五</td><td><b>AMKR</b> ⚡</td><td>盘后</td><td>$0.32</td><td>$1.45B</td><td>OSAT 景气度</td></tr>
-      <tr><td>5/1 五</td><td>LOGI ⚡</td><td>盘后</td><td>$1.05</td><td>$1.06B</td><td>消费电子</td></tr>
-      <tr><td colspan="6" style="background:#21262d;color:#58a6ff;font-weight:700">第 2 周（5/4 – 5/8）</td></tr>
-      <tr><td>5/4 一</td><td>ON</td><td>盘后</td><td>$0.55</td><td>$1.42B</td><td>SiC/汽车</td></tr>
-      <tr><td>5/4 一</td><td>DIOD</td><td>盘后</td><td>$0.20</td><td>$310M</td><td>—</td></tr>
-      <tr><td>5/5 二</td><td><b>AMD</b></td><td>盘后</td><td>$0.95</td><td>$7.85B</td><td>AI CPU 大考</td></tr>
-      <tr><td>5/5 二</td><td>LSCC</td><td>盘后</td><td>$0.30</td><td>$130M</td><td>FPGA</td></tr>
-      <tr><td>5/6 三</td><td><b>ARM</b></td><td>盘后</td><td>$0.45</td><td>$1.05B</td><td>AGI CPU 验证</td></tr>
-      <tr><td>5/6 三</td><td>IONQ</td><td>盘后</td><td>-$0.42</td><td>$13M</td><td>量子叙事</td></tr>
-      <tr><td>5/7 四</td><td><b>MSI</b></td><td>盘后</td><td>$3.20</td><td>$2.65B</td><td>无线通信</td></tr>
-      <tr><td>5/7 四</td><td><b>MCHP</b></td><td>盘后</td><td>$0.40</td><td>$1.05B</td><td>MCU 周期</td></tr>
-      <tr><td>5/8 五</td><td>UMC</td><td>盘前</td><td>—</td><td>—</td><td>晶圆代工</td></tr>
-      <tr><td colspan="6" style="background:#21262d;color:#58a6ff;font-weight:700">第 3 周（5/11 – 5/15）</td></tr>
-      <tr><td>5/12 二</td><td><b>TSM</b> 月营收</td><td>—</td><td>—</td><td>—</td><td>AI 算力链</td></tr>
-      <tr><td>5/13 三</td><td><b>CSCO</b></td><td>盘后</td><td>$0.95</td><td>$14.0B</td><td>网络设备</td></tr>
-      <tr><td>5/13 三</td><td><b>DELL</b></td><td>盘后</td><td>$1.85</td><td>$25.5B</td><td>AI 服务器</td></tr>
-      <tr><td>5/14 四</td><td><b>AMAT</b></td><td>盘后</td><td>$2.35</td><td>$7.40B</td><td>设备龙头</td></tr>
-      <tr><td>5/14 四</td><td>NTAP</td><td>盘后</td><td>$1.95</td><td>$1.75B</td><td>存储</td></tr>
-      <tr><td colspan="6" style="background:#21262d;color:#58a6ff;font-weight:700">第 4 周（5/18 – 5/22）</td></tr>
-      <tr><td>5/19 二</td><td>KEYS</td><td>盘后</td><td>$1.78</td><td>$1.34B</td><td>测试仪器</td></tr>
-      <tr><td>5/20 三</td><td><b>MRVL</b></td><td>盘后</td><td>$0.65</td><td>$1.95B</td><td>AI 加速</td></tr>
-      <tr><td>5/21 四</td><td><b>NVDA</b></td><td>盘后</td><td>—</td><td>—</td><td>季度顶级催化</td></tr>
-      <tr><td>5/21 四</td><td>ZBRA</td><td>盘前</td><td>$4.10</td><td>$1.32B</td><td>条码识别</td></tr>
-    </tbody>
-  </table>
-  <p style="margin-top:10px;font-size:.82rem;color:#8b949e">⚡ 标记为未来 5 个交易日内的池内业绩。共池内约 26 家公司在 30 日内披露。</p>
-</div>
+{earnings_calendar_html}
 
-<div class="section">
-  <div class="title">🔭 未来 5 交易日观察（4/27 – 5/1）</div>
-  <table>
-    <thead><tr><th style="min-width:90px">日期</th><th>池内业绩</th><th>宏观数据</th><th>行业事件 / 大会</th><th>重要产品发布</th><th>关键技术位</th></tr></thead>
-    <tbody>
-      <tr>
-        <td><b>4/27 周一</b></td>
-        <td><span style="color:#8b949e">—</span></td>
-        <td>—</td>
-        <td>Advantest 东京盘 Q4 业绩；ASML 中国销售更新</td>
-        <td><span style="color:#8b949e">—</span></td>
-        <td>SPX 7,150 / SOX 10,500 关键支撑</td>
-      </tr>
-      <tr>
-        <td><b>4/28 周二</b></td>
-        <td><b class="up">AAPL</b> 盘后<br><span style="font-size:.78rem;color:#8b949e">EPS $1.65 / Rev $109.69B</span></td>
-        <td>美国 Q1 ECI（雇佣成本指数）；4 月 Conference Board 消费信心</td>
-        <td>—</td>
-        <td>—</td>
-        <td>AAPL 跨夜波动 ±5%；NDX 25,000 心理位</td>
-      </tr>
-      <tr>
-        <td><b>4/29 周三</b></td>
-        <td><b class="up">QCOM</b> 盘后 EPS $2.85<br>NVMI 盘后</td>
-        <td>ADP 4 月就业；JOLTS 3 月空缺；GDP 修订值</td>
-        <td>FOMC 5/6 会议预期博弈</td>
-        <td>—</td>
-        <td>SOX 能否站稳 10,500（日内回调阈值）</td>
-      </tr>
-      <tr>
-        <td><b>4/30 周四</b></td>
-        <td>LFUS 盘后</td>
-        <td><b style="color:#e57373">Q1 GDP 初值</b>（预期 +2.0% YoY）<br><b style="color:#e57373">3 月 PCE 物价指数</b>（Fed 通胀核心）</td>
-        <td>—</td>
-        <td>—</td>
-        <td>10Y 利率反应：>4.4% 警戒成长股回吐</td>
-      </tr>
-      <tr>
-        <td><b>5/1 周五</b></td>
-        <td><b class="up">AMKR</b> / LOGI 盘后</td>
-        <td><b style="color:#e57373">4 月非农就业 + 时薪</b>（决定 5/6 FOMC）；ISM 制造业 PMI</td>
-        <td>—</td>
-        <td>—</td>
-        <td>SPX 10 日均线 ~7,100；SOX 18 连阳后均值回归概率上升</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div style="margin-top:14px;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px;font-size:.87rem;color:#c9d1d9;line-height:1.75">
-    <b style="color:#e6edf3">📋 关键事件深度提示：</b>
-    <ul style="margin-top:8px;padding-left:20px">
-      <li><b class="up">AAPL 4/28 财报（最大单点风险）：</b>关注 iPhone Q3 出货指引（市场期 75M 单位）、服务业务利润率（>74% 为强信号）、Vision Pro 全球扩张进度、AI 落地节奏。Q3 营收指引若 &lt; $94B 则可能拖累 NDX 1.5–2.5%。期权隐含跨夜波动 ±4.8%。</li>
-      <li><b class="up">QCOM 4/29 财报（INTC 论调外溢验证）：</b>QCT 移动业务（占 65%）受益华为/小米 SoC 拉动，预期 +18% YoY；汽车业务（含 Snapdragon Cockpit）连续 4 季双位数增长。指引若上修，RF（SWKS/QRVO）/PC 链（X Elite OEM）继续接力。</li>
-      <li><b style="color:#e57373">5/1 非农 + ISM PMI（宏观决定权）：</b>共识 +18.5 万人，时薪 YoY +3.6%。若超预期，5/6 FOMC 鸽派路径受阻；若疲弱（&lt;15 万人），AI 链短线再获利率松动溢价。ISM PMI &gt;50 则验证制造业回暖叙事，利好 EMS/半导体设备链。</li>
-      <li><b>板块技术位整理：</b>SOX 18 连阳极端读数，RSI 78（超买）；MACD 顶背离风险显现。短期支撑 10,500（5 日均线）/ 10,000（20 日均线）；任何 -3% 单日回调即触发结构性补跌；但中线 AI capex 叙事未破。</li>
-    </ul>
-  </div>
-
-  <div style="margin-top:12px;font-size:.82rem;color:#8b949e">⏰ 时间转换：美东 → 北京 +12h（夏令时）；盘前 = 北京 21:00 前；盘后 = 北京次日凌晨 04:00 起</div>
-</div>
+{forward_5d_html}
 
 <div class="section">
   <div class="title">🎤 2026 行业大会日历（年度参考）</div>
