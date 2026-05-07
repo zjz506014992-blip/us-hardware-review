@@ -190,11 +190,30 @@ us-hardware-review/
 - `guidance`: 下季 / 全年 / 长期指引 50-150 字（必须给具体数字）
 - `call_takeaway`: 电话会管理层 commentary 50-150 字（CEO/CFO 原话引用 + 战略方向）
 
-**挑选规则**（每天 routine 写时遵守）：
-- **必填**：cap > $30B 池内大盘股盘后报的财报（如 ARM / AMD / QCOM / AVGO / NVDA / AAPL / MU / INTC / TXN / ADI / AMAT / LRCX / KLAC / MRVL / DELL / CSCO / ANET / MSI / MCHP / NXPI 等）
-- **优先**：cap $5B-$30B 中盘有显著市场反应的（盘后 ±5% 以上）
-- **跳过**：cap < $5B 小盘除非有特别催化（拆分/并购/重大技术突破）
-- **典型每天 2-5 家**，全是大盘股最多 3-4 家、加几个有意外动作的中盘
+**挑选规则——硬规则：池内当天盘后所有 reporter 都要有 entry，不允许偷懒只写大盘**
+
+按 cap 分级写不同长度（节约时间但保证覆盖）：
+- **cap > $30B 大盘**：完整 4 块（数字 / 亮点 / 指引 / 电话会），每块 50-200 字。如 ARM / AMD / QCOM / AVGO / NVDA / AAPL / MU / INTC / TXN / ADI / AMAT / LRCX / KLAC / MRVL / DELL / CSCO / ANET / MSI / MCHP / NXPI / ADI / TRMB 等
+- **cap $5B-$30B 中盘**：至少 3 块（数字 / 亮点 / 指引），call_takeaway 可省。每块 50-150 字
+- **cap < $5B 小盘**：至少给 verdict + ah_dp + eps + rev + 一句话 highlights。其他字段可全省。**不能跳过**——哪怕"AH 平淡 ±1% 内 / EPS 略 miss / 业务无重大新意"也要写一行
+- **池内 reporter 数据查不到**（FMP 还没回填 + WebSearch 无果）：写 `verdict: "—"`、`ah_dp: ""`、`eps`/`rev` 用 earnings_history.json 的 epsEstimated / revenueEstimated，highlights 写 "财报数据未公开 / 待核实"。**仍要在 list 里**
+
+判断"哪些公司当天盘后报"的方法：
+```bash
+python3 -c "
+import json
+TODAY='YYYY-MM-DD'
+with open('earnings_history.json') as f: hist=json.load(f)
+import sys; sys.path.insert(0,'.'); from gen import INDUSTRY_MAP
+pool = {s for ss in INDUSTRY_MAP.values() for s in ss if s != 'NA'}
+for sym, recs in hist.items():
+    if sym not in pool: continue
+    for r in recs:
+        if r.get('date') == TODAY:
+            print(sym, r.get('time'), r.get('epsEstimated'), r.get('revenueEstimated'))
+"
+```
+注意 FMP 的 `time` 字段经常是 null，这时按"美东盘后默认 amc"处理；如果是真 bmo（盘前），那就是次日凌晨（北京）的事，归到次日 routine 处理。
 
 **数据真实性硬规则**：
 - 数字 (`eps` / `rev`) 必须从公司 IR / 8-K / WebSearch 验证的财报新闻取实数，**不造数据、不四舍五入掩盖**

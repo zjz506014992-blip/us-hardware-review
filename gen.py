@@ -554,94 +554,6 @@ def _time_cn(t):
     return '—'
 
 
-def _render_earnings_calendar(date_str, big_caps):
-    """30 日业绩日历——从 earnings_history.json 动态生成，按周分组。"""
-    from datetime import date as _date, timedelta
-    from collections import defaultdict
-    today = _date.fromisoformat(date_str)
-    end = today + timedelta(days=30)
-    next5_set = set(_business_days_after(date_str, 5))
-
-    pool_syms = {s for syms in INDUSTRY_MAP.values() for s in syms if s != 'NA'}
-
-    by_date = defaultdict(list)
-    for sym, recs in _EARNINGS_HISTORY.items():
-        if sym not in pool_syms:
-            continue
-        for r in recs:
-            d = r.get('date', '')
-            if not d:
-                continue
-            try:
-                ed = _date.fromisoformat(d)
-            except Exception:
-                continue
-            if today < ed <= end:
-                by_date[d].append({
-                    'sym': sym,
-                    'time': r.get('time'),
-                    'eps': r.get('epsEstimated'),
-                    'rev': r.get('revenueEstimated'),
-                })
-
-    by_week = defaultdict(list)
-    for d in sorted(by_date.keys()):
-        ed = _date.fromisoformat(d)
-        monday = ed - timedelta(days=ed.weekday())
-        by_week[monday].append(d)
-
-    weekday_cn = ['一', '二', '三', '四', '五', '六', '日']
-    rows = []
-    total_count = 0
-    for i, monday in enumerate(sorted(by_week.keys())):
-        fri = monday + timedelta(days=4)
-        is_priority = any(d in next5_set for d in by_week[monday])
-        prio_tag = ' ⚡ 高优先级' if is_priority else ''
-        rows.append(
-            f'<tr><td colspan="6" style="background:#21262d;color:#58a6ff;font-weight:700">'
-            f'第 {i+1} 周（{_fmt_md(monday)} – {_fmt_md(fri)}）{prio_tag}</td></tr>'
-        )
-        items = []
-        for d in by_week[monday]:
-            for rec in by_date[d]:
-                rec2 = dict(rec)
-                rec2['date'] = d
-                items.append(rec2)
-        items.sort(key=lambda x: (
-            x['date'],
-            0 if x['sym'] in big_caps else 1,
-            -(x.get('rev') or 0),
-        ))
-        for r in items:
-            total_count += 1
-            ed = _date.fromisoformat(r['date'])
-            wd = weekday_cn[ed.weekday()]
-            sym_disp = f'<b>{r["sym"]}</b>' if r['sym'] in big_caps else r['sym']
-            zap = ' ⚡' if r['date'] in next5_set else ''
-            ind = SYM_TO_IND.get(r['sym'], '—')
-            rows.append(
-                f'<tr><td>{_fmt_md(ed)} {wd}</td><td>{sym_disp}{zap}</td>'
-                f'<td>{_time_cn(r.get("time"))}</td>'
-                f'<td>{_eps_str(r.get("eps"))}</td>'
-                f'<td>{_rev_str(r.get("rev"))}</td>'
-                f'<td style="color:#8b949e">{ind}</td></tr>'
-            )
-
-    if not rows:
-        rows.append('<tr><td colspan="6" style="text-align:center;color:#8b949e;padding:18px">未来 30 日内池内暂无已确认业绩</td></tr>')
-    body = '\n      '.join(rows)
-    return f'''<div class="section">
-  <div class="title">📅 30 日业绩日历（池内公司）</div>
-  <table>
-    <thead><tr><th>日期</th><th>代码</th><th>时段</th><th>EPS 预期</th><th>营收预期</th><th>子行业</th></tr></thead>
-    <tbody>
-      {body}
-    </tbody>
-  </table>
-  <p style="margin-top:10px;font-size:.82rem;color:#8b949e">⚡ 标记为未来 5 个交易日内的池内业绩。共池内 {total_count} 家公司在 30 日内披露（数据来源 FMP earnings_history）。</p>
-</div>'''
-
-
 def _render_earnings_recap(recap):
     """当日盘后业绩复盘——从 narrative_{DATE}.json 的 earnings_recap 字段渲染。
 
@@ -1089,11 +1001,10 @@ def write_html(data):
     market_structure_kpis = breadth_kpi + tech_kpi + semi_kpi + pool_kpi
     market_structure_narrative = MARKET_STRUCTURE.get('narrative', '<i style="color:#8b949e">市场结构叙事维护中…</i>')
 
-    # 业绩日历 + 未来 5 交易日观察（基于 DATE 动态生成，避免日期 stale）
+    # 未来 5 交易日观察（基于 DATE 动态生成）+ 当日盘后业绩复盘
+    # 注意：30 日完整业绩日历由独立的 calendar.html 提供，这里不重复
     big_caps = {s['s'] for s in stocks if s.get('cap', 0) >= 30000}  # cap > $30B 的池内大盘股
-    earnings_calendar_html = _render_earnings_calendar(DATE, big_caps)
     forward_5d_html = _render_forward_5d(DATE, big_caps)
-    # 当日盘后业绩复盘（来自 narrative_{DATE}.json 的 earnings_recap，缺失则不渲染）
     earnings_recap_html = _render_earnings_recap(_NARRATIVE.get('earnings_recap') if _NARRATIVE else None)
 
     html = f'''<!DOCTYPE html>
@@ -1251,8 +1162,6 @@ tr:hover td{{background:#1c2128}}
 </div>
 
 {earnings_recap_html}
-
-{earnings_calendar_html}
 
 {forward_5d_html}
 
