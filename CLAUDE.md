@@ -190,15 +190,31 @@ us-hardware-review/
 - `guidance`: 下季 / 全年 / 长期指引 50-150 字（必须给具体数字）
 - `call_takeaway`: 电话会管理层 commentary 50-150 字（CEO/CFO 原话引用 + 战略方向）
 
-**挑选规则——硬规则：池内当天盘后所有 reporter 都要有 entry，不允许偷懒只写大盘**
+**挑选规则——硬规则：仅当天 AMC 报的池内 reporter 进 list，all-in（不允许偷懒只写大盘）**
 
-按 cap 分级写不同长度（节约时间但保证覆盖）：
-- **cap > $30B 大盘**：完整 4 块（数字 / 亮点 / 指引 / 电话会），每块 50-200 字。如 ARM / AMD / QCOM / AVGO / NVDA / AAPL / MU / INTC / TXN / ADI / AMAT / LRCX / KLAC / MRVL / DELL / CSCO / ANET / MSI / MCHP / NXPI / ADI / TRMB 等
+**两层过滤**（缺一不可）：
+
+**A. 时间过滤——只留"今天 AMC"，剔除以下 3 类**：
+1. **昨日 AMC** ——典型 FMP date 字段比新闻晚一天（FLEX 报 5/5 amc 但 FMP 标 5/6）。验证方法：搜 `"after hours on May X" + 公司名`，新闻里说"5/5 evening"就归 5/5 不归 5/6
+2. **今日 BMO 盘前**（如 TRMB / LFUS / CDW 等典型 BMO reporter）——反应在当日盘中，不属于"盘后业绩"。识别信号：
+   · 新闻标题含 "Q1 results due May X **before market open**"
+   · 当日股价反应在 "midday trading"（不是 AH / extended trading）
+   · 公司 IR 公告时间是早 6-8am ET
+   · **BMO reporter 整体不该出现在 amc 复盘 list 里**——他们在当日 K 线里已被吸收
+3. **次日凌晨北京时间的 BMO**——这是次日 routine 的事
+
+**B. cap 分级写不同长度**（time 过滤通过后）：
+- **cap > $30B 大盘**：完整 4 块（数字 / 亮点 / 指引 / 电话会），每块 50-200 字。如 ARM / AMD / QCOM / AVGO / NVDA / AAPL / MU / INTC / TXN / ADI / AMAT / LRCX / KLAC / MRVL / DELL / CSCO / ANET / MSI / MCHP / NXPI 等
 - **cap $5B-$30B 中盘**：至少 3 块（数字 / 亮点 / 指引），call_takeaway 可省。每块 50-150 字
 - **cap < $5B 小盘**：至少给 verdict + ah_dp + eps + rev + 一句话 highlights。其他字段可全省。**不能跳过**——哪怕"AH 平淡 ±1% 内 / EPS 略 miss / 业务无重大新意"也要写一行
 - **池内 reporter 数据查不到**（FMP 还没回填 + WebSearch 无果）：写 `verdict: "—"`、`ah_dp: ""`、`eps`/`rev` 用 earnings_history.json 的 epsEstimated / revenueEstimated，highlights 写 "财报数据未公开 / 待核实"。**仍要在 list 里**
 
-判断"哪些公司当天盘后报"的方法：
+**C. 重大 AH 反应升级写法（覆盖 cap 分级规则）**：
+- **|ah_dp| ≥ 5% 必须升级到完整 4 块**（无论 cap 大小，包括小盘 / 微盘），尤其 highlights 必须 200+ 字 + call_takeaway 必须有原话引用
+- **典型场景**：beat-then-fade（headline 数字漂亮但 AH 跌）/ miss-but-pop（数字差但指引强 + 估值已大幅 priced-in 利空）/ 不可解释的剧烈反应（管理层声明 + 新业务披露 + 罕见大单等）—— 这些都是后续要追踪的 alpha 来源，必须深度复盘
+- **不重大反应（|ah_dp| < 5%）**：按上面 cap 分级规则即可，不强求长篇
+
+判断"哪些公司当天 AMC 报"的方法：
 ```bash
 python3 -c "
 import json
@@ -213,7 +229,7 @@ for sym, recs in hist.items():
             print(sym, r.get('time'), r.get('epsEstimated'), r.get('revenueEstimated'))
 "
 ```
-注意 FMP 的 `time` 字段经常是 null，这时按"美东盘后默认 amc"处理；如果是真 bmo（盘前），那就是次日凌晨（北京）的事，归到次日 routine 处理。
+**FMP `time` 字段经常 null，绝不能盲信"null = amc"**——必须用 WebSearch 验证至少一遍是不是 BMO（高频陷阱：很多元器件 / 分销 / 工具厂商习惯 BMO 报）。一个简单 WebSearch 关键词：`{ticker} earnings "before market" OR "after market"` 可秒查时间点。
 
 **数据真实性硬规则**：
 - 数字 (`eps` / `rev`) 必须从公司 IR / 8-K / WebSearch 验证的财报新闻取实数，**不造数据、不四舍五入掩盖**
@@ -554,6 +570,7 @@ NEWS_TIERS = {
 | 2026-04-30 | routine 启动后准备一次 Write ~50KB narrative JSON 时被 stream timeout / API error 中断（用户提示重新试） | 第一次尝试时我打算"一次 Write 整个 narrative_{DATE}.json"——这正是 4/29 教训表已记录的反模式。经验未及时调用 → 重蹈覆辙 | 立即切换到 **Python builder 增量法**（4/29 教训已写明的方案）：把 narrative 拆成 `_b1_init.py`（2KB 框架）/ `_b2_keystocks_a.py`（4 张卡 ~7KB）/ `_b2_keystocks_b.py`（4 张卡 ~7KB）/ `_b3_sector_beta.py`（tldr+4 themes ~6KB）/ `_b4_news_tiers.py`（4 tier ~8KB）—— 每个 builder 单次 Write < 8KB、跑完立即 `rm`，最终生成 ~30KB JSON。**根本教训**：开 routine 第 4 步时直接默认走 builder 增量法，不要"先试 Write 再说"——4/29 表已写明 builder 法是经过验证的稳妥方案。把这条加进 routine 提示词的执行节奏第一行更稳 |
 | 2026-04-30 | Write 工具写 .py 文件含 Unicode × (U+00D7) 等字符时 SyntaxError | Write 工具保存文件后，Bash 调用 python3 解析时把 × 等非 ASCII 字符报 "invalid character" SyntaxError，文件未能执行 | **用 inline heredoc** 替代写 .py 文件：`python3 << 'PYEOF' ... PYEOF` 直接在 Bash heredoc 里运行 Python，完全绕过文件写入 + 编码问题。已成功以此方式完成整个 narrative builder 流程。**判断准则**：含中文/特殊 Unicode 的 builder 脚本一律用 inline heredoc，不用 Write 工具写 .py 文件。 |
 | 2026-05-07 | EARNINGS_RECAP 写 ARM/COHR 盘后股价方向错（写成 +5%/+2.66% 涨，实际是 -6.4%/-7% 跌） | WebSearch 关键词偏 `"earnings results" + "beat"`，搜出来都是头条 pop（财报刚出 5 分钟内 +X%），没意识到经过 1-2 小时电话会 + 细读后转跌（pop-then-fade pattern）；ARM 是 license 细项 + AGI CPU R&D 投入担忧、COHR 是 OI/FCF miss + 估值 priced-in。盲信第一篇 hit | **硬规则升级**（CLAUDE.md 第 4 节 EARNINGS_RECAP 已加）：(1) 必须查 AH session 最终收盘价，不是 headline pop；(2) WebSearch 至少带一次 `"after hours" + "fall/decline/drop"` 反向关键词；(3) 看 Seeking Alpha 'declines despite' / Yahoo Finance AH / Nasdaq.com after-hours page 这种最准；(4) 推荐写"盘中→AH 早→AH 末"全链路时间线写法。**verdict 与 ah_dp 方向不一致很常见**（headline beat 但 AH 跌），不要因为 AH 跌就强行改 verdict |
+| 2026-05-07 | EARNINGS_RECAP 没区分 AMC vs BMO，把 FLEX（5/5 amc）/ TRMB（5/6 bmo）/ LFUS（5/6 bmo）也放进了 5/6 list | 盲信 FMP `earnings_history.json` 的 `date` 字段 + `time=null` 默认 amc。但 FMP 经常把 5/5 amc 标 5/6（FLEX），且 BMO reporter（TRMB / LFUS / CDW 类元器件 / 分销 / 工具厂商）`time` 也常是 null。结果是把"昨日 amc"和"今日 bmo"都污染进了"今日 amc"列表 | **硬规则升级**（第 4 节 EARNINGS_RECAP 加 A/B/C 三层过滤）：(A) 时间过滤——只留今天 AMC，剔除昨日 amc（搜 `"after hours on May X"` 验证）+ 今日 bmo（搜 `{ticker} earnings "before market" OR "after market"` 秒查）；(C) 重大 AH 反应（\|ah_dp\| ≥ 5%）必须升级到完整 4 块，不论 cap 大小。**绝不能盲信 FMP date + time=null 默认 amc，每个 reporter 都要 WebSearch 验证一次时间点** |
 
 ## 13. 用户偏好
 
