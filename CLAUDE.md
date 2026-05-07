@@ -217,8 +217,14 @@ for sym, recs in hist.items():
 
 **数据真实性硬规则**：
 - 数字 (`eps` / `rev`) 必须从公司 IR / 8-K / WebSearch 验证的财报新闻取实数，**不造数据、不四舍五入掩盖**
-- `ah_dp` 必须从 Yahoo Finance / Reuters / Bloomberg / Benzinga / StockTitan 等的 AH quote 取实数。如果实在查不到，写定性描述（"盘后小幅上涨" / "AH 平淡 ±1% 内"），**绝不编造具体百分比**
-- `verdict` 标定：`beat` 要 EPS 和 Rev **都超**共识；`miss` 要至少一项**显著低于**；`mixed` = 一项 beat 一项 miss；`inline` = 都在 ±2% 内符合预期
+- `ah_dp` 取数硬规则（**经常翻车，重点防御**）：
+  · **必须取 AH session 最终收盘报价**，不是 headline 刚出 5 分钟内的 pop —— 北京 7am routine 启动时美东 AH 已 ~3 小时，价格基本稳定，必须查最新
+  · 常见翻车 pattern：财报 headline beat → 即时 +5-10% 高开 → 电话会期间 / 后转跌（细项 / 指引细节 / FCF / capex / valuation priced-in 触发）→ AH 收盘负
+  · WebSearch 至少要带 `"after hours" OR "extended trading" + "fall" OR "decline" OR "drop"` 双向关键词搜两次，**不能只看"earnings beat"标题**就下结论
+  · 看 Seeking Alpha 'declines despite' / Yahoo Finance AH quote / Nasdaq.com `/market-activity/stocks/{sym}/after-hours` 这类源最准
+  · 实在查不到，写定性描述（"盘后小幅上涨" / "AH 平淡 ±1% 内"），**绝不编造具体百分比**
+  · 推荐写法：`"-6.4% AH（$222.12）—— 盘中 +13.6%，盘后初涨 +8% 后转跌（pop-then-fade）"` 这种"盘中→AH 早→AH 末"全链路时间线，比单数字更准
+- `verdict` 标定（**只看 headline 数字 vs 共识，不看市场反应**）：`beat` 要 EPS 和 Rev **都超**共识；`miss` 要至少一项**显著低于**；`mixed` = 一项 beat 一项 miss / 或者 EPS 共识口径有歧义（GAAP vs Non-GAAP 双标，OI / FCF 等非 EPS 指标 miss）；`inline` = 都在 ±2% 内符合预期。**verdict 与 ah_dp 方向不一致很常见**（beat 但 AH 跌、miss 但 AH 涨），不要因为 AH 跌就强行改成 miss
 
 5. **跑生成**：`python gen.py`
 
@@ -547,6 +553,7 @@ NEWS_TIERS = {
 | 2026-04-29 | commit 完成但 push 卡在 develop branch，问用户授权 push 到 main 增加摩擦 | Claude Code on the Web routine 平台层加了"必须开发到 `claude/<random>` 分支 + 不许 push main"的硬约束（system prompt 注入），与 CLAUDE.md 工作流（一直 push main）冲突；我没敢越规则就问用户 | **临时方案**：commit 完成后 `git checkout main && git merge --ff-only <branch> && git push origin main` 把分支 fast-forward 到 main 即可，分支只是开发暂存区，不是禁区。**永久方案**：用户在 Claude Code on the Web 的 routine 配置里去掉"指定开发分支"字段（让默认走 main），下次 routine 启动 system prompt 就不会注入这条约束。**判断准则**：当 routine 平台规则与 CLAUDE.md 业务流程冲突时，CLAUDE.md 优先（CLAUDE.md 是用户固化的真意图） |
 | 2026-04-30 | routine 启动后准备一次 Write ~50KB narrative JSON 时被 stream timeout / API error 中断（用户提示重新试） | 第一次尝试时我打算"一次 Write 整个 narrative_{DATE}.json"——这正是 4/29 教训表已记录的反模式。经验未及时调用 → 重蹈覆辙 | 立即切换到 **Python builder 增量法**（4/29 教训已写明的方案）：把 narrative 拆成 `_b1_init.py`（2KB 框架）/ `_b2_keystocks_a.py`（4 张卡 ~7KB）/ `_b2_keystocks_b.py`（4 张卡 ~7KB）/ `_b3_sector_beta.py`（tldr+4 themes ~6KB）/ `_b4_news_tiers.py`（4 tier ~8KB）—— 每个 builder 单次 Write < 8KB、跑完立即 `rm`，最终生成 ~30KB JSON。**根本教训**：开 routine 第 4 步时直接默认走 builder 增量法，不要"先试 Write 再说"——4/29 表已写明 builder 法是经过验证的稳妥方案。把这条加进 routine 提示词的执行节奏第一行更稳 |
 | 2026-04-30 | Write 工具写 .py 文件含 Unicode × (U+00D7) 等字符时 SyntaxError | Write 工具保存文件后，Bash 调用 python3 解析时把 × 等非 ASCII 字符报 "invalid character" SyntaxError，文件未能执行 | **用 inline heredoc** 替代写 .py 文件：`python3 << 'PYEOF' ... PYEOF` 直接在 Bash heredoc 里运行 Python，完全绕过文件写入 + 编码问题。已成功以此方式完成整个 narrative builder 流程。**判断准则**：含中文/特殊 Unicode 的 builder 脚本一律用 inline heredoc，不用 Write 工具写 .py 文件。 |
+| 2026-05-07 | EARNINGS_RECAP 写 ARM/COHR 盘后股价方向错（写成 +5%/+2.66% 涨，实际是 -6.4%/-7% 跌） | WebSearch 关键词偏 `"earnings results" + "beat"`，搜出来都是头条 pop（财报刚出 5 分钟内 +X%），没意识到经过 1-2 小时电话会 + 细读后转跌（pop-then-fade pattern）；ARM 是 license 细项 + AGI CPU R&D 投入担忧、COHR 是 OI/FCF miss + 估值 priced-in。盲信第一篇 hit | **硬规则升级**（CLAUDE.md 第 4 节 EARNINGS_RECAP 已加）：(1) 必须查 AH session 最终收盘价，不是 headline pop；(2) WebSearch 至少带一次 `"after hours" + "fall/decline/drop"` 反向关键词；(3) 看 Seeking Alpha 'declines despite' / Yahoo Finance AH / Nasdaq.com after-hours page 这种最准；(4) 推荐写"盘中→AH 早→AH 末"全链路时间线写法。**verdict 与 ah_dp 方向不一致很常见**（headline beat 但 AH 跌），不要因为 AH 跌就强行改 verdict |
 
 ## 13. 用户偏好
 
