@@ -642,6 +642,88 @@ def _render_earnings_calendar(date_str, big_caps):
 </div>'''
 
 
+def _render_earnings_recap(recap):
+    """当日盘后业绩复盘——从 narrative_{DATE}.json 的 earnings_recap 字段渲染。
+
+    schema (narrative.earnings_recap):
+      {
+        "session_label": "盘后" 或 "盘前/盘后混合"  (可选，默认"盘后")
+        "items": [
+          {
+            "sym": "AMD",
+            "verdict": "beat" / "miss" / "mixed" / "inline",
+            "ah_dp": "+4.2%" 或 "-1.8%"  (盘后股价反应字符串)
+            "eps": "$0.96 vs $0.95E" (实际 vs 共识),
+            "rev": "$7.85B vs $7.80B (+36.5% YoY)",
+            "highlights": "Q1 业绩亮点，100-200 字",
+            "guidance": "下季 / 全年指引，50-150 字",
+            "call_takeaway": "电话会要点 / 管理层 commentary，50-150 字"
+          }
+        ]
+      }
+
+    没有 items 或 recap 缺失时返回空字符串（整个 section 不渲染）。
+    """
+    if not recap or not recap.get('items'):
+        return ''
+    items = recap['items']
+    session_label = recap.get('session_label', '盘后')
+
+    verdict_map = {
+        'beat':   ('BEAT',    '#e57373', '🟢 超预期'),  # 中国习惯红=涨；用红色
+        'miss':   ('MISS',    '#43a047', '🔻 不及预期'),
+        'mixed':  ('MIXED',   '#ffa726', '⚖️ 喜忧参半'),
+        'inline': ('IN-LINE', '#8b949e', '— 符合预期'),
+    }
+
+    cards = []
+    for r in items:
+        sym = r.get('sym', '?')
+        v = r.get('verdict', 'inline').lower()
+        v_label, v_color, v_chip = verdict_map.get(v, verdict_map['inline'])
+        ah = r.get('ah_dp', '').strip()
+        # 盘后股价颜色：从字符串解析符号
+        if ah.startswith('+'):
+            ah_color = '#e57373'
+        elif ah.startswith('-'):
+            ah_color = '#43a047'
+        else:
+            ah_color = '#8b949e'
+        ah_html = f'<span style="color:{ah_color};font-weight:700">{ah}</span>' if ah else '<span style="color:#8b949e">盘后股价 —</span>'
+
+        eps = r.get('eps', '—')
+        rev = r.get('rev', '—')
+        highlights = r.get('highlights', '')
+        guidance = r.get('guidance', '')
+        call = r.get('call_takeaway', '')
+
+        # 字段块，缺失则跳过
+        blocks = [f'<div style="font-size:.82rem;color:#c9d1d9;margin-bottom:8px"><b style="color:#8b949e">📊 数字</b><br>EPS：{eps}<br>Rev：{rev}</div>']
+        if highlights:
+            blocks.append(f'<div style="font-size:.82rem;color:#c9d1d9;line-height:1.7;margin-bottom:8px"><b style="color:#8b949e">✨ 业绩亮点</b><br>{highlights}</div>')
+        if guidance:
+            blocks.append(f'<div style="font-size:.82rem;color:#c9d1d9;line-height:1.7;margin-bottom:8px"><b style="color:#8b949e">🎯 指引</b><br>{guidance}</div>')
+        if call:
+            blocks.append(f'<div style="font-size:.82rem;color:#c9d1d9;line-height:1.7"><b style="color:#8b949e">📞 电话会要点</b><br>{call}</div>')
+
+        cards.append(f'''<div style="background:#0d1117;border:1px solid #30363d;border-left:4px solid {v_color};border-radius:6px;padding:14px 16px;margin-bottom:12px">
+  <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #30363d;padding-bottom:8px;margin-bottom:10px">
+    <div>
+      <span style="font-size:1.1rem;font-weight:700;color:#e6edf3">{sym}</span>
+      <span style="background:{v_color}33;color:{v_color};padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700;margin-left:8px">{v_chip}</span>
+    </div>
+    <div>{ah_html}</div>
+  </div>
+  {''.join(blocks)}
+</div>''')
+
+    return f'''<div class="section">
+  <div class="title">📊 当日{session_label}业绩复盘（池内）</div>
+  <p style="font-size:.82rem;color:#8b949e;margin-bottom:12px">财报实际值 vs 共识、业绩亮点、下季指引、电话会管理层观点、{session_label}股价反馈。共 {len(items)} 家。</p>
+  {''.join(cards)}
+</div>'''
+
+
 def _render_forward_5d(date_str, big_caps):
     """未来 5 交易日观察——池内业绩 + 宏观 + 行业大会，全部按 DATE 动态生成。"""
     from datetime import date as _date
@@ -1011,6 +1093,8 @@ def write_html(data):
     big_caps = {s['s'] for s in stocks if s.get('cap', 0) >= 30000}  # cap > $30B 的池内大盘股
     earnings_calendar_html = _render_earnings_calendar(DATE, big_caps)
     forward_5d_html = _render_forward_5d(DATE, big_caps)
+    # 当日盘后业绩复盘（来自 narrative_{DATE}.json 的 earnings_recap，缺失则不渲染）
+    earnings_recap_html = _render_earnings_recap(_NARRATIVE.get('earnings_recap') if _NARRATIVE else None)
 
     html = f'''<!DOCTYPE html>
 <html lang="zh-CN">
@@ -1165,6 +1249,8 @@ tr:hover td{{background:#1c2128}}
     <b style="color:#c9d1d9">📚 渠道说明：</b>Tier 1 宏观大盘（Bloomberg/Reuters/WSJ/CNBC/FT）；Tier 2 半导体深度（SemiAnalysis/SemiWiki/Semiconductor Engineering/EETimes/TechInsights/ServeTheHome）；Tier 3 亚洲供应链（DigiTimes/TrendForce/Nikkei Asia/日经亚洲）；Tier 4 公司公告 + 分析师评级（公司 IR / Bloomberg Analyst Estimates）。
   </div>
 </div>
+
+{earnings_recap_html}
 
 {earnings_calendar_html}
 

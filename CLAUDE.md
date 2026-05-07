@@ -90,6 +90,15 @@ us-hardware-review/
      "news_tiers": {
        "tier1": {"name": "...", "desc": "...", "items": [{src, title, body, impact}, ...]},
        "tier2": {...}, "tier3": {...}, "tier4": {...}
+     },
+     "earnings_recap": {
+       "session_label": "盘后",
+       "items": [
+         {"sym": "ARM", "verdict": "beat", "ah_dp": "+5% 高开",
+          "eps": "...", "rev": "...",
+          "highlights": "...", "guidance": "...", "call_takeaway": "..."},
+         ...
+       ]
      }
    }
    ```
@@ -101,7 +110,7 @@ us-hardware-review/
    # 然后 Edit 改 date / 各字段
    ```
 
-   各块写作要点见下方 schema 详解（`SECTOR_BETA` / `KEY_STOCKS` / `NEWS_TIERS` / `MARKET_STRUCTURE`）。
+   各块写作要点见下方 schema 详解（`SECTOR_BETA` / `KEY_STOCKS` / `NEWS_TIERS` / `MARKET_STRUCTURE` / `EARNINGS_RECAP`）。
 
    **指数/ETF/风格因子**（BROAD_INDICES / SEMI_INDICES / GICS_INDICES / STYLE_FACTORS）**不再手动维护**——`fetch_fmp.py` 每天自动拉到 `confirmed_macros_{DATE}.json`，`gen.py` 自动覆盖显示。如果某些指数 FMP 不支持（首次跑后看 missing 列表），把它们替换成 ETF proxy（如 `^TNX` → `IEF`）。
 
@@ -166,6 +175,31 @@ us-hardware-review/
 - 动量 + 质量 + 价值同向 → 普涨基本面 rally
 
 **第 3 段：综合判断**：用一句话给出"今日属于哪一类历史模式"+ 后市风险点（如"窄幅领涨脆弱性，关注 MTUM 与 SOX 拐点"）
+
+### `EARNINGS_RECAP` 写作要点（当日盘后业绩复盘）
+
+**用途**：当日有池内公司盘后报财报时，给出"业绩好坏 / 数字 / 亮点 / 指引 / 电话会 / 盘后股价反馈"的结构化复盘卡片。**没人报或者公司全是无关紧要小盘** → 整个 `earnings_recap` 字段省略，gen.py 自动跳过 section。
+
+**字段说明**（每个 item）：
+- `sym`: 池内 ticker
+- `verdict`: `"beat"` / `"miss"` / `"mixed"` / `"inline"` 之一（决定卡片左边框颜色 + chip 文案：BEAT 红/MISS 绿/MIXED 黄/IN-LINE 灰）
+- `ah_dp`: 盘后股价反馈字符串，**必须以 `+` 或 `-` 开头**才会有颜色（红/绿）。例如 `"+4.2%"`、`"-12% 暴跌"`、`"+5% 高开（盘中已涨 +12.5%）"`。如果只有定性描述（无 + / -），会显示灰色
+- `eps`: 实际 vs 共识，例如 `"$0.96 vs $0.95E（超 +1.0%）"` 或 `"Non-GAAP $1.41（共识 $1.41 in-line）；GAAP $0.97"`
+- `rev`: 同上，例如 `"$7.85B（共识 $7.80B，+36.5% YoY）"`
+- `highlights`: 业绩亮点 100-200 字（业务分项数据 / 毛利率 / 利润率 / 现金流 / 客户名单）
+- `guidance`: 下季 / 全年 / 长期指引 50-150 字（必须给具体数字）
+- `call_takeaway`: 电话会管理层 commentary 50-150 字（CEO/CFO 原话引用 + 战略方向）
+
+**挑选规则**（每天 routine 写时遵守）：
+- **必填**：cap > $30B 池内大盘股盘后报的财报（如 ARM / AMD / QCOM / AVGO / NVDA / AAPL / MU / INTC / TXN / ADI / AMAT / LRCX / KLAC / MRVL / DELL / CSCO / ANET / MSI / MCHP / NXPI 等）
+- **优先**：cap $5B-$30B 中盘有显著市场反应的（盘后 ±5% 以上）
+- **跳过**：cap < $5B 小盘除非有特别催化（拆分/并购/重大技术突破）
+- **典型每天 2-5 家**，全是大盘股最多 3-4 家、加几个有意外动作的中盘
+
+**数据真实性硬规则**：
+- 数字 (`eps` / `rev`) 必须从公司 IR / 8-K / WebSearch 验证的财报新闻取实数，**不造数据、不四舍五入掩盖**
+- `ah_dp` 必须从 Yahoo Finance / Reuters / Bloomberg / Benzinga / StockTitan 等的 AH quote 取实数。如果实在查不到，写定性描述（"盘后小幅上涨" / "AH 平淡 ±1% 内"），**绝不编造具体百分比**
+- `verdict` 标定：`beat` 要 EPS 和 Rev **都超**共识；`miss` 要至少一项**显著低于**；`mixed` = 一项 beat 一项 miss；`inline` = 都在 ±2% 内符合预期
 
 5. **跑生成**：`python gen.py`
 
