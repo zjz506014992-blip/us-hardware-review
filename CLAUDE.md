@@ -214,7 +214,9 @@ us-hardware-review/
 - **典型场景**：beat-then-fade（headline 数字漂亮但 AH 跌）/ miss-but-pop（数字差但指引强 + 估值已大幅 priced-in 利空）/ 不可解释的剧烈反应（管理层声明 + 新业务披露 + 罕见大单等）—— 这些都是后续要追踪的 alpha 来源，必须深度复盘
 - **不重大反应（|ah_dp| < 5%）**：按上面 cap 分级规则即可，不强求长篇
 
-判断"哪些公司当天 AMC 报"的方法：
+判断"哪些公司当天 AMC 报"的方法——**必须从业绩日历完整列表出发，逐一过滤**：
+
+**第 0 步（硬规则）：先跑下面脚本，得到当日所有池内 reporter 完整列表。这是唯一可信的起点，不能靠记忆或 ad-hoc WebSearch 来发现公司。**
 ```bash
 python3 -c "
 import json
@@ -229,7 +231,11 @@ for sym, recs in hist.items():
             print(sym, r.get('time'), r.get('epsEstimated'), r.get('revenueEstimated'))
 "
 ```
+**典型单日会有 20–40 家**（FMP 时间精度差，全 null）。把这张完整列表存在工作记忆里，后续所有过滤操作都基于它。**不在这张列表里的公司，说明 FMP 没有该日业绩记录，再去 WebSearch 也意义不大**；**在这张列表里的公司，必须逐一判断 BMO/AMC，不能跳过**（尤其 cap > $1B 的标的）。
+
 **FMP `time` 字段经常 null，绝不能盲信"null = amc"**——必须用 WebSearch 验证至少一遍是不是 BMO（高频陷阱：很多元器件 / 分销 / 工具厂商习惯 BMO 报）。一个简单 WebSearch 关键词：`{ticker} earnings "before market" OR "after market"` 可秒查时间点。
+
+**教训（2026-05-07）**：当天 earnings_history.json 列出 35 家，routine 仅验证了部分，漏掉 SYNA/DIOD/POWI/CRSR 4 家 AMC reporter。根因是没有把完整列表当起点逐一过滤，而是靠印象 + 部分 WebSearch。正确流程：**先输出完整列表 → 复制出来 → 每家查一次 BMO/AMC → 再写 recap**。
 
 **数据真实性硬规则**：
 - 数字 (`eps` / `rev`) 必须从公司 IR / 8-K / WebSearch 验证的财报新闻取实数，**不造数据、不四舍五入掩盖**
@@ -572,6 +578,7 @@ NEWS_TIERS = {
 | 2026-05-07 | EARNINGS_RECAP 写 ARM/COHR 盘后股价方向错（写成 +5%/+2.66% 涨，实际是 -6.4%/-7% 跌） | WebSearch 关键词偏 `"earnings results" + "beat"`，搜出来都是头条 pop（财报刚出 5 分钟内 +X%），没意识到经过 1-2 小时电话会 + 细读后转跌（pop-then-fade pattern）；ARM 是 license 细项 + AGI CPU R&D 投入担忧、COHR 是 OI/FCF miss + 估值 priced-in。盲信第一篇 hit | **硬规则升级**（CLAUDE.md 第 4 节 EARNINGS_RECAP 已加）：(1) 必须查 AH session 最终收盘价，不是 headline pop；(2) WebSearch 至少带一次 `"after hours" + "fall/decline/drop"` 反向关键词；(3) 看 Seeking Alpha 'declines despite' / Yahoo Finance AH / Nasdaq.com after-hours page 这种最准；(4) 推荐写"盘中→AH 早→AH 末"全链路时间线写法。**verdict 与 ah_dp 方向不一致很常见**（headline beat 但 AH 跌），不要因为 AH 跌就强行改 verdict |
 | 2026-05-07 | EARNINGS_RECAP 没区分 AMC vs BMO，把 FLEX（5/5 amc）/ TRMB（5/6 bmo）/ LFUS（5/6 bmo）也放进了 5/6 list | 盲信 FMP `earnings_history.json` 的 `date` 字段 + `time=null` 默认 amc。但 FMP 经常把 5/5 amc 标 5/6（FLEX），且 BMO reporter（TRMB / LFUS / CDW 类元器件 / 分销 / 工具厂商）`time` 也常是 null。结果是把"昨日 amc"和"今日 bmo"都污染进了"今日 amc"列表 | **硬规则升级**（第 4 节 EARNINGS_RECAP 加 A/B/C 三层过滤）：(A) 时间过滤——只留今天 AMC，剔除昨日 amc（搜 `"after hours on May X"` 验证）+ 今日 bmo（搜 `{ticker} earnings "before market" OR "after market"` 秒查）；(C) 重大 AH 反应（\|ah_dp\| ≥ 5%）必须升级到完整 4 块，不论 cap 大小。**绝不能盲信 FMP date + time=null 默认 amc，每个 reporter 都要 WebSearch 验证一次时间点** |
 | 2026-05-08 | 用 Python inline heredoc 构建含中文字符的 dict 字面量时触发 SyntaxError（与 4/30 教训相同根因，但反向表现） | 在 heredoc 中写 `{"key": "中文内容"}` Python dict 字面量时，某些 Unicode 字符（如弯引号 `"..."` 或 `→`）导致 Python SyntaxError。4/30 教训说"用 inline heredoc 替代 Write 写 .py 文件"，但 heredoc 本身也可能有同样的字符编码问题 | **新判断准则**：(1) `.json` 文件含中文 → **用 Write 工具直接写**，不用 heredoc（Write 工具对 .json 完全支持 Unicode，无 SyntaxError 风险）；(2) `.py` 文件含中文 → 用 heredoc 但避免复杂 Unicode；(3) 两者都会有问题时 → 在 Python 代码里只用 ASCII，中文内容通过读文件方式注入。今日用 Write 工具直接写 narrative_2026-05-07.json（~25KB）成功，无任何 encoding 问题 |
+| 2026-05-08 | earnings_recap 漏掉 4 家 AMC reporter（SYNA/DIOD/POWI/CRSR），用户指出后补写 | 没有把 earnings_history.json 当日列表（当天 35 家）作为强制起点逐一过滤，而是靠记忆 + 部分 WebSearch 来"发现"公司，结果遗漏了 4 家中小盘但均已报 AMC 的池内公司 | **硬规则**：每日 routine 写 earnings_recap 前，必须先跑 earnings_history.json 过滤脚本，得到完整的当日 reporter 列表（通常 20–40 家），把这张列表存在工作记忆里；后续 BMO/AMC 过滤必须对列表里每家 cap > $1B 的公司都做一次 WebSearch 验证，不能有遗漏。流程：**完整列表 → 逐一 BMO/AMC 判断 → 再写 recap**，而不是"先写 recap 再想有没有遗漏"。CLAUDE.md 第 4 节 EARNINGS_RECAP 已加"第 0 步"强制要求 |
 
 ## 13. 用户偏好
 
