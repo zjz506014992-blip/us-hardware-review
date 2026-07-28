@@ -5,12 +5,12 @@
 
   默认（增量）: fetch_earnings_history.py
     用 /stable/earnings-calendar?from=today-30d&to=today+180d 拉一次（1 call）,
-    过滤到 314 池, upsert 合并进 earnings_history.json.
+    过滤到池内, upsert 合并进 earnings_history.json.
     适合 GitHub Actions 工作日每天跑.
 
   全量回填: fetch_earnings_history.py --full
-    对池里 313 只 ticker 逐个调 /stable/earnings?symbol=X&limit=120
-    覆盖近 25-30 年历史. ~313 次 API 调用, 仅在首次或月度纠错时跑.
+    对池里 292 只 ticker 逐个调 /stable/earnings?symbol=X&limit=120
+    覆盖近 25-30 年历史. ~292 次 API 调用, 仅在首次或月度纠错时跑.
 
   最近重拉: fetch_earnings_history.py --refresh-recent [days]
     重拉过去 N 天 (默认 180) 内有过财报的所有 ticker,
@@ -100,7 +100,7 @@ def upsert(history, sym, recs):
 
 
 def mode_full(api_key):
-    """逐 ticker 拉历史. 313 calls."""
+    """逐 ticker 拉历史."""
     print(f"=== FULL backfill: {len(TICKERS)} tickers ===")
     history = load_history()
     failed = []
@@ -196,7 +196,7 @@ def mode_refresh_recent(api_key, days=180):
 
 
 def mode_profiles(api_key):
-    """拉取 313 只 ticker 的公司 profile, 写 company_profiles.json. 313 calls."""
+    """拉取池内全部 ticker 的公司 profile, 写 company_profiles.json."""
     print(f"=== PROFILES: {len(TICKERS)} tickers ===")
     profiles_file = os.path.join(REPO_DIR, 'company_profiles.json')
     profiles = {}
@@ -259,11 +259,11 @@ def mode_profiles(api_key):
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument('--full', action='store_true', help='Full backfill (313 calls)')
+    p.add_argument('--full', action='store_true', help='Full backfill (all pool tickers)')
     p.add_argument('--refresh-recent', type=int, nargs='?', const=180, default=None,
                    metavar='DAYS', help='Re-fetch tickers with earnings in last N days')
     p.add_argument('--profiles', action='store_true',
-                   help='Fetch company profiles -> company_profiles.json (313 calls)')
+                   help='Fetch company profiles -> company_profiles.json')
     args = p.parse_args()
     api_key = get_api_key()
     if args.full:
