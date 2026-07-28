@@ -9,7 +9,7 @@
 每日产出 **美股硬件板块** 收盘复盘网页，发布到 GitHub Pages：
 <https://zjz506014992-blip.github.io/us-hardware-review/>
 
-覆盖 **314 只股票 / 24 个子行业 / 4 大板块**，含 ECharts treemap、Chart.js scatter、个股深度卡、新闻 Tier 分层、业绩日历等。
+覆盖 **292 只股票 / 25 个子行业 / 5 大板块**，含 ECharts treemap、Chart.js scatter、个股深度卡、新闻 Tier 分层、业绩日历等。
 
 ## 2. 仓库结构
 
@@ -20,11 +20,11 @@ us-hardware-review/
 ├── fetch_earnings_history.py    # 业绩历史 + 公司 profile 维护（delta / refresh-recent / full / profiles）
 ├── calendar.html                # 业绩日历（加载 earnings_history.json + company_profiles.json，点格弹框）
 ├── earnings.html                # 业绩历史搜索表（客户端加载 earnings_history.json）
-├── earnings_history.json        # 314 池近 25-30 年业绩（首次 --full 回填，之后日增量）
-├── company_profiles.json        # 314 公司 profile（name/desc/industry/website/image，每周日刷新）
+├── earnings_history.json        # 292 池近 25-30 年业绩（首次 --full 回填，之后日增量）
+├── company_profiles.json        # 292 公司 profile（name/desc/industry/website/image，每周日刷新）
 ├── index.html                   # 历史存档目录
 ├── {DATE}.html                  # 当日复盘页（一天一份）
-├── stocks-{DATE}.html           # 当日全部 314 只股票表
+├── stocks-{DATE}.html           # 当日全部 292 只股票表
 ├── confirmed_{DATE}.json        # FMP 当日行情（GitHub Actions 自动产出）
 ├── _meta.json                   # 累计每日统计（cap_w / up / down / flat / total）
 ├── .github/workflows/daily.yml  # GitHub Actions 定时任务（cron 22:30 UTC 工作日）
@@ -37,7 +37,7 @@ us-hardware-review/
 
 ### 3.1 自动层（GitHub Actions，每个交易日跑）
 - 美东 22:30（北京 6:30am）触发 `.github/workflows/daily.yml`
-- 跑 `python fetch_fmp.py` → 调 `https://financialmodelingprep.com/stable/batch-quote` 拉 313 只 ticker（'NA' 是占位符跳过）
+- 跑 `python fetch_fmp.py` → 调 `https://financialmodelingprep.com/stable/batch-quote` 拉 292 只 ticker
 - 落到 `confirmed_{DATE}.json`，schema：
   ```json
   {
@@ -401,15 +401,50 @@ NEWS_TIERS = {
 
 每层 3-5 条，挑对硬件板块**最有信息量**的新闻。
 
-## 7. 池子定义（INDUSTRY_MAP, gen.py 第 414 行）
+## 7. 池子定义（INDUSTRY_MAP, gen.py 第 126 行）
 
-24 个子行业：
-- **半导体核心 (10)**：AI加速 / CPU处理器 / Fabless设计 / 晶圆代工 / 存储器件 / 模拟电源 / 射频芯片 / 半导体设备 / 封测OSAT / 化合物光电
-- **硬件系统 (6)**：AI服务器 / 网络设备 / 光通信 / 无线通信 / 消费电子 / PC与外设
-- **元器件制造 (7)**：连接器元件 / EMS制造 / 测试仪器 / 安防识别 / 传感LiDAR / 工业IoT / 能源电池
-- **分销渠道 (1)**：分销渠道
+> **2026-07-28 大改版**：用户提供 Excel 分类表重建池子。旧版 314 只 / 24 子行业 / 4 大板块 → 新版 **292 只 / 25 子行业 / 5 大板块**。
 
-合计 **314 只**。`'NA'` 是 Fabless 子行业里的 placeholder（不是真 ticker），FMP 拉不到，gen.py 用 hash-fake 数据兜底。
+25 个子行业，按 5 大板块聚合（`GROUP_MAP`，gen.py 第 153 行）：
+- **半导体设计 (8)**：AI芯片/CPU · 网络/互连芯片 · 存储 · 模拟/电源 · 功率/分立 · MCU/嵌入式/FPGA · 射频 · IP/EDA
+- **半导体制造 (5)**：Fab/代工 · 封测 · 设备 · 零部件 · 材料
+- **通信硬件 (3)**：光通信 · 网络设备 · 无线/卫星通信
+- **系统与终端 (3)**：服务器/存储系统 · PC/消费电子 · 量子/加密算力
+- **元器件与配套 (6)**：连接器/被动元件 · PCB/面板 · EMS · 仪器/工业设备 · 传感器/安防/无人机 · 分销
+
+合计 **292 只**，全部是真 ticker（旧版 `'NA'` placeholder 已废除——现在 `NA` 是真代码 = Nano Labs，归「量子/加密算力」）。
+
+### 改版细节
+
+**新增 5 只**（旧池没有）：`SKHY`（SK Hynix ADR → 存储）· `Q`（Qnity Electronics → 材料）· `CBRS`（Cerebras → AI芯片/CPU）· `AMBQ`（Ambiq → MCU/嵌入式/FPGA）· `NA`（Nano Labs → 量子/加密算力）
+> ⚠️ 这 5 只**尚未经 FMP 验证**（改版当日 FMP MCP 不可用）。下次 GH Actions 跑完后**必须查 `confirmed_*.json` 的 `missing` 列表**，若命中则去 WebSearch 确认正确代码后改 INDUSTRY_MAP。
+
+**移除 26 只**：
+- 9 只主业不明（用户 Excel「需确认」Sheet 第 1 部分）：MOVE / SONM / HCAI / ENGS / IMTE / SMX / SELX / TROO / FGL
+- 17 只「其他」板块（非电子链：光伏/电池/加油站设备/验钞机/POS/印刷版材/支付卡）：ENPH / VNT / CXT / KODK / PAR / DVLT / PMTS / TOYO / NVX / ELBM / NTIP / ZEO / ASTI / SDST / SGE / ELPW / CMPO
+
+**关键归属调整**（与旧版不同，写 narrative 时注意）：
+| ticker | 旧子行业 | 新子行业 | 依据 |
+|---|---|---|---|
+| AVGO / MRVL / CRDO / ALAB | AI加速 / Fabless | **网络/互连芯片** | 定制 ASIC + SerDes/AEC 为主驱动 |
+| INTC | CPU处理器（单股板块） | **AI芯片/CPU**（与 NVDA/AMD 同板块） | CPU 设计同质 |
+| GLW 康宁 | 连接器元件 | **光通信** | 光纤光缆是最大且增速最快板块 |
+| FN Fabrinet | EMS制造 | **光通信** | 产业口径等同光模块产能 |
+| NOK 诺基亚 | 无线通信 | **光通信** | 收购 Infinera 后按光传输口径 |
+| SMTC / MTSI / VIAV | Fabless / 射频 / 光通信 | **光通信** | 见下方「多业务注意」|
+| STM / ON / WOLF / NVTS | 模拟电源 | **功率/分立** | 功率器件独立成板块 |
+| ARM / PDFS / CEVA / IMMR | Fabless / 测试仪器 / PC外设 | **IP/EDA** | 授权模式而非芯片销售 |
+| SITM | Fabless设计 | **模拟/电源** | 按财务特征（fabless、毛利 58%）|
+| ENTG / OLED / ROG / PLAB | 半导体设备 / 化合物光电 | **材料** | 材料与设备分离 |
+| MKSI / AEIS / UCTT / ICHR | 半导体设备 | **零部件** | 设备零部件独立 |
+| IONQ / RGTI / CAN / ICG / EBON | AI服务器 / 化合物光电 | **量子/加密算力** | 量子计算 + 矿机独立成板块 |
+| TTMI / LPL / DAKT / KOPN | EMS制造 / 消费电子 / 传感LiDAR | **PCB/面板** | PCB 与面板独立 |
+
+**兼容层**：gen.py 有 `SECTOR_ALIAS` dict（第 179 行），历史 `narrative_*.json` 里的旧子行业名（如 `"AI加速"`）在渲染时自动 fallback 到新名（`"AI芯片/CPU"`），历史页面不会断掉。**未 backfill 历史 narrative 文件**（用户 2026-07-28 决定），新写 narrative 一律用新名。
+
+**公司业务备注**：`company_business_notes.json`（292 家，含中文名 / 子行业 / 是否多业务 / 业务备注）。写 narrative 需要描述某公司业务时**优先引用这个文件**，比 WebSearch 更准（含用户 Excel 里的多业务拆解说明，如「博通半导体约 6 成 + 基础设施软件约 4 成」）。164 家标记为多业务——写 sector beta 时若涉及这些票，driver 里要按铁律 5 点名说明业务跨度。
+
+**用户 Excel「需确认」Sheet 的归类边界题**（25 条）已按用户 Excel 的「我的处理」列落地，采用**一票一归**（不允许一票多归，用户 2026-07-28 决定）。做特定赛道加总（如 AI 光互连弹性、WFE 口径、EMS 横向比较）时需要手动拆分的票，业务备注里已标注。
 
 ## 8. 颜色约定（中国股市习惯，与西方相反）
 
@@ -451,9 +486,9 @@ NEWS_TIERS = {
 - 步骤：`fetch_fmp.py`（行情）→ `fetch_earnings_history.py`（业绩历史增量；周日额外跑 refresh-recent + profiles）→ `fetch_earnings_history.py --profiles`（公司简介，仅周日 / 缺失 / 强制时跑）→ `gen.py`（重生成全部 HTML）→ commit & push
 - 手动触发输入：
   - `review_date`：强制指定交易日 YYYY-MM-DD
-  - `earnings_mode`：`delta`（默认）/ `refresh-recent`（重拉近 180 天纠错）/ `full`（**首次回填**，313 calls，仅手动触发）
-  - `fetch_profiles`：勾选则强制刷新 `company_profiles.json`（313 calls，平时只在周日 / 文件缺失时自动跑）
-- 自动 commit message 格式：`auto: FMP daily fetch {DATE} (hit {N}/313)`
+  - `earnings_mode`：`delta`（默认）/ `refresh-recent`（重拉近 180 天纠错）/ `full`（**首次回填**，292 calls，仅手动触发）
+  - `fetch_profiles`：勾选则强制刷新 `company_profiles.json`（292 calls，平时只在周日 / 文件缺失时自动跑）
+- 自动 commit message 格式：`auto: FMP daily fetch {DATE} (hit {N}/292)`
 - **PAT 权限注意**：从 CLI push 工作流文件需要 `workflow` scope，本地 PAT 不一定有 → 修改 `daily.yml` 时优先在 GitHub 网页编辑
 
 ## 11.4 Routine push 鉴权（OAuth 代理 — 当前生产方案）

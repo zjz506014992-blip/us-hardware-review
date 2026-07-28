@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """每日 FMP 数据拉取 — GitHub Actions / Mac mini 入口
 
-读 INDUSTRY_MAP 池子（314 只），调 FMP /quote 批量端点，
+读 INDUSTRY_MAP 池子（292 只），调 FMP /quote 批量端点，
 落到 confirmed_{TRADING_DATE}.json，供 gen.py 消费。
 
 同时拉取宏观指数 + ETF + 风格因子，落到 confirmed_macros_{TRADING_DATE}.json。
@@ -18,8 +18,7 @@ from urllib.error import HTTPError, URLError
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from gen import INDUSTRY_MAP
 
-# 'NA' 是占位符不是真 ticker，FMP 上不存在
-TICKERS = sorted({s for syms in INDUSTRY_MAP.values() for s in syms if s != 'NA'})
+TICKERS = sorted({s for syms in INDUSTRY_MAP.values() for s in syms})
 
 # === 宏观指数 + ETF + 风格因子（用于 gen.py 自动填 BROAD/SEMI/GICS/STYLE_FACTORS dicts）===
 # 格式：fmp_symbol -> (group, display_code, display_name, hint)

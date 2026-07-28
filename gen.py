@@ -124,38 +124,51 @@ MACRO_EVENTS = [
 ]
 
 INDUSTRY_MAP = {
-'AI加速':['NVDA','AMD','AVGO','MRVL','CRDO','ALAB'],
-'CPU处理器':['INTC'],
-'Fabless设计':['ARM','QCOM','LSCC','SLAB','SITM','SIMO','SYNA','CEVA','CRUS','AMBA','MXL','HIMX','PI','SQNS','PXLW','RMBS','INDI','NVTS','QUIK','BZAI','VLN','MOBX','PRSO','GCTS','GSIT','SMTC','PDFS','LASR','ALMU','NA'],
-'晶圆代工':['TSM','UMC','GFS','TSEM','SKYT'],
-'存储器件':['MU','WDC','STX','SNDK','MRAM','DVLT','QMCO'],
-'模拟电源':['TXN','ADI','MPWR','ON','NXPI','MCHP','STM','DIOD','POWI','AOSL','ALGM','MX','WOLF'],
-'射频芯片':['SWKS','QRVO','MTSI','AMPG','LGL'],
-'半导体设备':['AMAT','LRCX','KLAC','ASML','TER','ONTO','NVMI','ENTG','MKSI','ACLS','VECO','COHU','UCTT','ACMR','KLIC','AEHR','AEIS','ICHR','CAMT','FORM','PLAB','CVV','ASYS','NVEC','ATOM','DAIO','TRT','SOTK','INTT','MPTI'],
-'封测OSAT':['AMKR','ASX','IMOS'],
-'化合物光电':['AXTI','OLED','LEDS','SMTK','CAN','ICG','EBON','TBCH','SELX'],
-'AI服务器':['SMCI','DELL','HPE','NTAP','PSTG','IONQ','RGTI','OSS'],
-'网络设备':['ANET','CSCO','JNPR','FFIV','EXTR','UI','CALX','NTCT','HLIT','ADTN','NTGR','SILC','ASNS','NTIP'],
-'光通信':['CIEN','COHR','LITE','VIAV','FN','AAOI','CLFD','OCC','POET','LPTH','LWLG','OPTX','IPGP'],
-'无线通信':['MSI','NOK','ERIC','VSAT','GILT','CRNT','AVNW','KVHI','CMTL','SATX','INSG','FKWL','SANG','BKTI','DGII','CMBM','COMM','MINM','UTSI','RBBN','AUDC','BB','MOB','CLRO','SYTA','FATN'],
-'消费电子':['AAPL','LPL','WETH','FGL','BOXL','WLDS','ZEPP','VUZI','IMTE','OST','REFR','GAUZ','SONM'],
-'PC与外设':['HPQ','LOGI','CRSR','XRX','ARLO','TACT','KODK','DBD','SCKT','IMMR','ALOT','MOVE'],
-'连接器元件':['APH','TEL','GLW','LFUS','VSH','BDC','KN','CTS','ROG','BELFA','RFIL','SDST','CCTG','LNKS','ELTK','ELPW','CPSH','AIRG'],
-'EMS制造':['CLS','JBL','FLEX','SANM','PLXS','TTMI','BHE','NSYS','DSWL','KTCC','SGMA','NEON','KE','HCAI','WTO'],
-'测试仪器':['KEYS','TRMB','ZBRA','CGNX','NOVT','OSIS','BMI','ITRI','TDY','VPG','VNT','MIR','MASS','FARO','ASTC','SHMD','ELSE','UUU','PAR','FEIM','ZEO','ENGS','SNT'],
-'安防识别':['NSSC','EVLV','SPCB','INVE','DGLY','WRAP','CMPO','LAES','VRME','SMX','SOBR','GNSS','PMTS','CXT'],
-'传感LiDAR':['OUST','AEVA','LIDR','INVZ','MVIS','ARBE','RCAT','DPRO','ODYS','KOPN','LINK','UMAC','RVSN','PRZO','ONDS','CODA','MSAI','MTEK'],
-'工业IoT':['SMRT','AIOT','ITRN','LTRX','TROO','MEI','PENG','DAKT','FCUV','SGE','CETX','MKDW','NNDM'],
-'能源电池':['ENPH','NVX','ELBM','TOYO','ASTI'],
-'分销渠道':['CDW','SNX','ARW','AVT','NSIT','PLUS','CNXN','SCSC','RELL','IZM','TAIT','BOSC','CLMB']
+'AI芯片/CPU':['NVDA','AMD','INTC','CBRS','BZAI'],
+'网络/互连芯片':['AVGO','MRVL','ALAB','CRDO','MXL','VLN'],
+'存储':['SKHY','MU','SNDK','STX','WDC','RMBS','SIMO','PENG','MRAM','GSIT'],
+'模拟/电源':['TXN','ADI','MPWR','SITM','ALGM','CRUS','POWI','HIMX','NVEC','PXLW'],
+'功率/分立':['STM','ON','DIOD','NVTS','WOLF','AOSL','MX'],
+'MCU/嵌入式/FPGA':['NXPI','MCHP','LSCC','SLAB','SYNA','PI','AMBA','AMBQ','INDI','LAES','QUIK','GCTS','ARBE','SQNS'],
+'射频':['QCOM','SWKS','QRVO','AMPG','MOBX','PRSO'],
+'IP/EDA':['ARM','PDFS','CEVA','IMMR','ATOM','NEON'],
+'Fab/代工':['TSM','UMC','GFS','TSEM','SKYT'],
+'封测':['ASX','AMKR','IMOS','TRT'],
+'设备':['ASML','AMAT','LRCX','KLAC','TER','NVMI','ONTO','FORM','CAMT','ACMR','KLIC','ACLS','VECO','AEHR','COHU','ASYS','INTT','SOTK','CVV','DAIO'],
+'零部件':['MKSI','AEIS','UCTT','ICHR'],
+'材料':['Q','ENTG','OLED','ROG','PLAB','CPSH','REFR','GAUZ','SMTK'],
+'光通信':['GLW','LITE','CIEN','COHR','NOK','MTSI','FN','SMTC','VIAV','AAOI','AXTI','POET','LWLG','CLFD','ALMU','OCC'],
+'网络设备':['CSCO','ANET','UI','ERIC','FFIV','JNPR','BB','COMM','EXTR','NTCT','CALX','HLIT','ADTN','RBBN','AUDC','SILC','SANG','FATN','UTSI','CLRO','ASNS'],
+'无线/卫星通信':['MSI','VSAT','DGII','ITRN','GILT','NTGR','BKTI','AVNW','SATX','LTRX','CRNT','KVHI','INSG','GNSS','MOB','CMTL','BOSC','FKWL','CMBM','SYTA','MINM'],
+'服务器/存储系统':['DELL','HPE','NTAP','PSTG','SMCI','QMCO','OSS'],
+'PC/消费电子':['AAPL','HPQ','LOGI','CRSR','XRX','TBCH','ALOT','VUZI','ZEPP','TACT','WETH','WLDS','SCKT'],
+'量子/加密算力':['IONQ','RGTI','CAN','ICG','NA','EBON'],
+'连接器/被动元件':['APH','TEL','LFUS','VSH','BDC','KN','BELFA','FEIM','MPTI','RFIL','AIRG','LGL','CCTG','LNKS'],
+'PCB/面板':['TTMI','LPL','DAKT','KOPN','ELTK','LEDS','OST','BOXL','WTO'],
+'EMS':['FLEX','CLS','JBL','SANM','PLXS','BHE','CTS','KE','MEI','DSWL','KTCC','NSYS','CETX','SGMA'],
+'仪器/工业设备':['KEYS','TDY','TRMB','CGNX','NOVT','MIR','LASR','IPGP','ITRI','BMI','DBD','LPTH','AIOT','NNDM','OPTX','SHMD','MASS','SMRT','ODYS','MKDW','ASTC','MTEK','RVSN','FARO'],
+'传感器/安防/无人机':['ZBRA','ONDS','OSIS','OUST','ARLO','VPG','NSSC','RCAT','EVLV','AEVA','UMAC','INVZ','DPRO','CODA','WRAP','MVIS','LINK','SPCB','INVE','LIDR','SNT','ELSE','PRZO','UUU','MSAI','VRME','SOBR','DGLY','FCUV'],
+'分销':['SNX','CDW','ARW','AVT','NSIT','PLUS','CNXN','SCSC','CLMB','RELL','IZM','TAIT'],
 }
 
 # 大类聚合
 GROUP_MAP = {
-'半导体核心': ['AI加速','CPU处理器','Fabless设计','晶圆代工','存储器件','模拟电源','射频芯片','半导体设备','封测OSAT','化合物光电'],
-'硬件系统': ['AI服务器','网络设备','光通信','无线通信','消费电子','PC与外设'],
-'元器件制造': ['连接器元件','EMS制造','测试仪器','安防识别','传感LiDAR','工业IoT','能源电池'],
-'分销渠道': ['分销渠道']
+'半导体设计': ['AI芯片/CPU','网络/互连芯片','存储','模拟/电源','功率/分立','MCU/嵌入式/FPGA','射频','IP/EDA'],
+'半导体制造': ['Fab/代工','封测','设备','零部件','材料'],
+'通信硬件': ['光通信','网络设备','无线/卫星通信'],
+'系统与终端': ['服务器/存储系统','PC/消费电子','量子/加密算力'],
+'元器件与配套': ['连接器/被动元件','PCB/面板','EMS','仪器/工业设备','传感器/安防/无人机','分销'],
+}
+
+# 旧子行业名 → 新名 兼容映射（历史 narrative_*.json 的 sectors 字段 fallback，避免历史页面渲染断掉）
+SECTOR_ALIAS = {
+'AI加速': 'AI芯片/CPU', 'CPU处理器': 'AI芯片/CPU', 'Fabless设计': 'MCU/嵌入式/FPGA',
+'晶圆代工': 'Fab/代工', '存储器件': '存储', '模拟电源': '模拟/电源', '射频芯片': '射频',
+'半导体设备': '设备', '封测OSAT': '封测', '化合物光电': '材料',
+'AI服务器': '服务器/存储系统', '无线通信': '无线/卫星通信', '消费电子': 'PC/消费电子',
+'PC与外设': 'PC/消费电子', '连接器元件': '连接器/被动元件', 'EMS制造': 'EMS',
+'测试仪器': '仪器/工业设备', '安防识别': '传感器/安防/无人机', '传感LiDAR': '传感器/安防/无人机',
+'工业IoT': '仪器/工业设备', '能源电池': '材料', '分销渠道': '分销',
 }
 
 # 子行业 → 大类 反查
@@ -340,30 +353,31 @@ _EARNINGS_HISTORY = _load_earnings_history()
 
 # 子行业基础参数 (avg, std, base_price_min, base_price_max)
 SECTOR_PARAMS = {
-'AI加速':       (5.0, 4.0),
-'CPU处理器':     (23.6, 0.0),
-'Fabless设计':   (4.0, 2.5),
-'晶圆代工':      (2.5, 1.0),
-'存储器件':      (4.0, 1.5),
-'模拟电源':      (2.5, 1.5),
-'射频芯片':      (5.0, 1.5),
-'半导体设备':    (4.0, 1.5),
-'封测OSAT':     (3.0, 1.0),
-'化合物光电':    (2.0, 1.5),
-'AI服务器':     (4.0, 2.5),
-'网络设备':      (2.5, 1.5),
-'光通信':        (2.5, 1.0),
-'无线通信':      (1.5, 1.0),
-'消费电子':      (1.0, 1.5),
-'PC与外设':      (-0.3, 1.5),
-'连接器元件':    (1.5, 1.0),
-'EMS制造':      (1.5, 1.0),
-'测试仪器':      (2.0, 1.0),
-'安防识别':      (0.3, 2.0),
-'传感LiDAR':    (2.5, 1.5),
-'工业IoT':      (1.4, 1.0),
-'能源电池':      (0.1, 2.0),
-'分销渠道':      (0.95, 0.8),
+'AI芯片/CPU':        (5.0, 4.0),
+'网络/互连芯片':      (4.0, 2.5),
+'存储':              (4.0, 1.5),
+'模拟/电源':          (2.5, 1.5),
+'功率/分立':          (2.5, 1.5),
+'MCU/嵌入式/FPGA':   (3.0, 2.0),
+'射频':              (5.0, 1.5),
+'IP/EDA':           (3.0, 2.0),
+'Fab/代工':          (2.5, 1.0),
+'封测':              (3.0, 1.0),
+'设备':              (4.0, 1.5),
+'零部件':            (3.0, 1.5),
+'材料':              (2.0, 1.5),
+'光通信':            (2.5, 1.0),
+'网络设备':          (2.5, 1.5),
+'无线/卫星通信':      (1.5, 1.0),
+'服务器/存储系统':    (4.0, 2.5),
+'PC/消费电子':        (1.0, 1.5),
+'量子/加密算力':      (3.0, 4.0),
+'连接器/被动元件':    (1.5, 1.0),
+'PCB/面板':          (1.0, 1.5),
+'EMS':               (1.5, 1.0),
+'仪器/工业设备':      (2.0, 1.0),
+'传感器/安防/无人机':  (1.5, 2.0),
+'分销':              (0.95, 0.8),
 }
 
 # 估算市值（百万美元）—— 简化按知名度分层
@@ -644,7 +658,7 @@ def _render_forward_5d(date_str, big_caps):
     if not days:
         return ''
     weekday_cn = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-    pool_syms = {s for syms in INDUSTRY_MAP.values() for s in syms if s != 'NA'}
+    pool_syms = {s for syms in INDUSTRY_MAP.values() for s in syms}
 
     pool_earn = defaultdict(list)
     for sym, recs in _EARNINGS_HISTORY.items():
@@ -843,6 +857,9 @@ def write_html(data):
         weak_sectors = []  # cap-w |dp| < 阈值的板块（写错 / 凑数预警）
         for sub in t.get('sectors', []):
             info = sector_betas.get(sub)
+            if not info and sub in SECTOR_ALIAS:
+                sub = SECTOR_ALIAS[sub]
+                info = sector_betas.get(sub)
             if not info: continue
             sign = '+' if info['dp'] >= 0 else ''
             mv = ' · '.join(f'<span style="color:{"#e57373" if m[1]>=0 else "#43a047"}">{m[0]} {"+" if m[1]>=0 else ""}{m[1]:.1f}%</span>' for m in info['top_movers'][:5])
@@ -1038,7 +1055,7 @@ tr:hover td{{background:#1c2128}}
 </head>
 <body>
 <h1>🖥️ 美股硬件板块每日复盘</h1>
-<div class="sub">数据日期 <b>{DATE}</b> · 覆盖 {totals['total']} 只股票 · 24 个子行业 · 4 大板块</div>
+<div class="sub">数据日期 <b>{DATE}</b> · 覆盖 {totals['total']} 只股票 · {len(INDUSTRY_MAP)} 个子行业 · {len(GROUP_MAP)} 大板块</div>
 
 <div class="navlinks">
   <a href="index.html">← 历史存档</a>
@@ -1389,7 +1406,7 @@ tr:hover td{{background:#161b22}}
 </head>
 <body>
 <h1>🖥️ 美股硬件板块复盘 — 历史存档</h1>
-<div class="sub">覆盖 314 只股票 · 24 个子行业 · 4 大板块 · 点击日期查看当日完整复盘</div>
+<div class="sub">覆盖 {sum(len(v) for v in INDUSTRY_MAP.values())} 只股票 · {len(INDUSTRY_MAP)} 个子行业 · {len(GROUP_MAP)} 大板块 · 点击日期查看当日完整复盘</div>
 <div style="margin-bottom:18px;display:flex;gap:10px;flex-wrap:wrap"><a href="calendar.html" style="display:inline-block;background:#1f6feb;color:#fff;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:.88rem;font-weight:600">📅 业绩日历（FMP 实时）</a><a href="earnings.html" style="display:inline-block;background:#8957e5;color:#fff;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:.88rem;font-weight:600">🗂️ 业绩历史（25 年回填 + 持续更新）</a></div>
 <table>
   <thead>
@@ -1712,7 +1729,7 @@ function openDay(date) {{
   }});
   const dow = cn[new Date(date+"T00:00:00").getDay()];
   $("#dlg-title").textContent = `📅 ${{date}} 周${{dow}} · ${{evs.length}} 家硬件公司业绩`;
-  $("#dlg-sub").textContent = groupFilter ? `仅显示「${{groupFilter}}」大类` : "全部 4 大板块";
+  $("#dlg-sub").textContent = groupFilter ? `仅显示「${{groupFilter}}」大类` : "全部 {len(GROUP_MAP)} 大板块";
   $("#dlg-body").innerHTML = evs.map(e => renderCard(e)).join("");
   $("#modal").classList.add("show");
   document.body.style.overflow = "hidden";
@@ -1941,7 +1958,7 @@ tr:hover td{{background:#1c2128}}
 <div class="sub">
   <a href="index.html">← 历史存档</a> ·
   <a href="calendar.html">📅 业绩日历</a> ·
-  数据源 FMP · 覆盖池内 314 只 · 过去 25 年 + 未来已确认日期 · 工作日自动增量更新
+  数据源 FMP · 覆盖池内 {sum(len(v) for v in INDUSTRY_MAP.values())} 只 · 过去 25 年 + 未来已确认日期 · 工作日自动增量更新
 </div>
 
 {history_note}
