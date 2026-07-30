@@ -291,6 +291,19 @@ if _FMP_MACROS:
     GICS_INDICES = _override(GICS_INDICES)
     STYLE_FACTORS = _override(STYLE_FACTORS)
 
+    # ^SOX（PHLX 半导体官方指数）FMP 长期不提供（missing 列表常年含 ^SOX），
+    # 陈旧硬编码值会让 SOX/NDX、Pool/SOX 两个 KPI 比值卡算出离谱结果（如 -39.40x）。
+    # 缺数据时用同批已拿到的 SOXX ETF 实时涨跌幅代理，避免误导。
+    if 'SOX' not in _FMP_MACROS and 'SOXX' in _FMP_MACROS:
+        _soxx_close, _soxx_dp, _soxx_group = _FMP_MACROS['SOXX']
+        SEMI_INDICES = [
+            (code, name,
+             _fmt_close(_soxx_group, code, _soxx_close) if code == 'SOX' else close,
+             _soxx_dp if code == 'SOX' else dp,
+             (hint + '（^SOX 当日无数据，用 SOXX ETF 代理）') if code == 'SOX' else hint)
+            for code, name, close, dp, hint in SEMI_INDICES
+        ]
+
 
 def _load_narrative():
     """加载 narrative_{DATE}.json，覆盖 KEY_STOCKS / SECTOR_BETA / NEWS_TIERS / MARKET_STRUCTURE
