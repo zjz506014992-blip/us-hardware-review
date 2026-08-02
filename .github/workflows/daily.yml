@@ -98,7 +98,7 @@ jobs:
             echo "No changes"; exit 0
           fi
           git add -A
-          git commit -m "auto: FMP daily fetch ${{ steps.fetch.outputs.date }} (hit ${{ steps.fetch.outputs.hit }}/313)"
+          git commit -m "auto: FMP daily fetch ${{ steps.fetch.outputs.date }} (hit ${{ steps.fetch.outputs.hit }}/${{ steps.fetch.outputs.total }})"
           for i in 1 2 3 4; do
             git push origin main && break || sleep $((2**i))
           done

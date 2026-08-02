@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """每日 FMP 数据拉取 — GitHub Actions / Mac mini 入口
 
-读 INDUSTRY_MAP 池子（292 只），调 FMP /quote 批量端点，
+读 INDUSTRY_MAP 池子（gen.py 建模池，当前 102 只），调 FMP /quote 批量端点，
 落到 confirmed_{TRADING_DATE}.json，供 gen.py 消费。
 
 同时拉取宏观指数 + ETF + 风格因子，落到 confirmed_macros_{TRADING_DATE}.json。
@@ -255,7 +255,7 @@ def main():
     gho = os.environ.get('GITHUB_OUTPUT')
     if gho:
         with open(gho, 'a') as f:
-            f.write(f"date={trading_date}\nhit={len(confirmed)}\nmissing={len(missing)}\n")
+            f.write(f"date={trading_date}\nhit={len(confirmed)}\nmissing={len(missing)}\ntotal={len(TICKERS)}\n")
 
 
 if __name__ == '__main__':
