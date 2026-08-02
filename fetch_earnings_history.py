@@ -99,14 +99,14 @@ def upsert(history, sym, recs):
     history[sym] = sorted(existing.values(), key=lambda x: x['date'], reverse=True)
 
 
-def mode_full(api_key):
-    """逐 ticker 拉历史."""
-    print(f"=== FULL backfill: {len(TICKERS)} tickers ===")
+def mode_full(api_key, limit=120):
+    """逐 ticker 拉历史. limit=120 全量 ~30 年; limit=12 只拉近 3 年（--refresh-pool 每日纠错用）."""
+    print(f"=== PER-SYMBOL pull: {len(TICKERS)} tickers, limit={limit} ===")
     history = load_history()
     failed = []
     sample_logged = False
     for i, sym in enumerate(TICKERS):
-        url = f"https://financialmodelingprep.com/stable/earnings?symbol={sym}&limit=120&apikey={api_key}"
+        url = f"https://financialmodelingprep.com/stable/earnings?symbol={sym}&limit={limit}&apikey={api_key}"
         try:
             data = http_get(url)
             if isinstance(data, dict) and ('Error Message' in data or 'error' in data):
@@ -260,6 +260,8 @@ def mode_profiles(api_key):
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--full', action='store_true', help='Full backfill (all pool tickers)')
+    p.add_argument('--refresh-pool', action='store_true',
+                   help='Per-symbol re-fetch ALL pool tickers, limit=12 (~3yr). Daily ground-truth fix for leaky calendar endpoint')
     p.add_argument('--refresh-recent', type=int, nargs='?', const=180, default=None,
                    metavar='DAYS', help='Re-fetch tickers with earnings in last N days')
     p.add_argument('--profiles', action='store_true',
@@ -268,6 +270,8 @@ def main():
     api_key = get_api_key()
     if args.full:
         mode_full(api_key)
+    elif args.refresh_pool:
+        mode_full(api_key, limit=12)
     elif args.refresh_recent is not None:
         mode_refresh_recent(api_key, args.refresh_recent)
     elif args.profiles:

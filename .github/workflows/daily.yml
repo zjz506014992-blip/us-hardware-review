@@ -10,13 +10,18 @@ on:
         required: false
         default: ''
       earnings_mode:
-        description: '业绩历史模式: delta (默认日增量) / refresh-recent (重拉近 180 天) / full (全量回填 313 calls)'
+        description: '业绩历史模式: delta (默认: 日历增量+池内逐票纠错) / refresh-recent (重拉近 180 天) / full (全量回填)'
         required: false
         default: 'delta'
         type: choice
         options: [delta, refresh-recent, full]
       fetch_profiles:
-        description: '是否拉取公司 profile (313 calls). 通常每周日自动跑, 这里强制触发用'
+        description: '是否拉取公司 profile (per-ticker calls). 通常每周五自动跑, 这里强制触发用'
+        required: false
+        default: false
+        type: boolean
+      earnings_only:
+        description: '只更新业绩历史/简介，跳过行情拉取和页面重建（不覆盖已发布页面，用于业绩数据回填）'
         required: false
         default: false
         type: boolean
@@ -40,6 +45,7 @@ jobs:
 
       - name: Fetch FMP /quote
         id: fetch
+        if: ${{ github.event.inputs.earnings_only != 'true' }}
         env:
           FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
           REVIEW_DATE: ${{ github.event.inputs.review_date }}
@@ -55,11 +61,11 @@ jobs:
           elif [ "$MODE" = "refresh-recent" ]; then
             python fetch_earnings_history.py --refresh-recent 180
           else
+            # delta 抓未来日历（1 call）+ refresh-pool 池内逐票纠错（~102 calls）
+            # 2026-08-02 起 refresh-pool 每天跑：earnings-calendar 端点漏数据（7 月末 MPWR/AAPL/KLAC 等
+            # 10 家实际报告日全漏），且旧的"周日 refresh-recent"兜底因 cron 只跑 1-5 从未执行过（死代码）
             python fetch_earnings_history.py
-            if [ "$(date -u +%u)" = "7" ]; then
-              echo "Sunday: also running refresh-recent"
-              python fetch_earnings_history.py --refresh-recent 180
-            fi
+            python fetch_earnings_history.py --refresh-pool
           fi
 
       - name: Fetch company profiles
@@ -67,21 +73,23 @@ jobs:
           FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
           FORCE: ${{ github.event.inputs.fetch_profiles }}
         run: |
-          # profiles 不常变, 每周日跑 + 手动 force, 否则跳过
+          # profiles 不常变, 每周五跑 + 手动 force, 否则跳过
+          # （旧逻辑写的周日 %u=7 因 cron 只跑 1-5 从未触发过——2026-08-02 改到周五）
           if [ "$FORCE" = "true" ]; then
             echo "Manual force: fetching profiles"
             python fetch_earnings_history.py --profiles
           elif [ ! -f company_profiles.json ]; then
             echo "company_profiles.json missing: bootstrapping"
             python fetch_earnings_history.py --profiles
-          elif [ "$(date -u +%u)" = "7" ]; then
-            echo "Sunday: refreshing profiles"
+          elif [ "$(date -u +%u)" = "5" ]; then
+            echo "Friday: refreshing profiles"
             python fetch_earnings_history.py --profiles
           else
-            echo "Skipping profiles (only runs Sundays or when missing)"
+            echo "Skipping profiles (only runs Fridays or when missing)"
           fi
 
       - name: Generate pages
+        if: ${{ github.event.inputs.earnings_only != 'true' }}
         run: python gen.py
 
       - name: Show diff
@@ -98,7 +106,11 @@ jobs:
             echo "No changes"; exit 0
           fi
           git add -A
-          git commit -m "auto: FMP daily fetch ${{ steps.fetch.outputs.date }} (hit ${{ steps.fetch.outputs.hit }}/${{ steps.fetch.outputs.total }})"
+          if [ "${{ github.event.inputs.earnings_only }}" = "true" ]; then
+            git commit -m "auto: earnings history backfill (manual, earnings_only)"
+          else
+            git commit -m "auto: FMP daily fetch ${{ steps.fetch.outputs.date }} (hit ${{ steps.fetch.outputs.hit }}/${{ steps.fetch.outputs.total }})"
+          fi
           for i in 1 2 3 4; do
             git push origin main && break || sleep $((2**i))
           done
