@@ -9,7 +9,7 @@
 每日产出 **美股硬件板块** 收盘复盘网页，发布到 GitHub Pages：
 <https://zjz506014992-blip.github.io/us-hardware-review/>
 
-覆盖 **292 只股票 / 25 个子行业 / 5 大板块**，含 ECharts treemap、Chart.js scatter、个股深度卡、新闻 Tier 分层、业绩日历等。
+覆盖 **102 只股票 / 22 个子行业 / 5 大板块**（2026-08-02 建模池改版，核心 84 + 跟踪 18），含 ECharts treemap、Chart.js scatter、个股深度卡、新闻 Tier 分层、业绩日历等。
 
 ## 2. 仓库结构
 
@@ -20,11 +20,11 @@ us-hardware-review/
 ├── fetch_earnings_history.py    # 业绩历史 + 公司 profile 维护（delta / refresh-recent / full / profiles）
 ├── calendar.html                # 业绩日历（加载 earnings_history.json + company_profiles.json，点格弹框）
 ├── earnings.html                # 业绩历史搜索表（客户端加载 earnings_history.json）
-├── earnings_history.json        # 292 池近 25-30 年业绩（首次 --full 回填，之后日增量）
-├── company_profiles.json        # 292 公司 profile（name/desc/industry/website/image，每周日刷新）
+├── earnings_history.json        # 历史池超集业绩数据（首次 --full 回填，之后按当前 102 池日增量）
+├── company_profiles.json        # 公司 profile（name/desc/industry/website/image，每周日刷新，含旧池超集）
 ├── index.html                   # 历史存档目录
 ├── {DATE}.html                  # 当日复盘页（一天一份）
-├── stocks-{DATE}.html           # 当日全部 292 只股票表
+├── stocks-{DATE}.html           # 当日全部 102 只股票表
 ├── confirmed_{DATE}.json        # FMP 当日行情（GitHub Actions 自动产出）
 ├── _meta.json                   # 累计每日统计（cap_w / up / down / flat / total）
 ├── .github/workflows/daily.yml  # GitHub Actions 定时任务（cron 22:30 UTC 工作日）
@@ -37,7 +37,7 @@ us-hardware-review/
 
 ### 3.1 自动层（GitHub Actions，每个交易日跑）
 - 美东 22:30（北京 6:30am）触发 `.github/workflows/daily.yml`
-- 跑 `python fetch_fmp.py` → 调 `https://financialmodelingprep.com/stable/batch-quote` 拉 292 只 ticker
+- 跑 `python fetch_fmp.py` → 调 `https://financialmodelingprep.com/stable/batch-quote` 拉 102 只 ticker（自动从 gen.py INDUSTRY_MAP 派生）
 - 落到 `confirmed_{DATE}.json`，schema：
   ```json
   {
@@ -123,7 +123,7 @@ us-hardware-review/
 
 `themes`（3-5 个）：每天挑当日最有信号意义的板块联动。
 
-#### 5 条 Theme 写作铁律（必须遵守）
+#### 7 条 Theme 写作铁律（必须遵守）
 
 1. **数据真实性硬规则** — `driver` / `cross_sector` 里的所有 ticker 涨幅必须从当日 `confirmed_*.json` 取实数。**写完前必须 grep 一遍** `confirmed_{DATE}.json` 验证：
    ```bash
@@ -139,6 +139,13 @@ us-hardware-review/
 
 5. **特例点名（INDUSTRY_MAP 归类粗糙的票）** — 池子里有些票（典型 GLW 归"连接器元件"但 Corning 业务跨光纤/玻璃/陶瓷、AMD 归"AI 加速"但同时是 CPU 设计公司）当天驱动可能跨主题，driver 里要明确标注："虽然池里我们归类 X 子行业（因为 业务 Y），但当天 +N% 的实际驱动来自 Z 业务，**实质属于本主题**"。这种点名比例每天不超过 1-2 个，超过说明 INDUSTRY_MAP 该重新切了。
 
+6. **单股板块不算 beta（2026-08-02 新增）** — 建模池有 4 个单股子行业（射频=QCOM、IP/EDA=ARM、PC/消费电子=AAPL、PCB/面板=TTMI），另有若干"单股 cap 占板块 90%+"的准单股板块（如 AVGO 占网络/互连芯片 ~87%）。**这些板块的行情本质是单股 alpha，一律走 KEY_STOCKS 卡片，不得单独立 theme**。如果该股当天确实引发了跨板块传导（如 AAPL memory 警告砸存储），theme 的主体写"被传导的板块"，单股只在 driver 里点一句 + 指向卡片。
+
+7. **与 KEY_STOCKS 去重铁律（2026-08-02 新增，解决"板块解读和个股深度经常重复"）** — theme 与卡片**分工不同、内容不得互相复制**：
+   - `driver` 只写**板块层逻辑**：共同催化是什么、cap-w 多少、板块内广度（几只涨/几只跌、涨幅分布）、谁领涨谁掉队。提及个股仅限「**代码 + 当日 dp + 一句话催化标签**」（例：「MU -5.90%（7/30 暴涨后 profit-taking）」），**不得展开**该股的财报数字、评级明细、指引细节、技术位——这些全部属于卡片。
+   - 若某股已有 KEY_STOCKS 卡片，theme 里对它的笔墨 **≤ 1 句**，结尾加「详见个股卡」即可。
+   - 判断标准：把 theme 里的个股句子删掉后，theme 是否仍然成立？成立 = 写对了（板块逻辑自洽）；不成立 = 这个 theme 其实是个股故事，应该降级并入卡片、theme 删除或换主题。
+
 #### 必填字段
 
 - `theme`: 标题，一句话点明唯一逻辑（**避免 "X+Y 板块联动" 模糊式标题，要 "XX 板块 beta：一句话点逻辑"**）
@@ -150,8 +157,9 @@ us-hardware-review/
 
 #### 主题数量规则
 
-- 强催化日（财报潮 / SOX ±2%+）：5 个主题
-- 平淡日：3 个主题
+- 强催化日（财报潮 / SOX ±2%+）：4-5 个主题
+- 平淡日：2-3 个主题
+- **2026-08-02 池子缩到 102 只后不要凑数**——真 beta 板块不够就少写，宁缺毋滥（铁律 3/6/7 都指向同一原则：theme 数量服从质量）
 
 #### 写作风格
 
@@ -351,11 +359,17 @@ for sym, recs in hist.items():
 
 每天选 **当日涨跌幅最大 / 最具叙事价值的 6-8 只**，可以跨子行业。
 
+### 5.0 与 sector_beta 去重（2026-08-02 新增，与第 4 节铁律 7 互为镜像）
+- `fund` 开头**最多 1 句板块定位**（例：「在存储板块 -3.75% 中是最深单股」），其余全部写**公司自身事实**：财报数字、产品/客户、评级、估值、资金流——**不复述板块共同催化叙事**（那是 theme.driver 的事）
+- 单股板块（QCOM/ARM/AAPL/TTMI）+ 准单股板块（AVGO 等）的当日行情**只在卡片里写深**，theme 侧最多一句带过（铁律 6）
+- 自检：卡片 `fund` 与当日任一 theme `driver` 若有 ≥ 2 句实质等价的内容 → 删掉 theme 侧那份，卡片保留
+
 ### 5.1 卡片数量动态规则
 - 默认 **6-8 张**
 - 当日有 `|dp| > 30%` 的中盘以上异动股（`cap > $30 亿` = 3000 $M）→ **必加 1 张**
 - 总卡片数硬上限 **10 张**（防止单日稿件失控）
 - 候选挑选算法：FMP JSON 算 Top 25 by `|dp|` 和 Top 25 by `|dp| × cap`，两个榜单交集优先；小市值（<$30亿）仅在 `|dp| > 10%` + 有可验证催化时纳入
+- **跟踪票（TRACK_TIER 18 只）仅在 `|dp| > 10%` + 有可验证催化时上卡**，核心票优先
 
 ### 5.2 内容更新策略（按当日新闻浓度）
 | 当日类型 | 判断 | 更新颗粒 |
@@ -401,50 +415,32 @@ NEWS_TIERS = {
 
 每层 3-5 条，挑对硬件板块**最有信息量**的新闻。
 
-## 7. 池子定义（INDUSTRY_MAP, gen.py 第 126 行）
+## 7. 池子定义（INDUSTRY_MAP, gen.py）
 
-> **2026-07-28 大改版**：用户提供 Excel 分类表重建池子。旧版 314 只 / 24 子行业 / 4 大板块 → 新版 **292 只 / 25 子行业 / 5 大板块**。
+> **2026-08-02 建模池改版**：用户提供 Excel「建模池」Sheet 重建池子。旧版 292 只 / 25 子行业 → 新版 **102 只 / 22 子行业 / 5 大板块**（核心 84 + 跟踪 18）。**微盘噪声票全部剔除，以后只看这 102 家。**
 
-25 个子行业，按 5 大板块聚合（`GROUP_MAP`，gen.py 第 153 行）：
-- **半导体设计 (8)**：AI芯片/CPU · 网络/互连芯片 · 存储 · 模拟/电源 · 功率/分立 · MCU/嵌入式/FPGA · 射频 · IP/EDA
-- **半导体制造 (5)**：Fab/代工 · 封测 · 设备 · 零部件 · 材料
-- **通信硬件 (3)**：光通信 · 网络设备 · 无线/卫星通信
-- **系统与终端 (3)**：服务器/存储系统 · PC/消费电子 · 量子/加密算力
-- **元器件与配套 (6)**：连接器/被动元件 · PCB/面板 · EMS · 仪器/工业设备 · 传感器/安防/无人机 · 分销
+22 个子行业，按 5 大板块聚合（`GROUP_MAP`）：
+- **半导体设计 (8)**：AI芯片/CPU (4) · 网络/互连芯片 (5) · 存储 (8) · 模拟/电源 (5) · 功率/分立 (4) · MCU/嵌入式/FPGA (5) · 射频 (1) · IP/EDA (1)
+- **半导体制造 (5)**：Fab/代工 (5) · 封测 (3) · 设备 (15) · 零部件 (4) · 材料 (5)
+- **通信硬件 (2)**：光通信 (12) · 网络设备 (3)
+- **系统与终端 (2)**：服务器/存储系统 (5) · PC/消费电子 (1)
+- **元器件与配套 (5)**：连接器/被动元件 (4) · PCB/面板 (1) · EMS (6) · 仪器/工业设备 (2) · 分销 (3)
 
-合计 **292 只**，全部是真 ticker（旧版 `'NA'` placeholder 已废除——现在 `NA` 是真代码 = Nano Labs，归「量子/加密算力」）。
+### 2026-08-02 改版细节
 
-### 改版细节
+**移除 3 个子行业**（微盘为主，全部出池）：无线/卫星通信 · 量子/加密算力 · 传感器/安防/无人机。SECTOR_ALIAS 已加 fallback（→ 网络设备 / 服务器/存储系统 / 仪器/工业设备），历史页不断。
 
-**新增 5 只**（旧池没有）：`SKHY`（SK Hynix ADR → 存储）· `Q`（Qnity Electronics → 材料）· `CBRS`（Cerebras → AI芯片/CPU）· `AMBQ`（Ambiq → MCU/嵌入式/FPGA）· `NA`（Nano Labs → 量子/加密算力）
-> ⚠️ 这 5 只**尚未经 FMP 验证**（改版当日 FMP MCP 不可用）。下次 GH Actions 跑完后**必须查 `confirmed_*.json` 的 `missing` 列表**，若命中则去 WebSearch 确认正确代码后改 INDUSTRY_MAP。
+**单股子行业（4 个）**：射频 = QCOM 单股 · IP/EDA = ARM 单股 · PC/消费电子 = AAPL 单股 · PCB/面板 = TTMI 单股。**这 4 个板块的行情本质是单股 alpha，不能作为 sector_beta theme**（见第 4 节铁律 6）。
 
-**移除 26 只**：
-- 9 只主业不明（用户 Excel「需确认」Sheet 第 1 部分）：MOVE / SONM / HCAI / ENGS / IMTE / SMX / SELX / TROO / FGL
-- 17 只「其他」板块（非电子链：光伏/电池/加油站设备/验钞机/POS/印刷版材/支付卡）：ENPH / VNT / CXT / KODK / PAR / DVLT / PMTS / TOYO / NVX / ELBM / NTIP / ZEO / ASTI / SDST / SGE / ELPW / CMPO
+**核心 / 跟踪 分层**：gen.py `TRACK_TIER` set 存 18 只跟踪票（SANM/PLXS/BHE/SKYT/SLAB/AMBA/TDY/VIAV/ARW/AVT/POWI/IMOS/OLED/EXTR/ACLS/VECO/LFUS/BDC）。跟踪票正常参与 cap-w 计算，但 KEY_STOCKS 选卡时优先核心票（跟踪票仅在 |dp| > 10% + 有可验证催化时上卡）。
 
-**关键归属调整**（与旧版不同，写 narrative 时注意）：
-| ticker | 旧子行业 | 新子行业 | 依据 |
-|---|---|---|---|
-| AVGO / MRVL / CRDO / ALAB | AI加速 / Fabless | **网络/互连芯片** | 定制 ASIC + SerDes/AEC 为主驱动 |
-| INTC | CPU处理器（单股板块） | **AI芯片/CPU**（与 NVDA/AMD 同板块） | CPU 设计同质 |
-| GLW 康宁 | 连接器元件 | **光通信** | 光纤光缆是最大且增速最快板块 |
-| FN Fabrinet | EMS制造 | **光通信** | 产业口径等同光模块产能 |
-| NOK 诺基亚 | 无线通信 | **光通信** | 收购 Infinera 后按光传输口径 |
-| SMTC / MTSI / VIAV | Fabless / 射频 / 光通信 | **光通信** | 见下方「多业务注意」|
-| STM / ON / WOLF / NVTS | 模拟电源 | **功率/分立** | 功率器件独立成板块 |
-| ARM / PDFS / CEVA / IMMR | Fabless / 测试仪器 / PC外设 | **IP/EDA** | 授权模式而非芯片销售 |
-| SITM | Fabless设计 | **模拟/电源** | 按财务特征（fabless、毛利 58%）|
-| ENTG / OLED / ROG / PLAB | 半导体设备 / 化合物光电 | **材料** | 材料与设备分离 |
-| MKSI / AEIS / UCTT / ICHR | 半导体设备 | **零部件** | 设备零部件独立 |
-| IONQ / RGTI / CAN / ICG / EBON | AI服务器 / 化合物光电 | **量子/加密算力** | 量子计算 + 矿机独立成板块 |
-| TTMI / LPL / DAKT / KOPN | EMS制造 / 消费电子 / 传感LiDAR | **PCB/面板** | PCB 与面板独立 |
+**PSTG → P 迁移落地**：用户 Excel 明确用新代码 `P`（Everpure，原 Pure Storage）。⚠️ FMP 截至 7/31 对 `P` 仍 MISSING（PSTG stale 44 个交易日的历史见第 12 节）——若 GH Actions 跑完后 `P` 落 missing list，gen.py 会**直接剔除该票**（2026-08-02 起 gen_data() 新硬规则：FMP 缺失票绝不 hash 伪造，直接从当日统计中排除并打印 WARN）。届时服务器/存储系统按 4 只算，无污染。
 
-**兼容层**：gen.py 有 `SECTOR_ALIAS` dict（第 179 行），历史 `narrative_*.json` 里的旧子行业名（如 `"AI加速"`）在渲染时自动 fallback 到新名（`"AI芯片/CPU"`），历史页面不会断掉。**未 backfill 历史 narrative 文件**（用户 2026-07-28 决定），新写 narrative 一律用新名。
+**归属要点**（与旧版一致的部分保留）：AVGO/MRVL/CRDO/ALAB/MXL → 网络/互连芯片；INTC 与 NVDA/AMD 同板块 AI芯片/CPU；GLW/FN/NOK/SMTC/MTSI/VIAV → 光通信；STM/ON/WOLF/NVTS → 功率/分立；SITM → 模拟/电源；ENTG/OLED/ROG/PLAB/Q → 材料；MKSI/AEIS/UCTT/ICHR → 零部件；TTMI → PCB/面板。
 
-**公司业务备注**：`company_business_notes.json`（292 家，含中文名 / 子行业 / 是否多业务 / 业务备注）。写 narrative 需要描述某公司业务时**优先引用这个文件**，比 WebSearch 更准（含用户 Excel 里的多业务拆解说明，如「博通半导体约 6 成 + 基础设施软件约 4 成」）。164 家标记为多业务——写 sector beta 时若涉及这些票，driver 里要按铁律 5 点名说明业务跨度。
+**公司业务备注**：`company_business_notes.json`（含中文名 / 子行业 / 是否多业务 / 业务备注，292 家旧池数据是超集、102 家新池全覆盖）。写 narrative 需要描述某公司业务时**优先引用这个文件**。多业务票写 sector beta 时按铁律 5 点名说明业务跨度（如「博通半导体约 6 成 + 基础设施软件约 4 成」）。
 
-**用户 Excel「需确认」Sheet 的归类边界题**（25 条）已按用户 Excel 的「我的处理」列落地，采用**一票一归**（不允许一票多归，用户 2026-07-28 决定）。做特定赛道加总（如 AI 光互连弹性、WFE 口径、EMS 横向比较）时需要手动拆分的票，业务备注里已标注。
+**业绩日历（calendar.html）**：2026-08-02 起**不再分大类**——大类过滤按钮已删除，只按 102 家公司整体展示。earnings_history.json 是 292 池超集，客户端按 gen.py 生成时嵌入的 102 池过滤。
 
 ## 8. 颜色约定（中国股市习惯，与西方相反）
 
@@ -486,9 +482,9 @@ NEWS_TIERS = {
 - 步骤：`fetch_fmp.py`（行情）→ `fetch_earnings_history.py`（业绩历史增量；周日额外跑 refresh-recent + profiles）→ `fetch_earnings_history.py --profiles`（公司简介，仅周日 / 缺失 / 强制时跑）→ `gen.py`（重生成全部 HTML）→ commit & push
 - 手动触发输入：
   - `review_date`：强制指定交易日 YYYY-MM-DD
-  - `earnings_mode`：`delta`（默认）/ `refresh-recent`（重拉近 180 天纠错）/ `full`（**首次回填**，292 calls，仅手动触发）
-  - `fetch_profiles`：勾选则强制刷新 `company_profiles.json`（292 calls，平时只在周日 / 文件缺失时自动跑）
-- 自动 commit message 格式：`auto: FMP daily fetch {DATE} (hit {N}/292)`
+  - `earnings_mode`：`delta`（默认）/ `refresh-recent`（重拉近 180 天纠错）/ `full`（**首次回填**，per-ticker calls，仅手动触发）
+  - `fetch_profiles`：勾选则强制刷新 `company_profiles.json`（per-ticker calls，平时只在周日 / 文件缺失时自动跑）
+- 自动 commit message 格式：`auto: FMP daily fetch {DATE} (hit {N}/{total})`（total 自动从池子派生，2026-08-02 起 = 102）
 - **PAT 权限注意**：从 CLI push 工作流文件需要 `workflow` scope，本地 PAT 不一定有 → 修改 `daily.yml` 时优先在 GitHub 网页编辑
 
 ## 11.4 Routine push 鉴权（OAuth 代理 — 当前生产方案）
@@ -735,6 +731,7 @@ git push origin main:claude/<random>   # ⚠️ 注意 src:dst，src 是本地 r
 | 2026-07-30 | **单 routine 顺利完成 + 无 race + 史上最强 chip 反弹之一**：FMP 延迟 **60 min**（cron 22:30 UTC → 数据到达 23:30 UTC），落 5/19 教训 65-100 min 常态区间中位（历史轨迹 5/19=68 / ... / 7/28=57 / 7/29=58 / 7/30=60 min）。Monitor 30 min 硬上限 + bg Bash 60s poll 双重 poll、bg Bash 通过 `git fetch && git log origin/main` 检测 remote auto-commit 6d2e754 命中 FMP_READY（5/22/6/3 教训方案）。本日是**「MSFT 7/29 AMC Q4 FY26 BLOWOUT BEAT (EPS $4.74 vs $4.24 +12% / Rev $90.01B / Azure +43% CC 加速 / FY27 capex $255-260B 大幅上调) 一举验证 hyperscaler AI infra ROI + Samsung 韩盘 Q2 破纪录 Op profit KRW 89.5T +56% Q/Q + HBM4E 样品行业首发 + LRCX 7/29 AMC BEAT + Q1 FY27 guide +14% 上调 fully vindicated (今日 +17.98% \"1999 以来最好一日\") + Meta 7/30 AMC EPS miss + Q3 guide 软 + FCF $8.5B→$784M -91% + capex $130-145B 上调 = AH -10% 反面 anchor 强化 hyperscaler 分野」四重共振 broad chip mega rally**（cap-w **+5.91%** 是 5/27 起跟踪历史最强单日之一 / Up=237 Down=50 Flat=5 广度 4.7:1 broad Risk-On / SPX +1.66% 至 7,437.53 / NDX **+3.36%** 至 28,106.35 结束 6 日连跌 / Dow +1.19% (+614pts) 至 52,208.06 / **SOXX +8.50% / SMH +6.88% / PSI +11.74% / XSD +7.48%** 半导体 ETF 全线飙涨（PSI 中小盘 chip 独强）/ **VIX -17.28% 一日 20.66→17.09 精准跌破 20 panic 位** / 10Y +0.87% 至 4.66% mild / WTI +0.56% 至 $84.06 / DXY -0.91% / **RSP -0.16% vs SPX +1.66% RSP/SPX = -0.10 罕见极端负值** = mega-cap chip 5 只集中拉指数 vs 中盘 broad 参与但被 AAPL -1.41% 稀释 / **MTUM +5.53% + SPLV -1.50% 7.03pp gap 是历史级别 momentum→low-vol 极端 rotation** + IWF +2.96% vs IWD +0.48% Growth 大幅跑赢 Value 2.48pp / **GICS 11 板块 5 涨 6 跌 XLK +5.50% 独领 vs XLC -2.68% (Meta AH 拖累) + XLP -2.16% + XLV -1.64% + XLRE -1.44% + XLU -0.56% + XLB -0.19% 六防御+comm 齐跌**）。硬件池**24 sub-industries 中 22 涨 2 跌**（唯二跌：PC/消费电子 -1.43% AAPL 单股 + 射频 -2.18% QCOM/SWKS/QRVO）是 5/27 起跟踪最广度 broad Risk-On 记录之一。最强 8 板块：存储 <b>+17.83%</b>（SNDK +25.99% / MU +18.36% / SKHY +17.52% / STX +11.41% / WDC +15.37%）/ 零部件 <b>+13.42%</b>（UCTT +19.63% / ICHR +20.43%）/ 封测 +11.73% / 设备 <b>+11.28%</b>（LRCX +17.98% "1999 以来最好" / AMAT +14.97% $500 破位 / FORM +26.28% / KLAC +5.96%）/ 光通信 <b>+10.83%</b>（LITE +15.09% / AAOI +17.76% / COHR +12.16% / CIEN +12.62%）/ 功率分立 +8.60% / 服务器 +8.17%（DELL +9.55% / HPE +6.10%）/ Fab/代工 +7.74%（TSM +7.64% / ASML +6.50%）。8 KEY_STOCKS（SNDK +25.99% $1,279.96 memory HBF / LRCX +17.98% "1999 以来最好" / MU +18.36% $874.66 逼近 $1,000 / AMD +13.00% $485.39 MSFT 验证 / AMAT +14.97% $501.77 破 $500 / INTC +11.30% $91.13 CPU catch-up + Apple 18A Day 22 / NVDA +2.65% $195.04 mega-cap 温和跑输 / **AAPL -1.41% $333.43 唯一 mega-cap DOWN + iPhone Q4 前夜 profit-take**）+ 5 themes 全部 cap-w ≥ 0.8%，gen.py 一次过无 sub-threshold 警告。**earnings_recap 2 家**：MPWR AMC 完整 4 块 BEAT（Q2 rev $980.6M +47.6% YoY / Non-GAAP EPS $6.50 +10.5% beat / Q3 midpt $1.15B 超共识 +16.5% / regular close $1,316.18 +5.40% + AH +5-10%）+ MX 微盘 in-range 1 行。narrative 用 Python builder (dict + json.dump，7/22 教训方案) 一次 Write 60KB JSON 成功、全程中文弯引号「」预防成功（5/9/5/18/6/25/7/15/7/20/7/22/7/29 教训纪律）。PR #151 squash merge 入 main 无冲突，**commit 前 fetch check + push 后 fetch check + create_PR 前 fetch check + merge 前 fetch check 四重 race check** 均确认无 same-day narrative commit | 根因：本日完全顺利。GH Actions FMP 延迟 60 min 落 5/19 教训中位、双重 poll 方案再次验证。今日叙事 pattern 是 7 月新月度 catalyst typology 第 **18 种** pattern——关键差异：本次是「hyperscaler MSFT 财报一举验证 AI infra ROI + Samsung HBM4E 首发 + LRCX BEAT 完全 vindicated + Meta AH -10% 反面 anchor 强化分野」四重共振**史上最强 chip 反弹之一**、且 24 个 sub-industries 中 22 涨 2 跌是 5/27 起跟踪最广度 broad Risk-On 记录之一，同时叠加 SKHY (SK Hynix ADR) 首次单日重要贡献（cap-w impact +0.79pp 是本日最大单股正贡献 vs MU +0.78pp / TSM +0.68pp / NVDA +0.54pp / AMD +0.44pp）。**关键结构信号**：RSP -0.16% vs SPX +1.66% RSP/SPX = -0.10 罕见极端负值 → mega-cap 5 只集中拉指数、中盘 broad 参与但 AAPL -1.41% cap $4.9T 稀释；MTUM +5.53% + SPLV -1.50% 7pp gap 历史级别 momentum→low-vol rotation；类似 6/30 Q2/H1 收官 window-dressing pattern 复现，反弹持续性需 8 月首周 broad participation confirmation。**WebSearch 数字冲突再次验证**：MU WebSearch 一源 +14% 一源 +18%（FMP 真值 +18.36%）/ SNDK 一源 +21% 一源 +26%（真值 +25.99%）/ LRCX 一源 +17% 一源 +18%（真值 +17.98% 命中）/ AMD 一源 +12.7% 一源 +13%（真值 +13.00%）/ NVDA 一源 +2.65% 一源 +3%（真值 +2.65% 命中）/ MPWR AH 一源说 +10.5% $1,448 一源说 +5.5% $1,318.23（AH intraday peak 与 late-AH close 差异需要引用 range）—— broad chip rally 日 WebSearch 数字仍显著 range，chip mega-cap 数字必须以 FMP 真值为准 | **判断准则**（无更新）：(1) FMP 延迟 60 min 落 5/19 教训中位、Monitor + bg Bash 双重 poll 仍是最佳方案；(2) **PSTG stale 第 43 个交易日** 已连续 8.5 周+（6/26 教训已停止逐日验证）；(3) **新增叙事 pattern 观察**：今日「hyperscaler MSFT Azure ROI 验证 + Samsung HBM4E 首发 + LRCX vindicated + Meta AH 反面 anchor」四重共振是历史罕见的**「single-day chip mega rally + 广度 22/2 sub-industries + RSP<0 反转 + MTUM SOARING + 6 GICS defensive 齐跌 + 唯一 mega-cap DOWN AAPL outlier」组合**、关键识别信号：(a) cap-w +5%+ + Up:Down = 4:1+ broad Risk-On；(b) SOXX +8%+ 半导体 ETF 全线飙涨 PSI 中小盘 chip 独强 +11%+；(c) VIX 精准跌破 20 panic 位 -15%+；(d) MTUM +5%+ SOARING + SPLV 温和跌 + IWF > IWD Growth-led rally；(e) GICS 11 板块 XLK 独领 + XLC/XLP/XLV/XLRE/XLU/XLB 六板块齐跌罕见结构（Meta AH -10% 直接拖累 XLC）；(f) mega-cap AAPL 唯一 DOWN outlier + NVDA 温和 vs 中盘 SNDK/MU/LRCX 集中大涨极致 dispersion；(g) RSP<SPX 罕见极端负值 = mega-cap 集中拉指数、中盘广度并未全面参与；(4) **8/5 AMD Q2 CY26 AMC + FOMC 会议** 是**本轮 rally 是否延续至 8 月中最强 test**；7/31 AAPL AMC Q3 FY26 + Amazon Q2 + 6 月 PCE + 就业 + 8/1 ISM PMI + 8/14 AMAT Q3 + 8/27 NVDA Q2 + 8/28 MU Q4 密集 chip 财报窗口 |
 | 2026-07-30（本 session 补记） | **PR race 第 37 次**（本 session 视角）+ **修复长期潜藏的 gen.py 数据 bug**：本 session 独立完成完整 narrative（8 KEY_STOCKS: MU/SNDK/LRCX/SKHY/AMD/INTC/ALAB/AAPL + 5 themes）+ 用两轮 Agent 深度研究验证 **AAPL 当日盘后财报**（EPS $2.02 vs 共识 $1.89、营收 $109.4B 双双 beat，但 Q4 指引疲软——营收增速降至 +9-11%、毛利率降至 47-48%，Cook 归因于 memory 成本「百年一遇洪水」）+ **Tim Cook 作为 CEO 的最后一次财报电话会**（John Ternus 将于 2026/9/1 起接任 CEO，2026/4/20 已官宣，AH 一度跌 -6.6% 后企稳至约 -5.9%，是 Apple 历史上第 8 次 CEO 交接）+ 验证 QCOM 实为 7/29 AMC 已报告（今日 -2.62% 是 Day 2 continued fade，正确排除出 earnings_recap）。commit 后 `git fetch origin main` 检查（6/16 起历次教训方案）发现并发 routine 的 PR #151（`34fa523`）+ 教训记录 PR #152（`7abc00e`）已先落地 main——**两版核心叙事高度收敛**（cap-w 均 +5.91%、均识别出 LRCX/MSFT/Samsung/存储 super-cycle 主线），但**并发版完全遗漏了 AAPL 已经财报 + Tim Cook 卸任 CEO 这一重大新闻**（其 AAPL 卡片仍写「7/31 AMC」财报前瞻，实际财报已于当天 7/30 AMC 公布——是一处有实质影响的事实性差错，而非单纯选题角度不同）。**处理方式**：`git rebase origin/main` 时 narrative_2026-07-30.json / 2026-07-30.html 走 add/add 与 content 冲突，用 `git show origin/main:<file>` 直接取用 main 版本（而非逐字段 diff，因为整份文件都需要替换），CLAUDE.md 冲突手动合并保留两条教训记录；随后**在 main 已合并版本基础上追加修正**：将 AAPL 卡片的 title/fund/catalysts 更新为已发生的 beat-but-weak-guide + CEO 交接叙事，并新增一条 AAPL 完整 4 块 earnings_recap（原版本 earnings_recap 只有 MPWR/MX，未含 AAPL），修正后二次跑 `gen.py` 验证无 sub-threshold 警告。**gen.py rebase 时无冲突、我的改动干净应用在 origin/main 之上**——修复了一个确认存在 3+ 个月的数据源 bug：`confirmed_macros_*.json` 的 `missing` 列表长期含 `^SOX`（7/21/7/24/7/27/7/30 逐一验证均命中），导致「半导体强度 SOX/NDX」「硬件池强度 Pool/SOX」两个 KPI 卡长期用 gen.py 里 4 月版硬编码的陈旧 stub 值（`SOX dp=-0.15%`）而非真实数据；今日在 SOXX 真实 +8.50% 的极端行情下，此 bug 让 KPI 卡显示「半导体强度 -0.04x」「硬件池强度 -39.40x」等明显荒谬的结果（平淡日偏差不易察觉，一直未被发现）。已在 `gen.py` `_load_macros_cache()` override 逻辑后追加约 12 行：当 `'SOX'` 不在 `_FMP_MACROS`（即 `^SOX` 当日缺数据）但 `'SOXX'` 在时，用同批已拿到的 SOXX ETF 实时涨跌幅代理 SOX 的 close/dp，hint 里注明代理来源。修复后两卡正确显示 `2.53x`（半导体远超）和 `0.70x`（跟随 SOXX 下限）。此改动范围极窄，仅在该特定缺失场景触发，不影响其他指数/风格因子计算。另外本次 narrative builder（Python dict + json.dump，7/22 教训方案）沿用固定模板时，8 个 `"fund"` 字段全部误在括号内最后一个字符串字面量后多加了逗号（`"...",\n    ),`），被 json.dump 序列化成单元素 tuple→list 而非字符串（与 7/20 教训记录的「多行字符串拼接尾随逗号变 tuple」bug 完全同根同源、但这次批量复现 8 处），用一次性 regex `re.compile(r'",\n(\s*)\),')` 自动查找并修复，比逐个排查更高效 | 根因：(1) 并发 routine（累计已建议 15+ 次删除兜底 routine 未见执行）与本 session 几乎同时独立完成研究并写入，race 累计 37 次（5/21 起持续复发）；(2) FMP `/stable/batch-quote` 等端点长期不支持 `^SOX`，`gen.py` `_override()` 找不到对应 code 时静默 fallback 到 4 月硬编码 stub，从未随时间更新，多数平淡日偏差不明显；(3) 并发版本把「AAPL 7/31 AMC 财报前瞻」的旧模板措辞直接沿用，未意识到财报当天已经发布，是复制模板未做事实核对的疏漏 | **判断准则**：(1) **PR race 处理新增分支**：当两个版本核心叙事高度收敛但其中一版存在**已发生 vs 未发生的事实性差错**（而非选题/角度差异）时，不应简单接受 main 版本了事——应在 main 版本基础上做最小化的事实修正追加提交，而非重新制作或放弃修正（放弃会让明显错误的信息（"AAPL 财报尚未公布"）留在生产页面上）；(2) **本次修复正式关闭 CLAUDE.md 第 14 节 TODO「验证 FMP 是否支持所有 MACRO_SYMBOLS」**——`^SOX` 已确认连续 3+ 个月 persistent missing，用 SOXX ETF 代理是 CLAUDE.md 自己建议的标准解法（如 `^TNX`→`IEF` 模式），已在 `gen.py` 正式落地，未来无需再逐日检查；(3) **builder 脚本自检步骤**：用 Python builder 写多行拼接字符串字段后，跑一次「遍历所有 dict/list 值、断言不含 `tuple` 类型」的递归检查脚本，比手动肉眼检查每个字段的收尾逗号更可靠，应作为 builder 流程标准最后一步；(4) **重大公司管理层交接事件的记录规范**：类似 Tim Cook 卸任 CEO 这类历史性事件，即使不直接影响当日 dp/cap 数字，也应作为 KEY_STOCKS 卡片 title 的核心叙事 + earnings_recap 的 call_takeaway 完整记录继任安排细节（继任者、生效日期、新任职务），因为这类信息的时效性和不可逆性使其成为未来复盘引用的重要锚点 |
 | 2026-07-31（本 session 补记） | **PR race 第 38 次（本 session 视角）+ 「mega-cap 头衔转移日」典型样本**：本 session 独立完成完整 narrative（8 KEY_STOCKS: AAPL/NVDA/MU/NXPI/AMBA/ANET/AXTI/MPWR + 5 themes）+ 用两轮 WebSearch 深度研究验证 AAPL Q4 memory 短缺 warning、Amazon $220B capex 上调、NVDA reclaim #1、NXP-AMBA M&A Bloomberg 独家、AXTI Q2 mega BEAT +171% EPS + Lumentum 2031 长约、AMBA acquisition premium 五大 catalyst，narrative 用 Python builder (dict + json.dump，7/22 教训方案 + 7/30 教训尾随逗号 tuple 校验) 一次 Write 60KB JSON 成功、gen.py 一次过无 sub-threshold 警告 (cap-w -1.08% / Up=192 Down=90)。**commit 前先 `git fetch origin main` 检查**（6/16 起历次教训方案），发现并发 routine 的 commit f636e40「feat: 2026-07-31 复盘 (cap-w -1.08%, AAPL财报Day2全场兑现-7.35% + NXP-Ambarella并购传闻 + 存储Day2回吐 + AWS外溢网络设备光通信)」已先落地 main——两版核心叙事高度收敛（均独立识别出 AAPL Q4 crash + NXP-AMBA M&A + memory Day 2 fade + AI infra 承接 4 大主线）。因本地从未 `git add`/`commit`，直接 `git stash` CLAUDE.md 后 `git restore 2026-07-31.html` + `rm narrative_2026-07-31.json` + `git pull origin main` fast-forward 无冲突，再 `git stash pop` 恢复 CLAUDE.md 本行。FMP 延迟 **57 min**（cron 22:30 UTC → 数据到达 23:27 UTC），落 5/19 教训 65-100 min 常态区间下限中位（历史轨迹 5/19=68 / ... / 7/28=57 / 7/29=58 / 7/30=60 / 7/31=57 min）。Monitor 30 min 硬上限 + bg Bash poll 60s 双重 poll，Monitor 通过 `git fetch && git log grep FMP` 检测 remote auto-commit 6e02889 命中 FMP_READY（5/22/6/3 双重 poll 方案再次验证）。本日是**「Amazon 7/30 AMC Q2 财报 blowout（Rev $200.6B +20% YoY / AWS +37% YoY 2021 以来最快 / 2026 capex $200B → $220B 上调 $20B、CFO 明确 cite「memory 成本上涨」）+ AAPL 7/30 AMC Q3 BEAT 但 Q4 sales guide 9-11% miss 12%E + Cook 卸任次日 memory 短缺 warning 引爆 -7.35% $308.91 单日 crash（跌破 $310、市值 $4.54T、丢 #1 头衔） + NVDA reclaim #1 $4.86T vs AAPL $4.54T gap $320B (3 天来最悬殊差距) + UBS 更新 hyperscaler 2026 combined capex +76% YoY 至 $673B + NXP-AMBA 收购谈判 Bloomberg 独家」四层独立 catalyst 首次共振 mega-cap 头衔转移日 + AI infra 中游承接 vs 消费电子 memory 短缺双轨脱钩结构**（cap-w **-1.08%** 空表面 vs 扣除 AAPL 后 pool cap-w **+0.36%** broad Risk-On 双重结构 / Up=192 Down=90 Flat=9 广度 2.13:1 broad 多方主导 / SPX +0.70% at 7,489.52 / NDX +0.60% at 28,274.20 / Dow +0.53% at 52,485.03 / RUT -0.50% 小盘走弱 / SOXX +0.07% / SMH +0.30% / PSI +1.16% / XSD +0.92% / VIX **-6.44% 至 15.99 跌破 16 是 4 月以来首次** / 10Y **+8bp 至 4.74%** vs cooler PCE 罕见组合（Amazon $220B capex 上调 → Treasury supply 增加叙事 offset 通胀 cooling）/ WTI **+3.89% 至 $86.84** Iran 缓和后逆势跳涨 / **RSP -0.17% vs SPX +0.70% RSP/SPX = -0.24 罕见极端负向反转** = mega-cap 集中拉指数（NVDA impact +0.62pp + ANET +0.05pp 承接 AAPL -1.44pp drag）/ MTUM +0.27% + SPLV -0.20% + IWF +0.76% > IWD +0.44% + QUAL +0.18% mild Growth-led + mega-cap 集中 + 低波下行 / **GICS 11 板块 4 涨 7 跌 XLY +3.29% 独领（Amazon 独驱） + XLC +1.56% + XLE +1.00% + XLI +0.81% vs XLK -0.22% + XLU -0.69% + XLB -2.34% 罕见结构**）。硬件池 25 sub-industries 中 12 板块 cap-w ≥ 0.8% bull + 5 板块 cap-w ≤ -0.8% bear + 8 板块 flat；bull 头部：网络设备 +3.08%（ANET +5.46% / CSCO +2.14%）/ 光通信 +2.55%（COHR +5.55% / AXTI +28.74%）/ 零部件 +2.43% / 传感 LiDAR +2.22% / AI 芯片 CPU +1.99%（NVDA reclaim #1 独驱）/ 仪器/工业设备 +1.70%；bear 头部：**PC/消费电子 -7.27%（AAPL 单股独驱 99% 权重）** / 存储 -3.75%（MU -5.90% / SNDK -5.09% / SKHY -3.54% Day 2 pop-then-fade） / MCU/嵌入式/FPGA -2.52%（NXPI -6.53% 单股主拉，AMBA +16.08% 反向 outlier M&A）/ 射频 -2.39%（QCOM -2.63%） / 功率/分立 -1.61%。8 KEY_STOCKS（AAPL -7.35% $308.91 crash / NVDA +2.93% $200.75 reclaim #1 / MU -5.90% Day 2 fade / NXPI -6.53% AMBA M&A + Q3 miss / AMBA +16.08% M&A 溢价 / ANET +5.46% network AI infra alpha / AXTI +28.74% Q2 mega BEAT +171% EPS / MPWR +8.35% 模拟单股 alpha 7/30 财报后 Day 2）+ 5 themes 全部 cap-w ≥ 0.8%，gen.py 一次过无 sub-threshold 警告。narrative 用 Python builder (dict + json.dump，7/22 教训方案 + 7/30 教训尾随逗号 tuple 校验) 一次 Write 60KB JSON 成功、全程中文弯引号「」预防成功（5/9/5/18/6/25/7/15/7/20/7/22/7/29 教训纪律）+ earnings_recap 顶层字段 vs news_tiers 嵌套 (7/14 教训预防成功)。**earnings_recap 省略**（池内 7/31 AMC reporter 零个 - earnings_history.json 过滤空 + WebSearch 未发现池内公司当日 AMC 报告，AAPL/Amazon 均为 7/30 AMC 已在 7/30 recap 处理，Amazon 非池内）| 根因：并发 routine（累计已建议 19+ 次删除兜底 routine 未见执行）与本 session 几乎同时独立完成研究并写入，race 累计 38 次（5/21 起持续复发）。GH Actions FMP 延迟 57 min 落 5/19-7/30 区间下限中位、无新异常。今日叙事 pattern 是 7 月新月度 catalyst typology 第 **19 种** pattern（前 18 种见 7/1-7/30 记录）——关键差异：本次是「Amazon capex $220B raise 上调驱动 memory cost + AAPL Q4 memory 短缺 warning 反噬 memory Day 2 fade + NVDA reclaim #1 mega-cap 头衔转移 + NXP-AMBA M&A」四重独立 catalyst 首次共振「mega-cap 头衔转移日」——AAPL 从 7/28 触及 $5.036T 峰值到 7/31 收 $4.54T 累计 3 交易日 -9.3%，是 AAPL 有史以来 top 3 单日跌幅之一。**关键结构信号**：(1) 净 pool -1.08% 空表面 vs 扣除 AAPL +0.36% broad Risk-On 双重结构；(2) VIX 跌破 16 是 4 月以来首次；(3) RSP/SPX -0.24 极端反转 = mega-cap 集中；(4) 10Y +8bp vs cooler PCE 组合 = rate cut 预期不明；(5) GICS XLB -2.34% 独深跌 + XLY +3.29% 独领 罕见结构。**WebSearch 数字冲突再次验证**：AAPL WebSearch 一源说 -9.9% $300.48 一源说 -9.17% 一源说 -6%（FMP 真值 -7.35% $308.91）/ NVDA 一源说 +3.46% 一源说 -1.25%（真值 +2.93% - 有方向冲突）/ MU 一源说 -10.57% 一源说 +18%（真值 -5.90% - 强烈冲突）/ AMD 一源说 -6.89% 一源说 -1.90%（真值 -1.90%）—— mega-cap 头衔转移日 WebSearch pattern 第 N+13 次验证 | **判断准则**（无更新）：(1) FMP 延迟 57 min 落常态区间下限、Monitor + bg Bash 双重 poll 仍是最佳方案；(2) **PSTG stale 第 44 个交易日**（5/27 起跟踪连续 9 周整、按 6/26 教训已停止逐日验证）；(3) **新增叙事 pattern 观察**：今日「mega-cap 头衔转移日 + AI infra 中游承接 vs 消费电子 memory 短缺双轨脱钩」是历史罕见的「同一 macro 事件 (hyperscaler capex raise) 触发对立方向 sector 反应 (AI infra +3% vs 消费电子 -7%)」组合、关键识别信号：(a) 净 pool cap-w 温和负值 (-0.5~-2%) 但 ex-single-mega-cap +0.3~+0.5% 双重结构；(b) RSP/SPX < 0 极端负向反转 = mega-cap 集中拖累；(c) VIX 反常下跌 -5%+ 至跌破 16 = chip 板块内 rotate 而非 macro fear；(d) GICS XLY 独领 (Amazon Q2 blowout 驱动) + XLC 中间 + XLK 独立走软 (AAPL 拖累) + XLB 材料独深跌罕见结构；(e) 硬件池 25 sub-industries 极致 dispersion：网络+光通信 broad bull vs PC/消费电子/存储/MCU 独深跌；(4) **8/1-8/5 关键 catalyst 密集周**：(a) 8/1 6 月非农就业 + ISM PMI（unemployment ≥ 4.5% → rate cut 25bp 概率升至 85%+）+ (b) 8/5 AMD Q2 CY26 AMC + FOMC 会议 = 本轮 rerate 是否延续至 8 月中最强 test；(5) **重大 mega-cap 头衔互换事件记录规范**：NVDA reclaim #1 vs AAPL 丢失 #1 (7/28 → 7/31 三日内交替 4 次) 是历史结构性事件、被动 index fund 权重 rebalance 结构性锁定信号 |
+| 2026-08-02 | **建模池 v3 大改版（用户指令）**：用户提供新 Excel「建模池」Sheet，池子从 292 只 / 25 子行业 → **102 只 / 22 子行业**（核心 84 + 跟踪 18），微盘噪声票全部剔除；同步 (1) 移除 3 个子行业（无线/卫星通信、量子/加密算力、传感器/安防/无人机）并加 SECTOR_ALIAS fallback；(2) **PSTG → P 正式落地**（用户 Excel 用新代码 P = Everpure，终结 44 个交易日 stale 跟踪——FMP 若对 P 继续 MISSING，gen_data() 新硬规则会直接剔除该票并打 WARN，绝不 hash 伪造）；(3) **calendar.html 去掉大类过滤**（用户指令：业绩日历只按 102 家公司做，不分大类）——顺带发现旧的大类按钮（半导体核心/硬件系统/元器件制造/分销渠道）与 7/28 改版后的 GROUP_MAP（半导体设计/半导体制造/通信硬件/系统与终端/元器件与配套）早已不匹配、过滤功能实际已坏，删除是正确解法；(4) **修复 gen_data() 伪造数据隐患**——FMP 数据已到位但 ticker 缺失时（更名/退市/新代码未迁移），旧代码会用 hash 生成假价格污染 cap-w，新代码直接剔除 + stdout WARN（测试确认 P 被正确剔除：`[WARN] 1 pool tickers missing from FMP data, EXCLUDED: P`）；(5) **新增 TRACK_TIER set**（18 只跟踪票，正常参与 cap-w 但 KEY_STOCKS 选卡优先核心票）；(6) **写作规则新增铁律 6/7 + 5.0 节**解决用户指出的「板块 beta 解读和个股深度解读经常重复」问题——铁律 6：4 个单股子行业（射频=QCOM、IP/EDA=ARM、PC/消费电子=AAPL、PCB/面板=TTMI）+ 准单股板块（AVGO 占网络/互连芯片 ~87%）不得单独立 theme、一律走卡片；铁律 7：theme.driver 只写板块层逻辑、个股提及 ≤1 句（代码+dp+一句话标签）、深度内容全部归卡片；5.0 节镜像规则：卡片 fund 只允许开头 1 句板块定位、不复述板块叙事；自检标准「theme 删掉个股句子后是否还成立」+「卡片与 theme 有 ≥2 句实质等价内容即删 theme 侧」；(7) fetch_fmp.py 输出加 total 字段 + daily.yml commit message 改用动态 total（不再硬编码 /313）；(8) 主题数量规则放宽为「强催化日 4-5 / 平淡日 2-3、不凑数」适配小池子 | 根因：292 池中 ~190 只微盘票（cap < $10 亿）日常贡献噪声：treemap 拥挤、Top movers 榜单被 +500% 微盘污染（如 7/31 FCUV +517%）、earnings 日历大量无关小公司；单股子行业的板块 beta 语义在旧池已经名存实亡（PC/消费电子 = AAPL 单股占 99% 权重）；板块/个股解读重复是因为旧写作规则未定义两者分工边界，theme.driver 常写成「个股深度合集」| **执行注意（下次 routine 生效）**：(1) 8/3（周一）GH Actions 会用新池拉 102 只，`P` 大概率落 missing list → gen.py 自动剔除，服务器/存储系统按 4 只算，**这是预期行为不是 bug**；(2) 7/31 及以前的已发布页面保持旧池数字不动（本次已 git restore，不回填）；(3) narrative 写作从 8/3 起严格执行铁律 6/7 + 5.0 去重规则；(4) daily.yml 修改如果 push 被 workflow scope 拦截，需要用户在 GitHub 网页手动改（本次一并提交试试）；(5) earnings_history.json / company_profiles.json / company_business_notes.json 是旧池超集、无需清理，fetch_earnings_history.py delta 会自动按新池 102 只增量 |
 
 ## 13. 用户偏好
 

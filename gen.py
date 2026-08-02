@@ -123,41 +123,43 @@ MACRO_EVENTS = [
     ('2026-05-14', '4 月 PPI', '生产端通胀'),
 ]
 
+# 建模池（2026-08-02 大改版：用户 Excel「建模池」102 只 / 22 子行业，核心 84 + 跟踪 18）
+# 剔除全部微盘噪声票；PSTG 已按用户 Excel 改为新代码 P（Everpure，原 Pure Storage）
 INDUSTRY_MAP = {
-'AI芯片/CPU':['NVDA','AMD','INTC','CBRS','BZAI'],
-'网络/互连芯片':['AVGO','MRVL','ALAB','CRDO','MXL','VLN'],
-'存储':['SKHY','MU','SNDK','STX','WDC','RMBS','SIMO','PENG','MRAM','GSIT'],
-'模拟/电源':['TXN','ADI','MPWR','SITM','ALGM','CRUS','POWI','HIMX','NVEC','PXLW'],
-'功率/分立':['STM','ON','DIOD','NVTS','WOLF','AOSL','MX'],
-'MCU/嵌入式/FPGA':['NXPI','MCHP','LSCC','SLAB','SYNA','PI','AMBA','AMBQ','INDI','LAES','QUIK','GCTS','ARBE','SQNS'],
-'射频':['QCOM','SWKS','QRVO','AMPG','MOBX','PRSO'],
-'IP/EDA':['ARM','PDFS','CEVA','IMMR','ATOM','NEON'],
+'AI芯片/CPU':['NVDA','AMD','INTC','CBRS'],
+'网络/互连芯片':['AVGO','MRVL','ALAB','CRDO','MXL'],
+'存储':['SKHY','MU','SNDK','STX','WDC','RMBS','SIMO','PENG'],
+'模拟/电源':['TXN','ADI','MPWR','SITM','POWI'],
+'功率/分立':['STM','ON','NVTS','WOLF'],
+'MCU/嵌入式/FPGA':['NXPI','MCHP','LSCC','SLAB','AMBA'],
+'射频':['QCOM'],
+'IP/EDA':['ARM'],
 'Fab/代工':['TSM','UMC','GFS','TSEM','SKYT'],
-'封测':['ASX','AMKR','IMOS','TRT'],
-'设备':['ASML','AMAT','LRCX','KLAC','TER','NVMI','ONTO','FORM','CAMT','ACMR','KLIC','ACLS','VECO','AEHR','COHU','ASYS','INTT','SOTK','CVV','DAIO'],
+'封测':['ASX','AMKR','IMOS'],
+'设备':['ASML','AMAT','LRCX','KLAC','TER','NVMI','ONTO','FORM','CAMT','ACMR','KLIC','ACLS','VECO','AEHR','COHU'],
 '零部件':['MKSI','AEIS','UCTT','ICHR'],
-'材料':['Q','ENTG','OLED','ROG','PLAB','CPSH','REFR','GAUZ','SMTK'],
-'光通信':['GLW','LITE','CIEN','COHR','NOK','MTSI','FN','SMTC','VIAV','AAOI','AXTI','POET','LWLG','CLFD','ALMU','OCC'],
-'网络设备':['CSCO','ANET','UI','ERIC','FFIV','JNPR','BB','COMM','EXTR','NTCT','CALX','HLIT','ADTN','RBBN','AUDC','SILC','SANG','FATN','UTSI','CLRO','ASNS'],
-'无线/卫星通信':['MSI','VSAT','DGII','ITRN','GILT','NTGR','BKTI','AVNW','SATX','LTRX','CRNT','KVHI','INSG','GNSS','MOB','CMTL','BOSC','FKWL','CMBM','SYTA','MINM'],
-'服务器/存储系统':['DELL','HPE','NTAP','PSTG','SMCI','QMCO','OSS'],
-'PC/消费电子':['AAPL','HPQ','LOGI','CRSR','XRX','TBCH','ALOT','VUZI','ZEPP','TACT','WETH','WLDS','SCKT'],
-'量子/加密算力':['IONQ','RGTI','CAN','ICG','NA','EBON'],
-'连接器/被动元件':['APH','TEL','LFUS','VSH','BDC','KN','BELFA','FEIM','MPTI','RFIL','AIRG','LGL','CCTG','LNKS'],
-'PCB/面板':['TTMI','LPL','DAKT','KOPN','ELTK','LEDS','OST','BOXL','WTO'],
-'EMS':['FLEX','CLS','JBL','SANM','PLXS','BHE','CTS','KE','MEI','DSWL','KTCC','NSYS','CETX','SGMA'],
-'仪器/工业设备':['KEYS','TDY','TRMB','CGNX','NOVT','MIR','LASR','IPGP','ITRI','BMI','DBD','LPTH','AIOT','NNDM','OPTX','SHMD','MASS','SMRT','ODYS','MKDW','ASTC','MTEK','RVSN','FARO'],
-'传感器/安防/无人机':['ZBRA','ONDS','OSIS','OUST','ARLO','VPG','NSSC','RCAT','EVLV','AEVA','UMAC','INVZ','DPRO','CODA','WRAP','MVIS','LINK','SPCB','INVE','LIDR','SNT','ELSE','PRZO','UUU','MSAI','VRME','SOBR','DGLY','FCUV'],
-'分销':['SNX','CDW','ARW','AVT','NSIT','PLUS','CNXN','SCSC','CLMB','RELL','IZM','TAIT'],
+'材料':['Q','ENTG','OLED','ROG','PLAB'],
+'光通信':['GLW','LITE','CIEN','COHR','NOK','MTSI','FN','SMTC','VIAV','AAOI','AXTI','POET'],
+'网络设备':['CSCO','ANET','EXTR'],
+'服务器/存储系统':['DELL','HPE','NTAP','P','SMCI'],
+'PC/消费电子':['AAPL'],
+'连接器/被动元件':['APH','TEL','LFUS','BDC'],
+'PCB/面板':['TTMI'],
+'EMS':['FLEX','CLS','JBL','SANM','PLXS','BHE'],
+'仪器/工业设备':['KEYS','TDY'],
+'分销':['SNX','ARW','AVT'],
 }
+
+# 核心 / 跟踪 分层（来自用户 Excel「池子」列；跟踪票不影响 cap-w 计算，仅供叙事参考）
+TRACK_TIER = {'SANM','PLXS','BHE','SKYT','SLAB','AMBA','TDY','VIAV','ARW','AVT','POWI','IMOS','OLED','EXTR','ACLS','VECO','LFUS','BDC'}
 
 # 大类聚合
 GROUP_MAP = {
 '半导体设计': ['AI芯片/CPU','网络/互连芯片','存储','模拟/电源','功率/分立','MCU/嵌入式/FPGA','射频','IP/EDA'],
 '半导体制造': ['Fab/代工','封测','设备','零部件','材料'],
-'通信硬件': ['光通信','网络设备','无线/卫星通信'],
-'系统与终端': ['服务器/存储系统','PC/消费电子','量子/加密算力'],
-'元器件与配套': ['连接器/被动元件','PCB/面板','EMS','仪器/工业设备','传感器/安防/无人机','分销'],
+'通信硬件': ['光通信','网络设备'],
+'系统与终端': ['服务器/存储系统','PC/消费电子'],
+'元器件与配套': ['连接器/被动元件','PCB/面板','EMS','仪器/工业设备','分销'],
 }
 
 # 旧子行业名 → 新名 兼容映射（历史 narrative_*.json 的 sectors 字段 fallback，避免历史页面渲染断掉）
@@ -165,10 +167,12 @@ SECTOR_ALIAS = {
 'AI加速': 'AI芯片/CPU', 'CPU处理器': 'AI芯片/CPU', 'Fabless设计': 'MCU/嵌入式/FPGA',
 '晶圆代工': 'Fab/代工', '存储器件': '存储', '模拟电源': '模拟/电源', '射频芯片': '射频',
 '半导体设备': '设备', '封测OSAT': '封测', '化合物光电': '材料',
-'AI服务器': '服务器/存储系统', '无线通信': '无线/卫星通信', '消费电子': 'PC/消费电子',
+'AI服务器': '服务器/存储系统', '无线通信': '网络设备', '消费电子': 'PC/消费电子',
 'PC与外设': 'PC/消费电子', '连接器元件': '连接器/被动元件', 'EMS制造': 'EMS',
-'测试仪器': '仪器/工业设备', '安防识别': '传感器/安防/无人机', '传感LiDAR': '传感器/安防/无人机',
+'测试仪器': '仪器/工业设备', '安防识别': '仪器/工业设备', '传感LiDAR': '仪器/工业设备',
 '工业IoT': '仪器/工业设备', '能源电池': '材料', '分销渠道': '分销',
+# 2026-08-02 改版移除的 3 个子行业 → 最近似现存板块（仅历史页 fallback 用）
+'无线/卫星通信': '网络设备', '量子/加密算力': '服务器/存储系统', '传感器/安防/无人机': '仪器/工业设备',
 }
 
 # 子行业 → 大类 反查
@@ -435,11 +439,17 @@ def fake_high_low(close, dp):
 
 def gen_data():
     stocks = []
+    skipped = []
     for ind, syms in INDUSTRY_MAP.items():
-        avg, std = SECTOR_PARAMS[ind]
+        avg, std = SECTOR_PARAMS.get(ind, (0.0, 1.0))
         for sym in syms:
             if sym in CONFIRMED:
                 c, dp, cap = CONFIRMED[sym]
+            elif _FMP_DATE:
+                # FMP 数据已到位但该 ticker 缺失（如更名/退市/新代码未迁移）→ 直接剔除，
+                # 绝不用 hash 伪造数据污染 cap-w（2026-08-02 改版起硬规则）
+                skipped.append(sym)
+                continue
             else:
                 dp = round(avg + hash_offset(sym, std), 2)
                 c = base_price(sym) * (1 + dp/100)
@@ -450,6 +460,8 @@ def gen_data():
                 's': sym, 'c': c, 'dp': dp, 'h': h, 'l': l, 'pc': pc,
                 'cap': cap, 'ind': ind, 'grp': SUB_TO_GROUP[ind]
             })
+    if skipped:
+        print(f"[WARN] {len(skipped)} pool tickers missing from FMP data, EXCLUDED from stats: {','.join(skipped)}")
     return stocks
 
 def main():
@@ -1549,13 +1561,7 @@ h1{{font-size:1.45rem;margin-bottom:4px}}
 <div class="sub"><a href="index.html" style="color:#58a6ff;text-decoration:none">← 返回历史存档</a> · <a href="earnings.html" style="color:#58a6ff;text-decoration:none">🗂️ 业绩历史（25 年回填）</a> · 数据源 FMP · 池内 {total_n} 只股票 · <b style="color:#58a6ff">点击有数据的日期格 → 弹出公司业绩 + 简介</b></div>
 
 <div class="bar">
-  <span class="lbl">大类：</span>
-  <button class="btn grp act" data-g="">全部</button>
-  <button class="btn grp" data-g="半导体核心">半导体核心</button>
-  <button class="btn grp" data-g="硬件系统">硬件系统</button>
-  <button class="btn grp" data-g="元器件制造">元器件制造</button>
-  <button class="btn grp" data-g="分销渠道">分销渠道</button>
-  <span class="lbl" style="margin-left:14px">视图：</span>
+  <span class="lbl">视图：</span>
   <button class="btn vw act" data-v="cal">日历</button>
   <button class="btn vw" data-v="lst">列表</button>
   <div class="nav">
@@ -1601,7 +1607,6 @@ let CAPS = {{}};          // sym -> market cap ($M) 用于模态框排序
 let BY_DATE = {{}};       // "2026-04-29" -> [{{symbol, time, eps, ...}}, ...]
 let cur = new Date();
 cur.setDate(1);
-let groupFilter = "";
 let view = "cal";
 
 const $ = s => document.querySelector(s);
@@ -1663,10 +1668,7 @@ function renderCal() {{
     const we = dow===0||dow===6;
     const isTdy = dt.getTime() === today.getTime();
     const isPast = dt < today && !isTdy;
-    const allEvs = BY_DATE[ds] || [];
-    const evs = groupFilter
-      ? allEvs.filter(e => POOL[e.symbol] && POOL[e.symbol][1] === groupFilter)
-      : allEvs;
+    const evs = (BY_DATE[ds] || []).slice();
     evs.sort((a,b) => {{
       const o = {{bmo:0,dmh:1,amc:2}};
       return (o[(a.time||"").toLowerCase()]||1) - (o[(b.time||"").toLowerCase()]||1);
@@ -1697,7 +1699,6 @@ function renderList() {{
   for (const date in BY_DATE) {{
     if (date < monthStart || date > monthEnd) continue;
     for (const e of BY_DATE[date]) {{
-      if (groupFilter && (!POOL[e.symbol] || POOL[e.symbol][1] !== groupFilter)) continue;
       items.push({{date, ...e}});
     }}
   }}
@@ -1725,10 +1726,7 @@ function renderList() {{
 }}
 
 function openDay(date) {{
-  const events = BY_DATE[date] || [];
-  const evs = groupFilter
-    ? events.filter(e => POOL[e.symbol] && POOL[e.symbol][1] === groupFilter)
-    : events;
+  const evs = (BY_DATE[date] || []).slice();
   // 按市值降序排（CAPS 单位 $M, 缺失视为 0 排到底）;
   // 市值相同时再按 BMO/DMH/AMC 时点 + ticker 字母排序兜底
   evs.sort((a,b) => {{
@@ -1742,7 +1740,7 @@ function openDay(date) {{
   }});
   const dow = cn[new Date(date+"T00:00:00").getDay()];
   $("#dlg-title").textContent = `📅 ${{date}} 周${{dow}} · ${{evs.length}} 家硬件公司业绩`;
-  $("#dlg-sub").textContent = groupFilter ? `仅显示「${{groupFilter}}」大类` : "全部 {len(GROUP_MAP)} 大板块";
+  $("#dlg-sub").textContent = "建模池 {total_n} 家公司";
   $("#dlg-body").innerHTML = evs.map(e => renderCard(e)).join("");
   $("#modal").classList.add("show");
   document.body.style.overflow = "hidden";
@@ -1750,7 +1748,7 @@ function openDay(date) {{
 
 function renderCard(e) {{
   const meta = POOL[e.symbol] || ["",""];
-  const ind = meta[0], grp = meta[1];
+  const ind = meta[0];
   const t = (e.time||"").toLowerCase();
   const timing = t==="bmo" ? '<span class="timing bmo">BMO 盘前</span>'
     : t==="amc" ? '<span class="timing amc">AMC 盘后</span>'
@@ -1799,7 +1797,7 @@ function renderCard(e) {{
       ${{img}}
       <div class="ti">
         <div class="sym"><a href="https://finance.yahoo.com/quote/${{encodeURIComponent(e.symbol)}}" target="_blank" rel="noopener">${{escapeHTML(e.symbol)}}</a> · ${{name}}</div>
-        <div class="ind">中文行业 <b>${{escapeHTML(ind)}}</b> / <b>${{escapeHTML(grp)}}</b></div>
+        <div class="ind">中文行业 <b>${{escapeHTML(ind)}}</b></div>
       </div>
       ${{timing}}
     </div>
@@ -1860,12 +1858,6 @@ async function load() {{
   }}
 }}
 
-document.querySelectorAll(".btn.grp").forEach(b => b.onclick = () => {{
-  document.querySelectorAll(".btn.grp").forEach(x => x.classList.remove("act"));
-  b.classList.add("act");
-  groupFilter = b.dataset.g;
-  load();
-}});
 document.querySelectorAll(".btn.vw").forEach(b => b.onclick = () => {{
   document.querySelectorAll(".btn.vw").forEach(x => x.classList.remove("act"));
   b.classList.add("act");
