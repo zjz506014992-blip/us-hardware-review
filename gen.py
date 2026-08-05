@@ -1184,7 +1184,7 @@ tr:hover td{{background:#1c2128}}
 
 <div class="section">
   <div class="title">📊 板块 Beta 解读 · 跨子行业联动主题</div>
-  <p style="font-size:.8rem;color:#8b949e;margin-bottom:12px">挑当日最有信号意义的 3-5 个板块联动主题。每个主题：涉及板块（cap-w 涨跌 + top movers）+ 共同驱动 + 跨板块联动 + 时效判断。<b style="color:#79c0ff">这里的 beta 故事比单只个股 alpha 更重要</b>。</p>
+  <p style="font-size:.8rem;color:#8b949e;margin-bottom:12px">挑当日最有信号意义的 3-5 个板块联动主题。每个主题：涉及板块（市值加权涨跌 + 领涨领跌个股）+ 共同驱动 + 跨板块联动 + 时效判断。<b style="color:#79c0ff">板块联动的故事比单只个股的超额收益更重要</b>。</p>
   {beta_themes_html}
 </div>
 
