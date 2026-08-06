@@ -2,7 +2,9 @@ name: Daily FMP fetch + page rebuild
 
 on:
   schedule:
-    - cron: '30 22 * * 1-5'
+    # 2026-08-06 从 '30 22' 提前到 '45 21'：收盘价 20:00 UTC 后即固定，提前 45 分钟让数据在北京 6:30-7:25am 落地，
+    # routine 7:00am 启动基本无需等待、复盘稳定在 8:00am 前发布；用冷门分钟 45 避开 GH Actions 整点/半点排队高峰
+    - cron: '45 21 * * 1-5'
   workflow_dispatch:
     inputs:
       review_date:
