@@ -221,8 +221,18 @@ CONFIRMED = {
 def _load_fmp_cache():
     import os, glob
     repo_dir = os.path.dirname(os.path.abspath(__file__))
-    files = sorted([f for f in glob.glob(os.path.join(repo_dir, 'confirmed_*.json'))
-                    if 'macros' not in os.path.basename(f)], reverse=True)
+    # REVIEW_DATE=YYYY-MM-DD 可强制重渲染指定历史日期（回补昨日 narrative 后重跑用）
+    _want = os.environ.get('REVIEW_DATE')
+    if _want:
+        p = os.path.join(repo_dir, f'confirmed_{_want}.json')
+        if os.path.exists(p):
+            files = [p]
+        else:
+            print(f"[FMP] REVIEW_DATE={_want} 但 confirmed_{_want}.json 不存在，回退最新")
+            _want = None
+    if not _want:
+        files = sorted([f for f in glob.glob(os.path.join(repo_dir, 'confirmed_*.json'))
+                        if 'macros' not in os.path.basename(f)], reverse=True)
     if not files:
         return None, {}
     try:
@@ -258,7 +268,12 @@ def _load_macros_cache():
     """加载 confirmed_macros_{DATE}.json，返回 {code: (close_val, dp, group)}"""
     import os, glob
     repo_dir = os.path.dirname(os.path.abspath(__file__))
-    files = sorted(glob.glob(os.path.join(repo_dir, 'confirmed_macros_*.json')), reverse=True)
+    # 优先取与当日 stock cache 同日期的 macros 文件（REVIEW_DATE 重渲染历史日期时必需）
+    _same_day = os.path.join(repo_dir, f'confirmed_macros_{_FMP_DATE}.json') if _FMP_DATE else None
+    if _same_day and os.path.exists(_same_day):
+        files = [_same_day]
+    else:
+        files = sorted(glob.glob(os.path.join(repo_dir, 'confirmed_macros_*.json')), reverse=True)
     if not files:
         return {}
     try:
@@ -320,7 +335,12 @@ def _load_narrative():
     """
     import os, glob
     repo_dir = os.path.dirname(os.path.abspath(__file__))
-    files = sorted(glob.glob(os.path.join(repo_dir, 'narrative_*.json')), reverse=True)
+    # 优先取与当日 stock cache 同日期的 narrative（REVIEW_DATE 重渲染历史日期时必需）
+    _same_day = os.path.join(repo_dir, f'narrative_{_FMP_DATE}.json') if _FMP_DATE else None
+    if _same_day and os.path.exists(_same_day):
+        files = [_same_day]
+    else:
+        files = sorted(glob.glob(os.path.join(repo_dir, 'narrative_*.json')), reverse=True)
     if not files:
         return None
     try:
@@ -475,6 +495,13 @@ def main():
     cap_w = sum(s['dp'] * s['cap'] for s in stocks) / cap_sum
     arith = sum(s['dp'] for s in stocks) / total
 
+    # 剔除前二权重（通常 NVDA/AAPL）后的市值加权 — 权重股稀释效应的每日量化
+    _by_cap = sorted(stocks, key=lambda s: -s['cap'])
+    _top2 = {s['s'] for s in _by_cap[:2]}
+    _rest = [s for s in stocks if s['s'] not in _top2]
+    cap_w_ex2 = (sum(s['dp'] * s['cap'] for s in _rest) / sum(s['cap'] for s in _rest)) if _rest else 0.0
+    ex2_names = '+'.join(s['s'] for s in _by_cap[:2])
+
     # 子行业聚合
     ind_stats = {}
     for ind in INDUSTRY_MAP:
@@ -517,7 +544,8 @@ def main():
         'date': DATE,
         'stocks': stocks,
         'totals': {'valid': valid, 'total': total, 'up': up, 'down': down, 'flat': flat,
-                    'cap_w': round(cap_w, 2), 'arith': round(arith, 2)},
+                    'cap_w': round(cap_w, 2), 'arith': round(arith, 2),
+                    'cap_w_ex2': round(cap_w_ex2, 2), 'ex2_names': ex2_names},
         'ind_stats': ind_stats,
         'top30': top30,
         'treemap': treemap,
@@ -1040,7 +1068,27 @@ def write_html(data):
                   '<b>跟随 SOX</b>（同节奏）' if r >= 0.7 else
                   '<b>跑输 SOX</b>（半导体大盘股领涨而中小盘跟不上）'),
     )
-    market_structure_kpis = breadth_kpi + tech_kpi + semi_kpi + pool_kpi
+    # 第 5 卡：剔除前二权重后的池 cap-w — 直接量化「权重股撑指数/掩盖广度」程度
+    _ex2 = totals.get('cap_w_ex2')
+    _full_cw = totals.get('cap_w')
+    if _ex2 is not None and _full_cw is not None:
+        _gap = round(_full_cw - _ex2, 2)
+        _ex2_col = '#e57373' if _ex2 >= 0 else '#43a047'
+        if abs(_gap) >= 0.5:
+            _ex2_interp = f'<b>权重股显著扭曲</b>（{totals.get("ex2_names","前二权重")} 贡献 {"+" if _gap>=0 else ""}{_gap} 个百分点，广度与表面数字背离）'
+        elif abs(_gap) >= 0.2:
+            _ex2_interp = '<b>权重股温和放大</b>（方向一致、幅度略有出入）'
+        else:
+            _ex2_interp = '<b>与整体一致</b>（无权重股稀释效应）'
+        ex2_kpi = f'''<div class="card">
+  <div class="lbl">🏋️ 剔除前二权重</div>
+  <div class="val" style="color:{_ex2_col}">{"+" if _ex2>=0 else ""}{_ex2}%</div>
+  <div style="font-size:.72rem;color:#8b949e;margin-top:2px">全池 {"+" if _full_cw>=0 else ""}{_full_cw}% · 剔除 {totals.get("ex2_names","")}</div>
+  <div style="font-size:.74rem;color:#c9d1d9;margin-top:6px;padding-top:6px;border-top:1px solid #30363d">{_ex2_interp}</div>
+</div>'''
+    else:
+        ex2_kpi = ''
+    market_structure_kpis = breadth_kpi + tech_kpi + semi_kpi + pool_kpi + ex2_kpi
     market_structure_narrative = MARKET_STRUCTURE.get('narrative', '<i style="color:#8b949e">市场结构叙事维护中…</i>')
 
     # 未来 5 交易日观察（基于 DATE 动态生成）+ 当日盘后业绩复盘
