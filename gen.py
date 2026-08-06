@@ -712,10 +712,14 @@ def _render_earnings_recap(recap):
     session_label = recap.get('session_label', '盘后')
 
     verdict_map = {
-        'beat':   ('BEAT',    '#e57373', '🟢 超预期'),  # 中国习惯红=涨；用红色
-        'miss':   ('MISS',    '#43a047', '🔻 不及预期'),
+        # 2026-08-06 起文案从「超预期」改为「超共识」：verdict 只衡量 headline 数字 vs 卖方共识，
+        # 上行周期里卖方共识系统性偏低、「人人都超」，与盘后下跌并存不矛盾——文案必须精确到口径
+        'beat':   ('BEAT',    '#e57373', '🟢 超共识'),  # 中国习惯红=涨；用红色
+        'miss':   ('MISS',    '#43a047', '🔻 逊共识'),
         'mixed':  ('MIXED',   '#ffa726', '⚖️ 喜忧参半'),
-        'inline': ('IN-LINE', '#8b949e', '— 符合预期'),
+        'inline': ('IN-LINE', '#8b949e', '— 符共识'),
+        '—':      ('N/A',     '#8b949e', '⋯ 待核实'),
+        '-':      ('N/A',     '#8b949e', '⋯ 待核实'),
     }
 
     cards = []
@@ -778,9 +782,24 @@ def _render_earnings_recap(recap):
             f'<span style="color:{ah_c};font-weight:700">盘后 {ah_short}</span></span>')
     chip_row = ('<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">' + ''.join(chips) + '</div>') if chips else ''
 
+    # 口径自检提示（2026-08-06，用户纠正教训）：多数超共识但多数盘后下跌时，自动提示读者
+    # 「超共识」在上行周期的信息含量下降，判断重心应转向指引 vs 买方预期与盘后反应
+    n_beat = sum(1 for r in items if str(r.get('verdict', '')).lower() == 'beat')
+    ah_known = [r for r in items if str(r.get('ah_dp', '')).strip()[:1] in '+-']
+    n_ah_neg = sum(1 for r in ah_known if str(r['ah_dp']).strip().startswith('-'))
+    caliber_note = ''
+    if len(items) >= 4 and n_beat >= 4 and n_beat / len(items) >= 0.6:
+        ah_part = (f'其中有明确盘后数字的 {len(ah_known)} 家里 {n_ah_neg} 家盘后下跌——'
+                   if len(ah_known) >= 2 else '')
+        caliber_note = (f'<div style="background:#2d2210;border:1px solid #8b6914;border-radius:6px;padding:10px 14px;'
+                        f'margin-bottom:12px;font-size:.82rem;color:#e3b341;line-height:1.7">⚠️ <b>口径提示</b>：'
+                        f'本批 {n_beat}/{len(items)} 家超卖方共识，{ah_part}上行周期里卖方共识'
+                        f'系统性滞后于现货定价，「超共识」扎堆时区分度下降；判断请以<b>指引 vs 买方预期</b>与<b>盘后反应</b>为主。</div>')
+
     return f'''<div class="section" style="border-color:#8b6914">
   <div class="title">📊 当日{session_label}业绩复盘（今晚谁报了 + 盘后怎么走）</div>
-  <p style="font-size:.82rem;color:#8b949e;margin-bottom:10px">财报实际值 vs 共识、业绩亮点、下季指引、电话会管理层观点、{session_label}股价反馈。共 {len(items)} 家。速览后下方有逐家深度复盘。</p>
+  <p style="font-size:.82rem;color:#8b949e;margin-bottom:10px">结论 chip 衡量的是「headline 数字 vs 卖方共识」，与盘后方向经常不一致；盘后 % 才是市场的投票。共 {len(items)} 家。</p>
+  {caliber_note}
   {chip_row}
   {''.join(cards)}
 </div>'''
@@ -1289,6 +1308,27 @@ def write_html(data):
     asia_relay_html = _render_asia_relay(_NARRATIVE.get('asia_relay') if _NARRATIVE else None)
     volume_html = _render_volume_block(stocks)
 
+    # 页面目录（2026-08-06 用户需求）：宽屏左侧常显，窄屏右下角按钮呼出；空区块自动隐藏条目
+    toc_entries = [
+        ('sec-tldr', '🔥 当日核心叙事', True),
+        ('sec-recap', '📊 盘后业绩复盘', bool(earnings_recap_html)),
+        ('sec-asia', '🌏 今晨亚盘接力', bool(asia_relay_html)),
+        ('sec-ratings', '🏦 卖方评级变动', bool(ratings_html)),
+        ('sec-treemap', '🗺️ 市值热力图', True),
+        ('sec-industry', '📊 子行业涨跌榜', True),
+        ('sec-scatter', '💎 市值 vs 涨跌', True),
+        ('sec-volume', '📈 量能分析', bool(volume_html)),
+        ('sec-macro', '📌 宏观大盘指数', True),
+        ('sec-structure', '🔄 市场结构因子', True),
+        ('sec-themes', '📊 板块 Beta 主题', True),
+        ('sec-cards', '🔍 个股深度解读', True),
+        ('sec-news', '📰 产业新闻分层', True),
+        ('sec-forward', '📅 未来 5 日观察', bool(forward_5d_html)),
+    ]
+    toc_links = ''.join(f'<a href="#{sid}">{label}</a>' for sid, label, present in toc_entries if present)
+    toc_html = f'''<nav id="toc"><div style="color:#e6edf3;font-weight:700;font-size:.8rem;margin-bottom:6px">📑 目录</div>{toc_links}</nav>
+<button id="tocbtn" onclick="document.getElementById('toc').classList.toggle('open')">☰ 目录</button>'''
+
     html = f'''<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -1299,8 +1339,17 @@ def write_html(data):
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
 *{{box-sizing:border-box;margin:0;padding:0}}
+html{{scroll-behavior:smooth}}
 body{{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:20px;max-width:1400px;margin:0 auto}}
 h1{{font-size:1.6rem;margin-bottom:6px}}
+#toc{{position:fixed;left:14px;top:90px;width:158px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:10px 12px;font-size:.78rem;z-index:50;display:none;max-height:82vh;overflow-y:auto}}
+#toc a{{display:block;color:#8b949e;text-decoration:none;padding:4px 2px;border-radius:4px;white-space:nowrap}}
+#toc a:hover{{color:#58a6ff;background:#0d1117}}
+@media(min-width:1780px){{#toc{{display:block}}}}
+#toc.open{{display:block;left:auto;right:18px;bottom:64px;top:auto}}
+#tocbtn{{position:fixed;right:18px;bottom:18px;z-index:60;background:#21262d;border:1px solid #30363d;color:#c9d1d9;border-radius:20px;padding:8px 14px;font-size:.8rem;cursor:pointer}}
+@media(min-width:1780px){{#tocbtn{{display:none}}}}
+[id^="sec-"]{{scroll-margin-top:12px}}
 .sub{{color:#8b949e;font-size:.88rem;margin-bottom:18px}}
 .stats{{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px}}
 .card{{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px 14px}}
@@ -1338,18 +1387,20 @@ tr:hover td{{background:#1c2128}}
   <div class="card"><div class="lbl">算术均</div><div class="val {'up' if totals['arith']>=0 else 'down'}">{"+" if totals['arith']>=0 else ""}{totals['arith']}%</div></div>
 </div>
 
-<div class="section">
+{toc_html}
+
+<div class="section" id="sec-tldr">
   <div class="title">🔥 当日核心叙事</div>
   <div style="line-height:1.85;color:#c9d1d9;font-size:.92rem">{tldr_html}</div>
 </div>
 
-{earnings_recap_html}
+<div id="sec-recap">{earnings_recap_html}</div>
 
-{asia_relay_html}
+<div id="sec-asia">{asia_relay_html}</div>
 
-{ratings_html}
+<div id="sec-ratings">{ratings_html}</div>
 
-<div class="section">
+<div class="section" id="sec-treemap">
   <div class="title">🗺️ 市值热力图（面积≈√市值 · 颜色：涨红跌绿 · 点击子行业可下钻）</div>
   <div id="treemap" style="height:620px"></div>
   <div style="margin-top:10px;font-size:.78rem;color:#8b949e">
@@ -1364,12 +1415,12 @@ tr:hover td{{background:#1c2128}}
   </div>
 </div>
 
-<div class="section">
+<div class="section" id="sec-industry">
   <div class="title">📊 子行业涨跌榜 · 成份股</div>
   <table><thead><tr><th>子行业</th><th>均涨跌</th><th>上涨/总数</th><th>成份股（按涨幅排序）</th></tr></thead><tbody>{ind_rows}</tbody></table>
 </div>
 
-<div class="section">
+<div class="section" id="sec-scatter">
   <div class="title">💎 市值 vs 涨跌幅（X 轴：log₁₀ 市值（百万美元）· 涨红跌绿）</div>
   <div style="position:relative;height:480px"><canvas id="scatter"></canvas></div>
   <div style="margin-top:12px;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px;font-size:.87rem;color:#c9d1d9;line-height:1.7">
@@ -1381,9 +1432,9 @@ tr:hover td{{background:#1c2128}}
   </div>
 </div>
 
-{volume_html}
+<div id="sec-volume">{volume_html}</div>
 
-<div class="section">
+<div class="section" id="sec-macro">
   <div class="title">📌 宏观大盘 + 行业指数（GICS 11 板块 + 半导体专项）</div>
 
   <div style="font-size:.82rem;color:#8b949e;margin:6px 0 6px;font-weight:600">📊 宽基与宏观</div>
@@ -1410,7 +1461,7 @@ tr:hover td{{background:#1c2128}}
   </div>
 </div>
 
-<div class="section">
+<div class="section" id="sec-structure">
   <div class="title">🔄 市场结构 + 风格因子（板块轮动周期 + 5 因子领跑判断）</div>
 
   <div style="font-size:.82rem;color:#8b949e;margin-bottom:8px;font-weight:600">📐 4 个比值快照（自动算）</div>
@@ -1430,20 +1481,20 @@ tr:hover td{{background:#1c2128}}
   </div>
 </div>
 
-<div class="section">
+<div class="section" id="sec-themes">
   <div class="title">📊 板块 Beta 解读 · 跨子行业联动主题</div>
   <p style="font-size:.8rem;color:#8b949e;margin-bottom:12px">挑当日最有信号意义的 3-5 个板块联动主题。每个主题：涉及板块（市值加权涨跌 + 领涨领跌个股）+ 共同驱动 + 跨板块联动 + 时效判断。<b style="color:#79c0ff">板块联动的故事比单只个股的超额收益更重要</b>。</p>
   {beta_themes_html}
 </div>
 
-<div class="section">
+<div class="section" id="sec-cards">
   <div class="title">🔍 重点个股深度解读</div>
   <div style="display:grid;grid-template-columns:1fr;gap:16px">
   {key_stocks_html}
   </div>
 </div>
 
-<div class="section">
+<div class="section" id="sec-news">
   <div class="title">📰 产业新闻 · 按权威性分层（Tier 1-4）</div>
   {news_html}
   <div style="margin-top:14px;padding:10px 14px;background:#0d1117;border:1px solid #30363d;border-radius:6px;font-size:.78rem;color:#8b949e;line-height:1.7">
@@ -1451,7 +1502,7 @@ tr:hover td{{background:#1c2128}}
   </div>
 </div>
 
-{forward_5d_html}
+<div id="sec-forward">{forward_5d_html}</div>
 
 <div class="section">
   <div class="title">🎤 2026 行业大会日历（年度参考）</div>

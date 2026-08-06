@@ -148,6 +148,14 @@ def main(path):
             v = it.get("verdict", "")
             if v not in ("beat", "miss", "mixed", "inline", "—", "-"):
                 fail(f"recap[{sym}].verdict「{v}」不合法")
+            # 硬规则（8/5 用户纠正教训）：标 beat/miss/mixed/inline 必须 EPS+营收都有已核实实数；
+            # 任一含「待核实/未公开/未检索/以 8-K 为准」→ 只能标「—」
+            if v in ("beat", "miss", "mixed", "inline"):
+                nums = str(it.get("eps", "")) + str(it.get("rev", ""))
+                for kw in ("待核实", "未公开", "未检索", "以 8-K 为准", "待确认"):
+                    if kw in nums:
+                        fail(f"recap[{sym}]: verdict={v} 但数字含「{kw}」——EPS+营收双核实才能标结论，否则用「—」")
+                        break
             ah = check_str(it.get("ah_dp", ""), f"recap[{sym}].ah_dp")
             if ah and not (ah[0] in "+-" or re.match(r"^[一-鿿（]", ah)):
                 warn(f"recap[{sym}].ah_dp「{ah[:20]}…」既不以 +/- 开头也不是中文定性描述")
