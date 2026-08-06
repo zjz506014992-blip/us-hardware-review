@@ -231,20 +231,24 @@ def _load_fmp_cache():
             print(f"[FMP] REVIEW_DATE={_want} 但 confirmed_{_want}.json 不存在，回退最新")
             _want = None
     if not _want:
+        # 排除三类衍生文件：macros（指数）/ ah（盘后）/ ratings（评级）——它们的 schema 没有 cap 字段，
+        # 且文件名字典序在纯日期文件之后，混入会复现 4/29 的 KeyError 回归
         files = sorted([f for f in glob.glob(os.path.join(repo_dir, 'confirmed_*.json'))
-                        if 'macros' not in os.path.basename(f)], reverse=True)
+                        if not any(t in os.path.basename(f) for t in ('macros', '_ah_', 'ratings'))],
+                       reverse=True)
     if not files:
-        return None, {}
+        return None, {}, {}
     try:
         with open(files[0], encoding='utf-8') as f:
             d = json.load(f)
-        cache = {sym: (v['close'], v['dp'], v['cap']) for sym, v in d.get('data', {}).items()}
-        return d.get('date'), cache
+        raw = d.get('data', {})
+        cache = {sym: (v['close'], v['dp'], v['cap']) for sym, v in raw.items()}
+        return d.get('date'), cache, raw
     except Exception as e:
         print(f"[FMP] cache load failed ({e}), falling back to hardcoded CONFIRMED")
-        return None, {}
+        return None, {}, {}
 
-_FMP_DATE, _FMP_CACHE = _load_fmp_cache()
+_FMP_DATE, _FMP_CACHE, _FMP_RAW = _load_fmp_cache()
 if _FMP_DATE and _FMP_CACHE:
     print(f"[FMP] using cache for {_FMP_DATE}: {len(_FMP_CACHE)} stocks (overrides {len(set(_FMP_CACHE)&set(CONFIRMED))} hardcoded)")
     DATE = _FMP_DATE
@@ -476,16 +480,75 @@ def gen_data():
                 c = round(c, 2)
                 cap = DEFAULT_CAPS.get(sym, 200)
             h, l, pc = fake_high_low(c, dp)
+            # FMP 原始数据有真实日高/日低/昨收时优先用真值（fake_high_low 仅兜底无数据场景）
+            raw = _FMP_RAW.get(sym, {})
+            h = raw.get('high') or h
+            l = raw.get('low') or l
+            pc = raw.get('prev_close') or pc
             stocks.append({
-                's': sym, 'c': c, 'dp': dp, 'h': h, 'l': l, 'pc': pc,
-                'cap': cap, 'ind': ind, 'grp': SUB_TO_GROUP[ind]
+                's': sym, 'c': c, 'dp': dp, 'h': round(float(h), 2), 'l': round(float(l), 2),
+                'pc': round(float(pc), 2), 'cap': cap, 'ind': ind, 'grp': SUB_TO_GROUP[ind]
             })
     if skipped:
         print(f"[WARN] {len(skipped)} pool tickers missing from FMP data, EXCLUDED from stats: {','.join(skipped)}")
     return stocks
 
+
+def _load_history_stats(current_date, n=20):
+    """读 current_date 之前最近 n 个 confirmed 文件，返回 {sym: {'dvs': [美元成交额...], 'dps': [dp...]}}（新→旧）
+
+    供量比（当日成交额 / 20 日均额）与 2 日 / 5 日累计涨幅计算。2026-08-06 新增。
+    """
+    import glob as _g, re as _re
+    repo_dir = os.path.dirname(os.path.abspath(__file__))
+    hist = {}
+    files = []
+    for f in _g.glob(os.path.join(repo_dir, 'confirmed_*.json')):
+        b = os.path.basename(f)
+        if any(t in b for t in ('macros', '_ah_', 'ratings')):
+            continue
+        m = _re.match(r'confirmed_(\d{4}-\d{2}-\d{2})\.json$', b)
+        if m and (not current_date or m.group(1) < current_date):
+            files.append((m.group(1), f))
+    for _d, f in sorted(files, reverse=True)[:n]:
+        try:
+            with open(f, encoding='utf-8') as fh:
+                data = json.load(fh).get('data', {})
+        except Exception:
+            continue
+        for sym, v in data.items():
+            vol, close = v.get('volume'), v.get('close')
+            rec = hist.setdefault(sym, {'dvs': [], 'dps': []})
+            rec['dps'].append(v.get('dp', 0.0))
+            if vol and close:
+                rec['dvs'].append(vol * close)
+    return hist
+
+
+def enrich_stocks(stocks, current_date):
+    """给每只股票补充：dv 当日美元成交额（$M）/ vr 量比 / d2、d5 N 日复合累计涨幅。缺数据置 None。"""
+    hist = _load_history_stats(current_date)
+    for s in stocks:
+        raw = _FMP_RAW.get(s['s'], {})
+        vol, close = raw.get('volume'), raw.get('close')
+        dv = vol * close if (vol and close) else None
+        s['dv'] = round(dv / 1e6, 1) if dv else None          # $M
+        h = hist.get(s['s'], {'dvs': [], 'dps': []})
+        s['vr'] = round(dv / (sum(h['dvs']) / len(h['dvs'])), 2) if (dv and len(h['dvs']) >= 5) else None
+        def _cum(k):
+            if len(h['dps']) < k - 1:
+                return None
+            r = 1 + s['dp'] / 100
+            for p in h['dps'][:k - 1]:
+                r *= 1 + p / 100
+            return round((r - 1) * 100, 2)
+        s['d2'] = _cum(2)
+        s['d5'] = _cum(5)
+    return stocks
+
 def main():
     stocks = gen_data()
+    enrich_stocks(stocks, DATE)
     total = len(stocks)
     valid = sum(1 for s in stocks if s['c'] > 0)
     up = sum(1 for s in stocks if s['dp'] > 0.05)
@@ -720,6 +783,112 @@ def _render_earnings_recap(recap):
   <p style="font-size:.82rem;color:#8b949e;margin-bottom:10px">财报实际值 vs 共识、业绩亮点、下季指引、电话会管理层观点、{session_label}股价反馈。共 {len(items)} 家。速览后下方有逐家深度复盘。</p>
   {chip_row}
   {''.join(cards)}
+</div>'''
+
+
+def _render_volume_block(stocks):
+    """量能分析区块（2026-08-06 新增）：池总成交额 vs 20 日均值 + 放缩量分布 + 放量异动榜。
+
+    「缩量回调 = 仓位行为、放量下跌 = 出货」——量比让回调性质可判别。
+    """
+    with_vr = [s for s in stocks if s.get('vr') is not None and s.get('dv')]
+    if len(with_vr) < 30:
+        return ''
+    tot_dv = sum(s['dv'] for s in stocks if s.get('dv'))
+    # 池层面量比：加权口径 = 当日总额 / 各股 20 日均额之和
+    tot_avg = sum(s['dv'] / s['vr'] for s in with_vr)
+    pool_vr = tot_dv / tot_avg if tot_avg else None
+    up_heavy = sum(1 for s in with_vr if s['vr'] >= 1.5 and s['dp'] > 0.05)
+    dn_heavy = sum(1 for s in with_vr if s['vr'] >= 1.5 and s['dp'] < -0.05)
+    shrink = sum(1 for s in with_vr if s['vr'] < 0.7)
+    movers = sorted([s for s in with_vr if abs(s['dp']) >= 2], key=lambda x: -x['vr'])[:6]
+    mover_rows = ''.join(
+        f'<tr><td><b>{s["s"]}</b></td><td>{s["ind"]}</td><td>{fmt_dp(s["dp"])}</td>'
+        f'<td><b>{s["vr"]:.1f}x</b></td><td>${s["dv"]/1000:.1f}B</td>'
+        f'<td>{fmt_dp(s["d2"]) if s.get("d2") is not None else "—"}</td>'
+        f'<td>{fmt_dp(s["d5"]) if s.get("d5") is not None else "—"}</td></tr>'
+        for s in movers)
+    vr_str = f'{pool_vr:.2f}x' if pool_vr else '—'
+    vr_verdict = ('<b class="up">显著放量</b>' if pool_vr and pool_vr >= 1.3 else
+                  '<b class="down">显著缩量</b>' if pool_vr and pool_vr <= 0.7 else '<b>量能正常</b>')
+    return f'''<div class="section">
+  <div class="title">📈 量能分析（当日 vs 20 日均值）</div>
+  <div style="font-size:.87rem;color:#c9d1d9;line-height:1.8;margin-bottom:10px">
+    池总成交额 <b>${tot_dv/1000:.0f}B</b>，为 20 日均值的 <b>{vr_str}</b>（{vr_verdict}）。
+    放量上涨（量比≥1.5）<b class="up">{up_heavy} 只</b> · 放量下跌 <b class="down">{dn_heavy} 只</b> · 缩量（&lt;0.7x）{shrink} 只。
+    <span style="color:#8b949e">判读：缩量下跌偏仓位调整、放量下跌偏筹码出逃；放量上涨才是有效突破。</span>
+  </div>
+  <table><thead><tr><th>放量异动</th><th>子行业</th><th>涨跌</th><th>量比</th><th>成交额</th><th>2 日累计</th><th>5 日累计</th></tr></thead>
+  <tbody>{mover_rows}</tbody></table>
+</div>''' if movers else f'''<div class="section">
+  <div class="title">📈 量能分析（当日 vs 20 日均值）</div>
+  <div style="font-size:.87rem;color:#c9d1d9;line-height:1.8">
+    池总成交额 <b>${tot_dv/1000:.0f}B</b>，为 20 日均值的 <b>{vr_str}</b>（{vr_verdict}）。
+    放量上涨 {up_heavy} 只 · 放量下跌 {dn_heavy} 只 · 缩量 {shrink} 只。当日无量比异动个股。
+  </div>
+</div>'''
+
+
+def _render_ratings(date_str):
+    """当日评级/目标价变动区块（2026-08-06 新增）：读 confirmed_ratings_{DATE}.json，无文件/无记录则不渲染。"""
+    path = os.path.join(REPO_DIR, f'confirmed_ratings_{date_str}.json')
+    if not os.path.exists(path):
+        return ''
+    try:
+        with open(path, encoding='utf-8') as f:
+            d = json.load(f)
+    except Exception:
+        return ''
+    grades, pts = d.get('grades', []), d.get('pt_news', [])
+    if not grades and not pts:
+        return ''
+    rows = ''
+    for g in grades[:40]:
+        act = g.get('action') or ''
+        col = '#e57373' if str(act).lower() in ('upgrade', 'initiate', 'buy') else ('#43a047' if str(act).lower() == 'downgrade' else '#c9d1d9')
+        rows += (f'<tr><td><b>{g.get("sym")}</b></td><td>{g.get("firm") or "—"}</td>'
+                 f'<td style="color:{col}">{g.get("prev") or "—"} → <b>{g.get("new") or "—"}</b></td><td>{act}</td></tr>')
+    pt_rows = ''
+    for p in pts[:40]:
+        prior, new = p.get('pt_prior'), p.get('pt_new')
+        col = '#e57373' if (prior and new and new > prior) else ('#43a047' if (prior and new and new < prior) else '#c9d1d9')
+        pt_rows += (f'<tr><td><b>{p.get("sym")}</b></td><td>{p.get("firm") or "—"}</td>'
+                    f'<td style="color:{col}">{"$" + str(prior) if prior else "—"} → <b>{"$" + str(new) if new else "—"}</b></td>'
+                    f'<td style="color:#8b949e;font-size:.78rem">{p.get("title") or ""}</td></tr>')
+    g_tbl = f'<div style="font-size:.82rem;color:#8b949e;margin:6px 0;font-weight:600">评级变动（{len(grades)} 条）</div><table><thead><tr><th>代码</th><th>机构</th><th>评级</th><th>动作</th></tr></thead><tbody>{rows}</tbody></table>' if grades else ''
+    p_tbl = f'<div style="font-size:.82rem;color:#8b949e;margin:12px 0 6px;font-weight:600">目标价变动（{len(pts)} 条）</div><table><thead><tr><th>代码</th><th>机构</th><th>目标价</th><th>标题</th></tr></thead><tbody>{pt_rows}</tbody></table>' if pts else ''
+    return f'''<div class="section">
+  <div class="title">🏦 当日卖方评级 / 目标价变动（FMP 自动抓取）</div>
+  {g_tbl}
+  {p_tbl}
+</div>'''
+
+
+def _render_asia_relay(relay):
+    """今晨亚盘接力区块（2026-08-06 新增）：narrative.asia_relay 可选字段。
+
+    routine 运行时（北京 7-8 点）首尔/台北已开盘 1-2 小时，韩台半导体对昨夜美股的
+    实时反应是 A 股开盘前的最后一环传导链。schema:
+      {"tldr": "...", "items": [{"sym": "000660.KS", "name": "SK海力士", "dp": -2.1, "note": "..."}]}
+    """
+    if not relay or not relay.get('items'):
+        return ''
+    chips = ''.join(
+        f'<span style="display:inline-flex;align-items:center;gap:6px;background:#0d1117;border:1px solid #30363d;'
+        f'border-radius:6px;padding:5px 10px;font-size:.8rem"><b style="color:#e6edf3">{it.get("name", it.get("sym"))}</b>'
+        f'<span style="color:{"#e57373" if (it.get("dp") or 0) >= 0 else "#43a047"};font-weight:700">'
+        f'{"+" if (it.get("dp") or 0) >= 0 else ""}{it.get("dp")}%</span></span>'
+        for it in relay['items'])
+    notes = ''.join(
+        f'<div style="font-size:.82rem;color:#c9d1d9;line-height:1.7;margin-top:6px"><b>{it.get("name", it.get("sym"))}</b>：{it["note"]}</div>'
+        for it in relay['items'] if it.get('note'))
+    tldr = relay.get('tldr', '')
+    tldr_html = f'<div style="font-size:.87rem;color:#c9d1d9;line-height:1.8;margin-bottom:10px">{tldr}</div>' if tldr else ''
+    return f'''<div class="section">
+  <div class="title">🌏 今晨亚盘接力（韩台盘对昨夜美股的实时反应 · A 股开盘前最后一环）</div>
+  {tldr_html}
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px">{chips}</div>
+  {notes}
 </div>'''
 
 
@@ -1116,6 +1285,9 @@ def write_html(data):
     big_caps = {s['s'] for s in stocks if s.get('cap', 0) >= 30000}  # cap > $30B 的池内大盘股
     forward_5d_html = _render_forward_5d(DATE, big_caps)
     earnings_recap_html = _render_earnings_recap(_NARRATIVE.get('earnings_recap') if _NARRATIVE else None)
+    ratings_html = _render_ratings(DATE)
+    asia_relay_html = _render_asia_relay(_NARRATIVE.get('asia_relay') if _NARRATIVE else None)
+    volume_html = _render_volume_block(stocks)
 
     html = f'''<!DOCTYPE html>
 <html lang="zh-CN">
@@ -1173,6 +1345,10 @@ tr:hover td{{background:#1c2128}}
 
 {earnings_recap_html}
 
+{asia_relay_html}
+
+{ratings_html}
+
 <div class="section">
   <div class="title">🗺️ 市值热力图（面积≈√市值 · 颜色：涨红跌绿 · 点击子行业可下钻）</div>
   <div id="treemap" style="height:620px"></div>
@@ -1204,6 +1380,8 @@ tr:hover td{{background:#1c2128}}
     {style_verdict}
   </div>
 </div>
+
+{volume_html}
 
 <div class="section">
   <div class="title">📌 宏观大盘 + 行业指数（GICS 11 板块 + 半导体专项）</div>
@@ -1394,7 +1572,13 @@ def write_stocks_page(stocks, date):
     rows = ''
     for i, s in enumerate(all_stocks):
         cap_str = f'${s["cap"]/1000:.1f}B' if s['cap'] >= 1000 else f'${s["cap"]}M'
-        rows += f'<tr><td>{i+1}</td><td><b>{s["s"]}</b></td><td>{s["grp"]}</td><td>{s["ind"]}</td><td>${s["c"]:.2f}</td><td>{fmt_dp(s["dp"])}</td><td>${s["h"]:.2f}</td><td>${s["l"]:.2f}</td><td>${s["pc"]:.2f}</td><td>{cap_str}</td></tr>'
+        dv_str = (f'${s["dv"]/1000:.1f}B' if s['dv'] >= 1000 else f'${s["dv"]:.0f}M') if s.get('dv') else '—'
+        vr_str = f'{s["vr"]:.1f}x' if s.get('vr') is not None else '—'
+        d2_str = fmt_dp(s['d2']) if s.get('d2') is not None else '—'
+        d5_str = fmt_dp(s['d5']) if s.get('d5') is not None else '—'
+        rows += (f'<tr><td>{i+1}</td><td><b>{s["s"]}</b></td><td>{s["grp"]}</td><td>{s["ind"]}</td>'
+                 f'<td>${s["c"]:.2f}</td><td>{fmt_dp(s["dp"])}</td><td>{d2_str}</td><td>{d5_str}</td>'
+                 f'<td>{dv_str}</td><td>{vr_str}</td><td>${s["h"]:.2f}</td><td>${s["l"]:.2f}</td><td>{cap_str}</td></tr>')
 
     html = f'''<!DOCTYPE html>
 <html lang="zh-CN">
@@ -1429,7 +1613,7 @@ input::placeholder{{color:#8b949e}}
 </div>
 <input type="text" id="filter" placeholder="筛选代码/行业..." oninput="filterTable()">
 <table id="tbl">
-  <thead><tr><th>#</th><th>代码</th><th>大类</th><th>子行业</th><th>收盘</th><th>涨跌</th><th>最高</th><th>最低</th><th>昨收</th><th>市值</th></tr></thead>
+  <thead><tr><th>#</th><th>代码</th><th>大类</th><th>子行业</th><th>收盘</th><th>涨跌</th><th>2日累计</th><th>5日累计</th><th>成交额</th><th>量比</th><th>最高</th><th>最低</th><th>市值</th></tr></thead>
   <tbody>{rows}</tbody>
 </table>
 <script>

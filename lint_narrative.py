@@ -75,7 +75,7 @@ def main(path):
 
     # 2. 顶层 keys
     allowed = {"date", "researched_at", "version", "market_structure", "key_stocks",
-               "sector_beta", "news_tiers", "earnings_recap"}
+               "sector_beta", "news_tiers", "earnings_recap", "asia_relay"}
     extra = set(d.keys()) - allowed
     if extra:
         warn(f"顶层出现未知 keys: {sorted(extra)}")
@@ -153,6 +153,15 @@ def main(path):
                 warn(f"recap[{sym}].ah_dp「{ah[:20]}…」既不以 +/- 开头也不是中文定性描述")
             for f in NARRATIVE_FIELDS_RECAP:
                 scan_english(check_str(it.get(f, ""), f"recap[{sym}].{f}"), f"recap[{sym}].{f}")
+
+    # asia_relay（可选）
+    ar = d.get("asia_relay")
+    if ar:
+        scan_english(check_str(ar.get("tldr", ""), "asia_relay.tldr"), "asia_relay.tldr")
+        for i, it in enumerate(ar.get("items", [])):
+            scan_english(check_str(it.get("note", ""), f"asia_relay[{i}].note"), f"asia_relay[{i}].note")
+            if not isinstance(it.get("dp"), (int, float)):
+                warn(f"asia_relay[{i}].dp 缺失或非数值（chip 无法着色）")
 
     # news
     for tk, tv in d.get("news_tiers", {}).items():

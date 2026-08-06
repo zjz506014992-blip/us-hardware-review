@@ -5,6 +5,9 @@ on:
     # 2026-08-06 从 '30 22' 提前到 '45 21'：收盘价 20:00 UTC 后即固定，提前 45 分钟让数据在北京 6:30-7:25am 落地，
     # routine 7:00am 启动基本无需等待、复盘稳定在 8:00am 前发布；用冷门分钟 45 避开 GH Actions 整点/半点排队高峰
     - cron: '45 21 * * 1-5'
+    # 2026-08-06 新增：盘后收盘价抓取（00:30 UTC = 美东 8:30pm，盘后 session 结束后半小时）
+    # 周二至周六 UTC = 周一至周五美东晚间；只跑 fetch_fmp.py --aftermarket 落 confirmed_ah_{DATE}.json
+    - cron: '30 0 * * 2-6'
   workflow_dispatch:
     inputs:
       review_date:
@@ -38,6 +41,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # 由第二个 cron（盘后抓取）触发时为 'true'，只跑 aftermarket 步骤
+      AH_RUN: ${{ github.event.schedule == '30 0 * * 2-6' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -45,15 +51,23 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Fetch aftermarket quotes
+        id: ahfetch
+        if: ${{ env.AH_RUN == 'true' }}
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+        run: python fetch_fmp.py --aftermarket
+
       - name: Fetch FMP /quote
         id: fetch
-        if: ${{ github.event.inputs.earnings_only != 'true' }}
+        if: ${{ github.event.inputs.earnings_only != 'true' && env.AH_RUN != 'true' }}
         env:
           FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
           REVIEW_DATE: ${{ github.event.inputs.review_date }}
         run: python fetch_fmp.py
 
       - name: Fetch earnings history
+        if: ${{ env.AH_RUN != 'true' }}
         env:
           FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
           MODE: ${{ github.event.inputs.earnings_mode || 'delta' }}
@@ -71,6 +85,7 @@ jobs:
           fi
 
       - name: Fetch company profiles
+        if: ${{ env.AH_RUN != 'true' }}
         env:
           FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
           FORCE: ${{ github.event.inputs.fetch_profiles }}
@@ -91,7 +106,7 @@ jobs:
           fi
 
       - name: Generate pages
-        if: ${{ github.event.inputs.earnings_only != 'true' }}
+        if: ${{ github.event.inputs.earnings_only != 'true' && env.AH_RUN != 'true' }}
         run: python gen.py
 
       - name: Show diff
@@ -108,7 +123,9 @@ jobs:
             echo "No changes"; exit 0
           fi
           git add -A
-          if [ "${{ github.event.inputs.earnings_only }}" = "true" ]; then
+          if [ "$AH_RUN" = "true" ]; then
+            git commit -m "auto: aftermarket quotes ${{ steps.ahfetch.outputs.date }} (hit ${{ steps.ahfetch.outputs.hit }})"
+          elif [ "${{ github.event.inputs.earnings_only }}" = "true" ]; then
             git commit -m "auto: earnings history backfill (manual, earnings_only)"
           else
             git commit -m "auto: FMP daily fetch ${{ steps.fetch.outputs.date }} (hit ${{ steps.fetch.outputs.hit }}/${{ steps.fetch.outputs.total }})"
