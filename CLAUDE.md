@@ -25,7 +25,12 @@ us-hardware-review/
 ├── index.html                   # 历史存档目录
 ├── {DATE}.html                  # 当日复盘页（一天一份）
 ├── stocks-{DATE}.html           # 当日全部 102 只股票表
-├── confirmed_{DATE}.json        # FMP 当日行情（GitHub Actions 自动产出）
+├── confirmed_{DATE}.json        # FMP 当日行情（GitHub Actions 自动产出；2026-08-06 起含 52 周高低/50/200 日均线）
+├── confirmed_ah_{DATE}.json     # 当日盘后收盘价（第二个 cron 00:30 UTC 自动产出，供次日 recap 回补）
+├── confirmed_ratings_{DATE}.json# 当日池内评级/目标价变动（FMP grades + price-target-news，gen.py 自动渲染成表）
+├── a_share_map.json             # 美股子行业 → A 股映射链（cross_sector 写作必引，含方向判断规则）
+├── lint_narrative.py            # narrative 五项机器校验（写完必跑）
+├── add_brief.py                 # earnings_briefs.json 安全追加工具
 ├── _meta.json                   # 累计每日统计（cap_w / up / down / flat / total）
 ├── .github/workflows/daily.yml  # GitHub Actions 定时任务（cron 21:45 UTC 工作日，2026-08-06 起）
 └── CLAUDE.md                    # 你正在读的这个文件
@@ -53,6 +58,8 @@ us-hardware-review/
   注意：`cap` 单位是 **$M（百万美元）**，不是亿、不是 $B。
 - 跑 `python gen.py` → 自动检测最新 JSON、覆盖 `DATE` 和 `CONFIRMED`、重新生成所有 HTML
 - Git auto commit & push
+- 同一 workflow 顺带产出 `confirmed_ratings_{DATE}.json`（池内 102 只逐票评级/目标价变动，~204 calls，失败不阻塞）
+- **第二个 cron `30 0 * * 2-6`**（00:30 UTC = 美东 8:30pm，盘后 session 结束后）：只跑 `fetch_fmp.py --aftermarket`，落 `confirmed_ah_{DATE}.json`（盘后收盘价 + 相对常规收盘的 ah_dp），供次日 routine 的 recap 回补精确取数
 
 ### 3.2 手动层（你 = Claude，每个交易日早上跑）
 **叙事部分** FMP 不提供，必须由你写。每天早上用户起床后，会让你做这件事。
@@ -69,12 +76,20 @@ us-hardware-review/
 
 2. **找最新 FMP 数据**：
    ```bash
-   ls -t confirmed_*.json | head -1   # 当日股票数据
+   ls -t confirmed_*.json | head -1   # 当日股票数据（注意排除 macros/_ah_/ratings 衍生文件）
    ls -t confirmed_macros_*.json 2>/dev/null | head -1   # 当日指数/ETF/风格因子
+   ls confirmed_ah_$(date -d yesterday +%F 2>/dev/null || echo '')*.json 2>/dev/null  # 昨日盘后收盘价（回补用）
+   ls confirmed_ratings_*.json 2>/dev/null | tail -1     # 当日评级/目标价变动（sellside 取数源）
    ```
-   读这两个 JSON（macros 文件由 GH Actions 自动拉，可能首次缺，缺则跳过）。
+   读这些 JSON（macros/ah/ratings 由 GH Actions 自动拉，可能缺，缺则跳过对应功能）。
 
 3. **看当日 stats**：读 `_meta.json` 最新一条，确认 cap_w / up / down 数字。
+
+3.5. **【亚盘接力】查韩台盘实时反应（2026-08-06 新增，FMP Connector 可用时必做）**：
+   routine 运行时（北京 7-8 点）首尔/台北已开盘 1-2 小时，用 `mcp__FMP__quote` 查以下亚盘标的对昨夜美股的实时反应：
+   SK 海力士 `000660.KS`、三星电子 `005930.KS`、台积电台股 `2330.TW`、联发科 `2454.TW`、东京电子 `8035.T`、爱德万 `6857.T`（FMP 对部分代码可能不支持，查到几个写几个，最少 2 个才成块）。
+   写入 narrative 顶层可选字段 `asia_relay`：`{"tldr": "一句话链条判断（昨夜美股 X → 今晨韩台 Y → 对 A 股开盘的含义）", "items": [{"sym": "000660.KS", "name": "SK海力士", "dp": -2.1, "note": "跟随美股存储回吐/背离原因"}]}`。
+   gen.py 自动渲染成「今晨亚盘接力」区块（位于盘后业绩之后）。**这是 A 股开盘前传导链的最后一环，重点判断「跟随还是背离」**。查不到实时数据则省略整个字段，不硬凑。
 
 4. **创建当日 narrative JSON**：`narrative_{DATE}.json`（**这是唯一的叙事载体，不再动 gen.py**）
 
@@ -152,7 +167,7 @@ us-hardware-review/
 - `sectors`: list[str]，涉及子行业（INDUSTRY_MAP 的 key，每个必须满足铁律 2 的阈值）
 - `sentiment`: "bull" 或 "bear"
 - `driver`: 共同驱动叙事，**200-400 字**，最核心
-- `cross_sector`: 跨板块联动，**50-150 字**，强制要写（包括"明确不联动"的负面观察）
+- `cross_sector`: 跨板块联动，**50-150 字**，强制要写（包括"明确不联动"的负面观察）。**A 股映射硬规则（2026-08-06）**：当日 |cap-w| ≥ 2% 的板块，必须引用 `a_share_map.json` 里的映射标的 + **显式判断方向**——需求/涨价/景气类催化同向传导；美国政策类催化（禁令/关税/出口管制/补贴）通常反向（美股涨 = A 股对应链承压，8/5 FCC 光模块教训）
 - `duration`: 时效判断，30-80 字（短期催化 vs 长期趋势）
 
 #### 主题数量规则
@@ -370,7 +385,7 @@ for sym, recs in hist.items():
    ```bash
    grep -o "待核实\|无公开报道\|待观察" $(ls -t narrative_*.json | sed -n 2p) | sort | uniq -c
    ```
-   若昨日 narrative（尤其 earnings_recap）留有「待核实 / 盘后反应无公开报道」，用 1-2 次 WebSearch 补查（隔了一天媒体通常已覆盖）；查到了就小 Edit 回补昨日 JSON，然后 `REVIEW_DATE={昨日} python3 gen.py` 重渲染昨日页面（gen.py 支持 REVIEW_DATE 环境变量强制渲染历史日期，2026-08-05 新增），最后再正常跑当日 `python3 gen.py`。一两分钟成本让页面不留死角；查不到就算了，不强求。
+   若昨日 narrative（尤其 earnings_recap）留有「待核实 / 盘后反应无公开报道」：**第一优先读 `confirmed_ah_{昨日}.json`**（第二个 cron 在美东盘后收盘后自动抓的精确盘后价，2026-08-06 起有）直接回填 ah_dp；数字类缺口（营收/EPS 实际值）再用 1-2 次 WebSearch 补查。查到了就小 Edit 回补昨日 JSON，然后 `REVIEW_DATE={昨日} python3 gen.py` 重渲染昨日页面，最后再正常跑当日 `python3 gen.py`。一两分钟成本让页面不留死角；查不到就算了，不强求。
 
 8. **【新】记录本次 routine 遇到的所有异常**（commit 之前必做）：
    - 翻一遍本次 session 历史，把所有反常情况（API error / 工具报错 / 数据回滚 / 误判 / 卡顿 / 工作流冲突 / 任何"我以为 X 实际 Y"）按规则写入 CLAUDE.md 第 12 节末尾表格
@@ -459,6 +474,10 @@ for sym, recs in hist.items():
 
 ### 5.3 数据真实性硬规则
 - `dp` / `close` / `cap` **必须从 FMP JSON 取实数**，不造数据、不四舍五入掩盖
+- **`range52w` / `technical`（2026-08-06 起）**：52 周高低、50/200 日均线直接从 confirmed_{DATE}.json 的 `year_high` / `year_low` / `avg50` / `avg200` 字段取（fetch_fmp.py 已随行情自动抓），不再靠 WebSearch/记忆估
+- **`vol` 必须写量比（2026-08-06 起）**：格式如「$343 亿（20 日均值的 3.2 倍）」——量比从 gen.py 量能分析或自算（当日成交额 / 近 20 日均额）；关键个股的涨跌解读必须区分放量（≥1.5x，有效突破/出货）与缩量（<0.7x，仓位行为）
+- **`sellside`（2026-08-06 起）**：第一取数源是 `confirmed_ratings_{DATE}.json`（FMP 自动抓的当日评级+目标价变动清单，gen.py 已渲染成页面表格）；卡片里只挑与该股相关的条目展开写观点。文件缺失或该股无记录时，才退回 WebSearch 验证；仍无 → 写「当日卖方静默」，绝不编造
+- **`call_takeaway`（2026-08-06 起）**：FMP Connector 可用时优先调 transcript 类端点（earnings-call-transcript）取管理层原话提炼；拿不到再用财经媒体转述，注明来源层级
 - `cap` 单位是 $M，显示亿美元用 `cap / 100`（例：cap=4144 → "$4,144 亿"；cap=50620 → "$5.06 万亿"）
 - 卖方评级（`sellside`）若 WebSearch 无法验证当日确实发生：
   - 要么 **省略整个 sellside 字段**
@@ -493,6 +512,8 @@ NEWS_TIERS = {
 ```
 
 每层 3-5 条，挑对硬件板块**最有信息量**的新闻。
+
+**Tier 2 定向情报（2026-08-06 起每日必做一次）**：WebSearch `SemiAnalysis new article this week` + `Dylan Patel` 公开言论——SemiAnalysis 报告多次引发板块级行情（7/9 CPO 延迟报告案例），标题与摘要本身就是信号，付费墙内不强求原文；有新文时在 tier2 记一条并标注「标题级情报，正文未读」。
 
 ## 7. 池子定义（INDUSTRY_MAP, gen.py）
 
