@@ -632,38 +632,32 @@ git push origin main:claude/<random>   # ⚠️ 注意 src:dst，src 是本地 r
 今天美股硬件板块收盘复盘。
 
 【启动 — 按顺序做以下 4 件事，其他都按 CLAUDE.md】
-1. cd /home/user/us-hardware-review && git pull origin main
-2. 用 Read 工具完整读取 CLAUDE.md（一次读完，1300+ 行）
+1. git pull origin main
+2. 用 Read 工具完整读取 CLAUDE.md（一次读完，约 800 行；12.0 蒸馏硬规则 + 12.1 近期流水是重点，LESSONS_ARCHIVE.md 不用读）
 3. 【幂等检查】查最新 confirmed_*.json 对应日期 X，再查 git log 是否已有 "feat: X" 的 commit。
    - 若已有 → routine 已成功跑过，**直接退出**（避免重复 commit）
    - 若没有 → 继续第 4 步
-4. 严格按 CLAUDE.md 第 4 节执行 8 步工作流，包含 commit + push
+4. 严格按 CLAUDE.md 第 4 节执行完整工作流（含 lint、回补检查、commit + push）
 
-【架构提醒（2026-04-28 升级）】
-- 叙事数据已从 gen.py 迁到 narrative_{DATE}.json，每天**只新建一个 JSON 文件**
-- gen.py 默认不动；指数/ETF 由 confirmed_macros_*.json 自动覆盖
-- 强烈建议：cp 上一个 narrative_*.json 作模板再改字段，比从空白写更稳
+【架构提醒】
+- 叙事数据在 narrative_{DATE}.json，每天**只新建一个 JSON 文件**，gen.py 默认不动
+- 指数/ETF 由 confirmed_macros_*.json 自动覆盖
+- narrative 用 Python builder（dict + json.dump）构建，写完先跑
+  python3 lint_narrative.py narrative_{DATE}.json（FAIL 必须修），再跑 python3 gen.py
+- earnings_briefs.json 增量一律走 python3 add_brief.py
 
 【失败重启策略 — 若 mid-session 被 API error 中断】
-- routine 是幂等的：下次定时触发时，第 3 步会重新检查 commit 状态
-  · 已 commit 过 → 退出
-  · 没 commit / commit 不全 → 在已有进度上续做（git status 查 staged/modified files 决定从哪步续）
-- 兜底 routine：在 Claude Code on the Web 多配一个 routine，触发时间 +30 分钟（北京 7:30am），
-  跑同一个提示词，靠幂等检查决定退出还是补跑
+- routine 是幂等的：下次触发时第 3 步会重新检查 commit 状态，
+  没 commit / commit 不全 → 在已有进度上续做（git status 决定从哪步续）
+- context 压缩恢复后第一步：git fetch && git log origin/main -3 确认无 same-day commit 再续跑
 
 【执行节奏 — 防 stream timeout】
-- narrative_{DATE}.json 用一次 Write 写完整文件，不要分多次 Edit（旧版痛点）
-- KEY_STOCKS 8 张卡片：先用 Bash 算好 dp/close/cap，再一次性构造完整 JSON
-- WebSearch 每批最多 3 个并发；写完 JSON 后 Bash 跑 `python3 gen.py | tail -3` 验证一次
-
-【遇到 API error 处理】
-- 不要 panic。把错误本身（错误类型、上一步在做什么、文件大致改到哪）记到 CLAUDE.md 第 12 节"历史教训"末尾
-- 然后退出 routine（不是修复后再继续）—— 让幂等检查 + 兜底 routine 来补救
-- 这样错误经验积累，下次遇到能用 CLAUDE.md 的避坑表预防
+- KEY_STOCKS 卡片先用 Bash 算好 dp/close/cap，再一次性构造完整 JSON
+- WebSearch 每批最多 3 个并发
+- FMP 数字用 FMP Connector（mcp__FMP__*）查真值，WebSearch 只用于新闻研判
 
 【最高指令】
-- 任何业务规则、流程、数据来源、输出格式、颜色约定、避坑、commit 信息格式 — **全部以 CLAUDE.md 为准**
-- 本提示词只负责启动 + 幂等 + 错误记录策略，业务规则一概不重复（避免与 CLAUDE.md drift）
+- 任何业务规则、流程、数据来源、输出格式 — **全部以 CLAUDE.md 为准**
 - 本提示词与 CLAUDE.md 冲突时，以 CLAUDE.md 为准
 - 用户后续维护：只需修改 GitHub 上的 CLAUDE.md，不必动这个提示词
 
