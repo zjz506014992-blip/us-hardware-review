@@ -696,9 +696,29 @@ def _render_earnings_recap(recap):
   {''.join(blocks)}
 </div>''')
 
-    return f'''<div class="section">
-  <div class="title">📊 当日{session_label}业绩复盘（池内）</div>
-  <p style="font-size:.82rem;color:#8b949e;margin-bottom:12px">财报实际值 vs 共识、业绩亮点、下季指引、电话会管理层观点、{session_label}股价反馈。共 {len(items)} 家。</p>
+    # 速览 chip 行：每家一个「代码 + 结论 + 盘后%」，一眼扫完
+    import re as _re
+    chips = []
+    for r in items:
+        sym = r.get('sym', '?')
+        v = r.get('verdict', 'inline').lower()
+        _, v_color, v_chip = verdict_map.get(v, verdict_map['inline'])
+        ah = r.get('ah_dp', '').strip()
+        m = _re.match(r'([+-][\d.]+%)', ah)
+        ah_short = m.group(1) if m else ('—' if not ah or not ah[0] in '+-' else ah.split('（')[0][:8])
+        ah_c = '#e57373' if ah_short.startswith('+') else ('#43a047' if ah_short.startswith('-') else '#8b949e')
+        chips.append(
+            f'<span style="display:inline-flex;align-items:center;gap:6px;background:#0d1117;border:1px solid #30363d;'
+            f'border-left:3px solid {v_color};border-radius:6px;padding:5px 10px;font-size:.8rem">'
+            f'<b style="color:#e6edf3">{sym}</b>'
+            f'<span style="color:{v_color};font-size:.7rem;font-weight:700">{v_chip}</span>'
+            f'<span style="color:{ah_c};font-weight:700">盘后 {ah_short}</span></span>')
+    chip_row = ('<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">' + ''.join(chips) + '</div>') if chips else ''
+
+    return f'''<div class="section" style="border-color:#8b6914">
+  <div class="title">📊 当日{session_label}业绩复盘（今晚谁报了 + 盘后怎么走）</div>
+  <p style="font-size:.82rem;color:#8b949e;margin-bottom:10px">财报实际值 vs 共识、业绩亮点、下季指引、电话会管理层观点、{session_label}股价反馈。共 {len(items)} 家。速览后下方有逐家深度复盘。</p>
+  {chip_row}
   {''.join(cards)}
 </div>'''
 
@@ -1151,6 +1171,8 @@ tr:hover td{{background:#1c2128}}
   <div style="line-height:1.85;color:#c9d1d9;font-size:.92rem">{tldr_html}</div>
 </div>
 
+{earnings_recap_html}
+
 <div class="section">
   <div class="title">🗺️ 市值热力图（面积≈√市值 · 颜色：涨红跌绿 · 点击子行业可下钻）</div>
   <div id="treemap" style="height:620px"></div>
@@ -1250,8 +1272,6 @@ tr:hover td{{background:#1c2128}}
     <b style="color:#c9d1d9">📚 渠道说明：</b>Tier 1 宏观大盘（Bloomberg/Reuters/WSJ/CNBC/FT）；Tier 2 半导体深度（SemiAnalysis/SemiWiki/Semiconductor Engineering/EETimes/TechInsights/ServeTheHome）；Tier 3 亚洲供应链（DigiTimes/TrendForce/Nikkei Asia/日经亚洲）；Tier 4 公司公告 + 分析师评级（公司 IR / Bloomberg Analyst Estimates）。
   </div>
 </div>
-
-{earnings_recap_html}
 
 {forward_5d_html}
 

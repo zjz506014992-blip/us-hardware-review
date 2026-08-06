@@ -27,7 +27,7 @@ us-hardware-review/
 ├── stocks-{DATE}.html           # 当日全部 102 只股票表
 ├── confirmed_{DATE}.json        # FMP 当日行情（GitHub Actions 自动产出）
 ├── _meta.json                   # 累计每日统计（cap_w / up / down / flat / total）
-├── .github/workflows/daily.yml  # GitHub Actions 定时任务（cron 22:30 UTC 工作日）
+├── .github/workflows/daily.yml  # GitHub Actions 定时任务（cron 21:45 UTC 工作日，2026-08-06 起）
 └── CLAUDE.md                    # 你正在读的这个文件
 ```
 
@@ -36,7 +36,7 @@ us-hardware-review/
 ## 3. 数据流（自动 + 手动两层）
 
 ### 3.1 自动层（GitHub Actions，每个交易日跑）
-- 美东 22:30（北京 6:30am）触发 `.github/workflows/daily.yml`
+- UTC 21:45（北京 5:45am）触发 `.github/workflows/daily.yml`（2026-08-06 从 22:30 提前：收盘价 20:00 UTC 后即固定，提前后数据在北京 6:30-7:25am 落地，复盘稳定在 8 点前发布；冷门分钟 45 避开 GH Actions 整半点排队高峰）
 - 跑 `python fetch_fmp.py` → 调 `https://financialmodelingprep.com/stable/batch-quote` 拉 102 只 ticker（自动从 gen.py INDUSTRY_MAP 派生）
 - 落到 `confirmed_{DATE}.json`，schema：
   ```json
@@ -256,7 +256,7 @@ us-hardware-review/
 **字段说明**（每个 item）：
 - `sym`: ticker（池内或池外重大 reporter）
 - `verdict`: `"beat"` / `"miss"` / `"mixed"` / `"inline"` 之一（决定卡片左边框颜色 + chip 文案：BEAT 红/MISS 绿/MIXED 黄/IN-LINE 灰）
-- `ah_dp`: 盘后股价反馈字符串，**必须以 `+` 或 `-` 开头**才会有颜色（红/绿）。例如 `"+4.2%"`、`"-12% 暴跌"`、`"+5% 高开（盘中已涨 +12.5%）"`。如果只有定性描述（无 + / -），会显示灰色
+- `ah_dp`: 盘后股价反馈字符串，**必须以 `+` 或 `-` 开头**才会有颜色（红/绿）。例如 `"+4.2%"`、`"-12% 暴跌"`、`"+5% 高开（盘中已涨 +12.5%）"`。如果只有定性描述（无 + / -），会显示灰色。**页面顶部速览 chip 行会自动提取开头的 ±X.X% 短显示**（2026-08-06 起 recap 区块前移到「当日核心叙事」之后 + 每家一个速览 chip），所以有具体数字时务必把百分比放在字符串最前面。**取数优先级（2026-08-06 起 FMP Connector 已挂载）**：`mcp__FMP__` 盘后报价端点（aftermarket/batch 报价，时间戳换算确认在美东 6pm 之后）→ WebSearch 双向关键词交叉验证 → 定性描述兜底，绝不编造
 - `eps`: 实际 vs 共识，例如 `"$0.96 vs $0.95E（超 +1.0%）"` 或 `"Non-GAAP $1.41（共识 $1.41 in-line）；GAAP $0.97"`
 - `rev`: 同上，例如 `"$7.85B（共识 $7.80B，+36.5% YoY）"`
 - `highlights`: 业绩亮点 100-200 字（业务分项数据 / 毛利率 / 利润率 / 现金流 / 客户名单）
@@ -557,7 +557,7 @@ NEWS_TIERS = {
 ## 11. GitHub Actions 工作流
 
 - 文件：`.github/workflows/daily.yml`
-- Cron：`30 22 * * 1-5`（UTC 22:30 工作日，= 美东 18:30 EDT / 17:30 EST 收盘后）
+- Cron：`45 21 * * 1-5`（UTC 21:45 工作日，= 美东 17:45 EDT 收盘后约 1.75 小时；2026-08-06 从 `30 22` 提前，理由见第 3.1 节）
 - 步骤：`fetch_fmp.py`（行情）→ `fetch_earnings_history.py`（业绩历史增量；周日额外跑 refresh-recent + profiles）→ `fetch_earnings_history.py --profiles`（公司简介，仅周日 / 缺失 / 强制时跑）→ `gen.py`（重生成全部 HTML）→ commit & push
 - 手动触发输入：
   - `review_date`：强制指定交易日 YYYY-MM-DD
@@ -623,7 +623,7 @@ git push origin main:claude/<random>   # ⚠️ 注意 src:dst，src 是本地 r
 
 用户在 Claude Code on the Web 配了一个**每日 routine**，跑在 Anthropic 云端，**不依赖用户开机**。
 
-- **触发时间**：北京 7:00am（UTC 23:00），刻意晚于 GitHub Actions 22:30 UTC 完成
+- **触发时间**：北京 7:00am（UTC 23:00）。GH Actions cron 已提前到 21:45 UTC（北京 5:45am），叠加 43-100 分钟排队延迟后数据通常在北京 6:30-7:25am 落地——routine 启动时大概率已就绪，无需长时间等待；**不要把 routine 提早于 7:00**（美东财报电话会通常 5-6:30pm ET 结束，过早抓到的盘后价仍在电话会波动中）
 - **绑定仓库**：routine 配置里 "Select a repository" 选 `us-hardware-review`（OAuth 代理，无需 token）
 - **工作目录**：routine 启动时仓库已自动 clone 到 `/home/user/us-hardware-review`，第一步直接 `cd` + `git pull`
 - Routine 提示词（复制到 Claude Code on the Web 的 routine 配置里）：
