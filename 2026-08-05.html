@@ -8,8 +8,17 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
 body{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:20px;max-width:1400px;margin:0 auto}
 h1{font-size:1.6rem;margin-bottom:6px}
+#toc{position:fixed;left:14px;top:90px;width:158px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:10px 12px;font-size:.78rem;z-index:50;display:none;max-height:82vh;overflow-y:auto}
+#toc a{display:block;color:#8b949e;text-decoration:none;padding:4px 2px;border-radius:4px;white-space:nowrap}
+#toc a:hover{color:#58a6ff;background:#0d1117}
+@media(min-width:1780px){#toc{display:block}}
+#toc.open{display:block;left:auto;right:18px;bottom:64px;top:auto}
+#tocbtn{position:fixed;right:18px;bottom:18px;z-index:60;background:#21262d;border:1px solid #30363d;color:#c9d1d9;border-radius:20px;padding:8px 14px;font-size:.8rem;cursor:pointer}
+@media(min-width:1780px){#tocbtn{display:none}}
+[id^="sec-"]{scroll-margin-top:12px}
 .sub{color:#8b949e;font-size:.88rem;margin-bottom:18px}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px}
 .card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px 14px}
@@ -47,20 +56,24 @@ tr:hover td{background:#1c2128}
   <div class="card"><div class="lbl">算术均</div><div class="val down">-2.73%</div></div>
 </div>
 
-<div class="section">
+<nav id="toc"><div style="color:#e6edf3;font-weight:700;font-size:.8rem;margin-bottom:6px">📑 目录</div><a href="#sec-tldr">🔥 当日核心叙事</a><a href="#sec-recap">📊 盘后业绩复盘</a><a href="#sec-treemap">🗺️ 市值热力图</a><a href="#sec-industry">📊 子行业涨跌榜</a><a href="#sec-scatter">💎 市值 vs 涨跌</a><a href="#sec-volume">📈 量能分析</a><a href="#sec-macro">📌 宏观大盘指数</a><a href="#sec-structure">🔄 市场结构因子</a><a href="#sec-themes">📊 板块 Beta 主题</a><a href="#sec-cards">🔍 个股深度解读</a><a href="#sec-news">📰 产业新闻分层</a><a href="#sec-forward">📅 未来 5 日观察</a></nav>
+<button id="tocbtn" onclick="document.getElementById('toc').classList.toggle('open')">☰ 目录</button>
+
+<div class="section" id="sec-tldr">
   <div class="title">🔥 当日核心叙事</div>
   <div style="line-height:1.85;color:#c9d1d9;font-size:.92rem"><b>核心叙事</b>：马斯克在 SpaceX 上市后首份财报电话会上宣布——Starmind 轨道算力计划与 SpaceX 全部 AI 基建独家采用 NVDA（Vera CPU + Rubin GPU、地面与在轨同构），摩根大通估算仅 SpaceX 一家 2027 年就将吃掉 NVDA 总出货量的「非常可观比例」。NVDA +3.43% 收 $219.22 独自撑起整池（贡献 +0.76 个百分点），而代价由竞争对手支付：AMD -7.04%（现供应商地位旁落 + 指引不及买方预期）、ALAB -11.96% / CRDO -5.59% 等互连链全线重挫。这不是普通轮动，而是「AI 算力赢家通吃」的一次集中重定价。<br><br><b>板块脉络</b>：池市值加权 -0.08% 但 85 只下跌、仅 14 只上涨——昨日 +4.77% 历史级普涨的第二日全面回吐。封测 -4.73% 领跌，功率 -3.52% / MCU -3.37% / 零部件 -3.33% 的中小盘链回吐最深；存储 -1.72%（SNDK/WDC 财报前对等减仓，盘后双双大超预期却双双下跌，「超预期也不涨」）。大盘层面：道指 +0.49% 连续第 5 日创新高（伊朗-阿曼霍尔木兹航运协议落地在即、布伦特周内累计 -11% 跌破 $79，能源通胀预期缓解），SPX -0.19% 终结 4 连涨，SOXX -2.12%，VIX 跌破 16。<br><br><b>后市看点</b>：今晚 9 家池内公司盘后财报（SNDK/WDC/MKSI/TTMI/SITM/VIAV/KLIC/POWI/VECO）次日消化是明天主线；8/14 AMAT 财报是设备链下一个定价节点；8 月末 NVDA 财报是「独家协议 + 赢家通吃」叙事的最终验证。广度 14 比 85 的极端结构若持续 2-3 日，需警惕普涨行情的有效性被证伪。</div>
 </div>
 
-<div class="section" style="border-color:#8b6914">
+<div id="sec-recap"><div class="section" style="border-color:#8b6914">
   <div class="title">📊 当日盘后业绩复盘（今晚谁报了 + 盘后怎么走）</div>
-  <p style="font-size:.82rem;color:#8b949e;margin-bottom:10px">财报实际值 vs 共识、业绩亮点、下季指引、电话会管理层观点、盘后股价反馈。共 9 家。速览后下方有逐家深度复盘。</p>
-  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px"><span style="display:inline-flex;align-items:center;gap:6px;background:#0d1117;border:1px solid #30363d;border-left:3px solid #e57373;border-radius:6px;padding:5px 10px;font-size:.8rem"><b style="color:#e6edf3">SNDK</b><span style="color:#e57373;font-size:.7rem;font-weight:700">🟢 超预期</span><span style="color:#43a047;font-weight:700">盘后 -4.2%</span></span><span style="display:inline-flex;align-items:center;gap:6px;background:#0d1117;border:1px solid #30363d;border-left:3px solid #e57373;border-radius:6px;padding:5px 10px;font-size:.8rem"><b style="color:#e6edf3">WDC</b><span style="color:#e57373;font-size:.7rem;font-weight:700">🟢 超预期</span><span style="color:#43a047;font-weight:700">盘后 -10%</span></span><span style="display:inline-flex;align-items:center;gap:6px;background:#0d1117;border:1px solid #30363d;border-left:3px solid #e57373;border-radius:6px;padding:5px 10px;font-size:.8rem"><b style="color:#e6edf3">MKSI</b><span style="color:#e57373;font-size:.7rem;font-weight:700">🟢 超预期</span><span style="color:#8b949e;font-weight:700">盘后 —</span></span><span style="display:inline-flex;align-items:center;gap:6px;background:#0d1117;border:1px solid #30363d;border-left:3px solid #e57373;border-radius:6px;padding:5px 10px;font-size:.8rem"><b style="color:#e6edf3">TTMI</b><span style="color:#e57373;font-size:.7rem;font-weight:700">🟢 超预期</span><span style="color:#8b949e;font-weight:700">盘后 —</span></span><span style="display:inline-flex;align-items:center;gap:6px;background:#0d1117;border:1px solid #30363d;border-left:3px solid #e57373;border-radius:6px;padding:5px 10px;font-size:.8rem"><b style="color:#e6edf3">SITM</b><span style="color:#e57373;font-size:.7rem;font-weight:700">🟢 超预期</span><span style="color:#8b949e;font-weight:700">盘后 —</span></span><span style="display:inline-flex;align-items:center;gap:6px;background:#0d1117;border:1px solid #30363d;border-left:3px solid #e57373;border-radius:6px;padding:5px 10px;font-size:.8rem"><b style="color:#e6edf3">VIAV</b><span style="color:#e57373;font-size:.7rem;font-weight:700">🟢 超预期</span><span style="color:#8b949e;font-weight:700">盘后 —</span></span><span style="display:inline-flex;align-items:center;gap:6px;background:#0d1117;border:1px solid #30363d;border-left:3px solid #e57373;border-radius:6px;padding:5px 10px;font-size:.8rem"><b style="color:#e6edf3">KLIC</b><span style="color:#e57373;font-size:.7rem;font-weight:700">🟢 超预期</span><span style="color:#8b949e;font-weight:700">盘后 —</span></span><span style="display:inline-flex;align-items:center;gap:6px;background:#0d1117;border:1px solid #30363d;border-left:3px solid #e57373;border-radius:6px;padding:5px 10px;font-size:.8rem"><b style="color:#e6edf3">POWI</b><span style="color:#e57373;font-size:.7rem;font-weight:700">🟢 超预期</span><span style="color:#8b949e;font-weight:700">盘后 —</span></span><span style="display:inline-flex;align-items:center;gap:6px;background:#0d1117;border:1px solid #30363d;border-left:3px solid #8b949e;border-radius:6px;padding:5px 10px;font-size:.8rem"><b style="color:#e6edf3">VECO</b><span style="color:#8b949e;font-size:.7rem;font-weight:700">— 符合预期</span><span style="color:#8b949e;font-weight:700">盘后 —</span></span></div>
+  <p style="font-size:.82rem;color:#8b949e;margin-bottom:10px">结论 chip 衡量的是「headline 数字 vs 卖方共识」，与盘后方向经常不一致；盘后 % 才是市场的投票。共 9 家。</p>
+  <div style="background:#2d2210;border:1px solid #8b6914;border-radius:6px;padding:10px 14px;margin-bottom:12px;font-size:.82rem;color:#e3b341;line-height:1.7">⚠️ <b>口径提示</b>：本批 6/9 家超卖方共识，其中有明确盘后数字的 3 家里 2 家盘后下跌——上行周期里卖方共识系统性滞后于现货定价，「超共识」扎堆时区分度下降；判断请以<b>指引 vs 买方预期</b>与<b>盘后反应</b>为主。</div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px"><span style="display:inline-flex;align-items:center;gap:6px;background:#0d1117;border:1px solid #30363d;border-left:3px solid #e57373;border-radius:6px;padding:5px 10px;font-size:.8rem"><b style="color:#e6edf3">SNDK</b><span style="color:#e57373;font-size:.7rem;font-weight:700">🟢 超共识</span><span style="color:#43a047;font-weight:700">盘后 -4.2%</span></span><span style="display:inline-flex;align-items:center;gap:6px;background:#0d1117;border:1px solid #30363d;border-left:3px solid #e57373;border-radius:6px;padding:5px 10px;font-size:.8rem"><b style="color:#e6edf3">WDC</b><span style="color:#e57373;font-size:.7rem;font-weight:700">🟢 超共识</span><span style="color:#43a047;font-weight:700">盘后 -10%</span></span><span style="display:inline-flex;align-items:center;gap:6px;background:#0d1117;border:1px solid #30363d;border-left:3px solid #e57373;border-radius:6px;padding:5px 10px;font-size:.8rem"><b style="color:#e6edf3">MKSI</b><span style="color:#e57373;font-size:.7rem;font-weight:700">🟢 超共识</span><span style="color:#8b949e;font-weight:700">盘后 —</span></span><span style="display:inline-flex;align-items:center;gap:6px;background:#0d1117;border:1px solid #30363d;border-left:3px solid #e57373;border-radius:6px;padding:5px 10px;font-size:.8rem"><b style="color:#e6edf3">TTMI</b><span style="color:#e57373;font-size:.7rem;font-weight:700">🟢 超共识</span><span style="color:#8b949e;font-weight:700">盘后 —</span></span><span style="display:inline-flex;align-items:center;gap:6px;background:#0d1117;border:1px solid #30363d;border-left:3px solid #e57373;border-radius:6px;padding:5px 10px;font-size:.8rem"><b style="color:#e6edf3">SITM</b><span style="color:#e57373;font-size:.7rem;font-weight:700">🟢 超共识</span><span style="color:#8b949e;font-weight:700">盘后 —</span></span><span style="display:inline-flex;align-items:center;gap:6px;background:#0d1117;border:1px solid #30363d;border-left:3px solid #8b949e;border-radius:6px;padding:5px 10px;font-size:.8rem"><b style="color:#e6edf3">VIAV</b><span style="color:#8b949e;font-size:.7rem;font-weight:700">⋯ 待核实</span><span style="color:#8b949e;font-weight:700">盘后 —</span></span><span style="display:inline-flex;align-items:center;gap:6px;background:#0d1117;border:1px solid #30363d;border-left:3px solid #8b949e;border-radius:6px;padding:5px 10px;font-size:.8rem"><b style="color:#e6edf3">KLIC</b><span style="color:#8b949e;font-size:.7rem;font-weight:700">⋯ 待核实</span><span style="color:#8b949e;font-weight:700">盘后 —</span></span><span style="display:inline-flex;align-items:center;gap:6px;background:#0d1117;border:1px solid #30363d;border-left:3px solid #e57373;border-radius:6px;padding:5px 10px;font-size:.8rem"><b style="color:#e6edf3">POWI</b><span style="color:#e57373;font-size:.7rem;font-weight:700">🟢 超共识</span><span style="color:#8b949e;font-weight:700">盘后 —</span></span><span style="display:inline-flex;align-items:center;gap:6px;background:#0d1117;border:1px solid #30363d;border-left:3px solid #8b949e;border-radius:6px;padding:5px 10px;font-size:.8rem"><b style="color:#e6edf3">VECO</b><span style="color:#8b949e;font-size:.7rem;font-weight:700">⋯ 待核实</span><span style="color:#8b949e;font-weight:700">盘后 —</span></span></div>
   <div style="background:#0d1117;border:1px solid #30363d;border-left:4px solid #e57373;border-radius:6px;padding:14px 16px;margin-bottom:12px">
   <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #30363d;padding-bottom:8px;margin-bottom:10px">
     <div>
       <span style="font-size:1.1rem;font-weight:700;color:#e6edf3">SNDK</span>
-      <span style="background:#e5737333;color:#e57373;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700;margin-left:8px">🟢 超预期</span>
+      <span style="background:#e5737333;color:#e57373;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700;margin-left:8px">🟢 超共识</span>
     </div>
     <div><span style="color:#43a047;font-weight:700">-4.2% 盘后（约 $1,294）——常规时段财报前已 -5.40%，盘后大超预期仍续跌，全天累计约 -9.4%</span></div>
   </div>
@@ -69,7 +82,7 @@ tr:hover td{background:#1c2128}
   <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #30363d;padding-bottom:8px;margin-bottom:10px">
     <div>
       <span style="font-size:1.1rem;font-weight:700;color:#e6edf3">WDC</span>
-      <span style="background:#e5737333;color:#e57373;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700;margin-left:8px">🟢 超预期</span>
+      <span style="background:#e5737333;color:#e57373;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700;margin-left:8px">🟢 超共识</span>
     </div>
     <div><span style="color:#43a047;font-weight:700">-10% 盘后（约 $465）——常规时段已 -5.36%，从昨收算合计回撤约 15%</span></div>
   </div>
@@ -78,7 +91,7 @@ tr:hover td{background:#1c2128}
   <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #30363d;padding-bottom:8px;margin-bottom:10px">
     <div>
       <span style="font-size:1.1rem;font-weight:700;color:#e6edf3">MKSI</span>
-      <span style="background:#e5737333;color:#e57373;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700;margin-left:8px">🟢 超预期</span>
+      <span style="background:#e5737333;color:#e57373;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700;margin-left:8px">🟢 超共识</span>
     </div>
     <div><span style="color:#8b949e;font-weight:700">盘后反应待观察（电话会安排在 8/6 早 8:30 美东，次日盘前才有完整定价）</span></div>
   </div>
@@ -87,7 +100,7 @@ tr:hover td{background:#1c2128}
   <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #30363d;padding-bottom:8px;margin-bottom:10px">
     <div>
       <span style="font-size:1.1rem;font-weight:700;color:#e6edf3">TTMI</span>
-      <span style="background:#e5737333;color:#e57373;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700;margin-left:8px">🟢 超预期</span>
+      <span style="background:#e5737333;color:#e57373;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700;margin-left:8px">🟢 超共识</span>
     </div>
     <div><span style="color:#8b949e;font-weight:700">盘后无公开异动报道（收盘 $131.25，当日 -1.16%；日内曾深跌至 $112.61 后收复，波动极大）</span></div>
   </div>
@@ -96,34 +109,34 @@ tr:hover td{background:#1c2128}
   <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #30363d;padding-bottom:8px;margin-bottom:10px">
     <div>
       <span style="font-size:1.1rem;font-weight:700;color:#e6edf3">SITM</span>
-      <span style="background:#e5737333;color:#e57373;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700;margin-left:8px">🟢 超预期</span>
+      <span style="background:#e5737333;color:#e57373;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700;margin-left:8px">🟢 超共识</span>
     </div>
     <div><span style="color:#8b949e;font-weight:700">盘后反应无公开报道（常规时段财报前已 -6.85% 收 $543.12）</span></div>
   </div>
   <div style="font-size:.82rem;color:#c9d1d9;margin-bottom:8px"><b style="color:#8b949e">📊 数字</b><br>EPS：Non-GAAP EPS $2.34 对共识 $1.95（超 +20%）<br>Rev：$1.574 亿（超指引 $1.40-1.50 亿上限，同比 +127%）</div><div style="font-size:.82rem;color:#c9d1d9;line-height:1.7;margin-bottom:8px"><b style="color:#8b949e">✨ 业绩亮点</b><br>通信/企业/数据中心业务持续放量，AI 集群对高精度时钟（时序芯片）的需求是核心驱动；连续四个季度大幅超共识（历史平均超预期幅度约 35%）。</div><div style="font-size:.82rem;color:#c9d1d9;line-height:1.7;margin-bottom:8px"><b style="color:#8b949e">🎯 指引</b><br>下季指引在电话会中给出，公开渠道暂未检索到具体数字。</div><div style="font-size:.82rem;color:#c9d1d9;line-height:1.7"><b style="color:#8b949e">📞 电话会要点</b><br>—</div>
-</div><div style="background:#0d1117;border:1px solid #30363d;border-left:4px solid #e57373;border-radius:6px;padding:14px 16px;margin-bottom:12px">
+</div><div style="background:#0d1117;border:1px solid #30363d;border-left:4px solid #8b949e;border-radius:6px;padding:14px 16px;margin-bottom:12px">
   <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #30363d;padding-bottom:8px;margin-bottom:10px">
     <div>
       <span style="font-size:1.1rem;font-weight:700;color:#e6edf3">VIAV</span>
-      <span style="background:#e5737333;color:#e57373;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700;margin-left:8px">🟢 超预期</span>
+      <span style="background:#8b949e33;color:#8b949e;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700;margin-left:8px">⋯ 待核实</span>
     </div>
     <div><span style="color:#8b949e;font-weight:700">盘后反应无公开报道（常规时段 -3.52% 收 $38.90）</span></div>
   </div>
-  <div style="font-size:.82rem;color:#c9d1d9;margin-bottom:8px"><b style="color:#8b949e">📊 数字</b><br>EPS：公司公告称 Q4 与全年业绩超预期（共识 EPS $0.30，具体实际值以 8-K 为准）<br>Rev：共识 $4.33 亿，公司称超预期（具体实际值以 8-K 为准）</div><div style="font-size:.82rem;color:#c9d1d9;line-height:1.7;margin-bottom:8px"><b style="color:#8b949e">✨ 业绩亮点</b><br>公司明确把超预期归因于数据中心生态与航空航天/国防两大新增长引擎；本季发布业界首个超以太网传输（UET）验证平台，卡位 AI 网络测试。财报数字的完整分项待 8-K 与电话会纪要核实。</div><div style="font-size:.82rem;color:#c9d1d9;line-height:1.7;margin-bottom:8px"><b style="color:#8b949e">🎯 指引</b><br>待核实。</div><div style="font-size:.82rem;color:#c9d1d9;line-height:1.7"><b style="color:#8b949e">📞 电话会要点</b><br>—</div>
-</div><div style="background:#0d1117;border:1px solid #30363d;border-left:4px solid #e57373;border-radius:6px;padding:14px 16px;margin-bottom:12px">
+  <div style="font-size:.82rem;color:#c9d1d9;margin-bottom:8px"><b style="color:#8b949e">📊 数字</b><br>EPS：公司公告称超预期，但实际数字未核实（共识 EPS $0.30）——按硬规则不标结论<br>Rev：共识 $4.33 亿，实际值待 8-K 核实</div><div style="font-size:.82rem;color:#c9d1d9;line-height:1.7;margin-bottom:8px"><b style="color:#8b949e">✨ 业绩亮点</b><br>公司明确把超预期归因于数据中心生态与航空航天/国防两大新增长引擎；本季发布业界首个超以太网传输（UET）验证平台，卡位 AI 网络测试。财报数字的完整分项待 8-K 与电话会纪要核实。</div><div style="font-size:.82rem;color:#c9d1d9;line-height:1.7;margin-bottom:8px"><b style="color:#8b949e">🎯 指引</b><br>待核实。</div><div style="font-size:.82rem;color:#c9d1d9;line-height:1.7"><b style="color:#8b949e">📞 电话会要点</b><br>—</div>
+</div><div style="background:#0d1117;border:1px solid #30363d;border-left:4px solid #8b949e;border-radius:6px;padding:14px 16px;margin-bottom:12px">
   <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #30363d;padding-bottom:8px;margin-bottom:10px">
     <div>
       <span style="font-size:1.1rem;font-weight:700;color:#e6edf3">KLIC</span>
-      <span style="background:#e5737333;color:#e57373;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700;margin-left:8px">🟢 超预期</span>
+      <span style="background:#8b949e33;color:#8b949e;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700;margin-left:8px">⋯ 待核实</span>
     </div>
     <div><span style="color:#8b949e;font-weight:700">盘后反应无公开报道（常规时段 -0.01% 收 $93.84，电话会在 8/6 早 8:00 美东）</span></div>
   </div>
-  <div style="font-size:.82rem;color:#c9d1d9;margin-bottom:8px"><b style="color:#8b949e">📊 数字</b><br>EPS：$1.20 对共识 $1.06（超约 +13%；另有源按 $0.98 口径计超 +22%）<br>Rev：共识 $3.085 亿（5 月指引 $3.10 亿），实际值待 8-K 核实</div><div style="font-size:.82rem;color:#c9d1d9;line-height:1.7;margin-bottom:8px"><b style="color:#8b949e">✨ 业绩亮点</b><br>焊线机与先进封装设备需求随存储扩产与 AI 封装升级回暖；5 月曾指引本季营收环比 +28%。</div><div style="font-size:.82rem;color:#c9d1d9;line-height:1.7;margin-bottom:8px"><b style="color:#8b949e">🎯 指引</b><br>待 8/6 早间电话会。</div><div style="font-size:.82rem;color:#c9d1d9;line-height:1.7"><b style="color:#8b949e">📞 电话会要点</b><br>—</div>
+  <div style="font-size:.82rem;color:#c9d1d9;margin-bottom:8px"><b style="color:#8b949e">📊 数字</b><br>EPS：EPS $1.20 对共识 $1.06（超约 +13%）已核实；但营收未核实，按硬规则（EPS+营收双核实才标 beat）暂不标结论<br>Rev：共识 $3.085 亿（5 月指引 $3.10 亿），实际值待 8-K 核实</div><div style="font-size:.82rem;color:#c9d1d9;line-height:1.7;margin-bottom:8px"><b style="color:#8b949e">✨ 业绩亮点</b><br>焊线机与先进封装设备需求随存储扩产与 AI 封装升级回暖；5 月曾指引本季营收环比 +28%。</div><div style="font-size:.82rem;color:#c9d1d9;line-height:1.7;margin-bottom:8px"><b style="color:#8b949e">🎯 指引</b><br>待 8/6 早间电话会。</div><div style="font-size:.82rem;color:#c9d1d9;line-height:1.7"><b style="color:#8b949e">📞 电话会要点</b><br>—</div>
 </div><div style="background:#0d1117;border:1px solid #30363d;border-left:4px solid #e57373;border-radius:6px;padding:14px 16px;margin-bottom:12px">
   <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #30363d;padding-bottom:8px;margin-bottom:10px">
     <div>
       <span style="font-size:1.1rem;font-weight:700;color:#e6edf3">POWI</span>
-      <span style="background:#e5737333;color:#e57373;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700;margin-left:8px">🟢 超预期</span>
+      <span style="background:#e5737333;color:#e57373;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700;margin-left:8px">🟢 超共识</span>
     </div>
     <div><span style="color:#8b949e;font-weight:700">盘后反应无公开报道（常规时段财报前 -4.06% 收 $61.95）</span></div>
   </div>
@@ -132,19 +145,19 @@ tr:hover td{background:#1c2128}
   <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #30363d;padding-bottom:8px;margin-bottom:10px">
     <div>
       <span style="font-size:1.1rem;font-weight:700;color:#e6edf3">VECO</span>
-      <span style="background:#8b949e33;color:#8b949e;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700;margin-left:8px">— 符合预期</span>
+      <span style="background:#8b949e33;color:#8b949e;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700;margin-left:8px">⋯ 待核实</span>
     </div>
     <div><span style="color:#8b949e">盘后股价 —</span></div>
   </div>
   <div style="font-size:.82rem;color:#c9d1d9;margin-bottom:8px"><b style="color:#8b949e">📊 数字</b><br>EPS：共识 $0.26（公司指引 $0.20-0.32），实际值截至发稿未检索到公开报道<br>Rev：共识 $1.80 亿（公司指引 $1.70-1.90 亿），实际值待核实</div><div style="font-size:.82rem;color:#c9d1d9;line-height:1.7;margin-bottom:8px"><b style="color:#8b949e">✨ 业绩亮点</b><br>财报数据未及时公开/待核实；关注点为磷化铟激光器沉积设备（800G/1.6T 光模块用）订单与 AI 相关先进封装设备需求。</div><div style="font-size:.82rem;color:#c9d1d9;line-height:1.7;margin-bottom:8px"><b style="color:#8b949e">🎯 指引</b><br>待核实。</div><div style="font-size:.82rem;color:#c9d1d9;line-height:1.7"><b style="color:#8b949e">📞 电话会要点</b><br>—</div>
 </div>
-</div>
+</div></div>
 
+<div id="sec-asia"></div>
 
+<div id="sec-ratings"></div>
 
-
-
-<div class="section">
+<div class="section" id="sec-treemap">
   <div class="title">🗺️ 市值热力图（面积≈√市值 · 颜色：涨红跌绿 · 点击子行业可下钻）</div>
   <div id="treemap" style="height:620px"></div>
   <div style="margin-top:10px;font-size:.78rem;color:#8b949e">
@@ -159,12 +172,12 @@ tr:hover td{background:#1c2128}
   </div>
 </div>
 
-<div class="section">
+<div class="section" id="sec-industry">
   <div class="title">📊 子行业涨跌榜 · 成份股</div>
   <table><thead><tr><th>子行业</th><th>均涨跌</th><th>上涨/总数</th><th>成份股（按涨幅排序）</th></tr></thead><tbody><tr><td style="white-space:nowrap;font-weight:600">分销</td><td style="white-space:nowrap"><span class="up">+1.48%</span></td><td style="white-space:nowrap">1/3</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>AVT</b> +5.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>SNX</b> -0.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>ARW</b> -0.4%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">PC/消费电子</td><td style="white-space:nowrap"><span class="up">+0.52%</span></td><td style="white-space:nowrap">1/1</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>AAPL</b> +0.5%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">连接器/被动元件</td><td style="white-space:nowrap"><span class="up">+0.13%</span></td><td style="white-space:nowrap">3/4</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>BDC</b> +0.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>APH</b> +0.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>TEL</b> +0.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>LFUS</b> -1.1%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">仪器/工业设备</td><td style="white-space:nowrap"><span class="down">-0.84%</span></td><td style="white-space:nowrap">0/2</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>TDY</b> -0.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>KEYS</b> -1.5%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">PCB/面板</td><td style="white-space:nowrap"><span class="down">-1.16%</span></td><td style="white-space:nowrap">0/1</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>TTMI</b> -1.2%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">服务器/存储系统</td><td style="white-space:nowrap"><span class="down">-1.19%</span></td><td style="white-space:nowrap">1/5</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>HPE</b> +1.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>P</b> -0.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>DELL</b> -1.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>NTAP</b> -2.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>SMCI</b> -4.3%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">材料</td><td style="white-space:nowrap"><span class="down">-1.20%</span></td><td style="white-space:nowrap">1/5</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>ENTG</b> +0.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>ROG</b> -0.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>OLED</b> -0.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>PLAB</b> -2.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>Q</b> -4.2%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">光通信</td><td style="white-space:nowrap"><span class="down">-2.10%</span></td><td style="white-space:nowrap">2/12</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>AXTI</b> +5.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>COHR</b> +1.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>CIEN</b> -0.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>FN</b> -1.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>GLW</b> -2.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>AAOI</b> -2.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>LITE</b> -2.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>VIAV</b> -3.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>MTSI</b> -3.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>NOK</b> -3.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>POET</b> -5.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>SMTC</b> -6.1%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">IP/EDA</td><td style="white-space:nowrap"><span class="down">-2.13%</span></td><td style="white-space:nowrap">0/1</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>ARM</b> -2.1%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">EMS</td><td style="white-space:nowrap"><span class="down">-2.14%</span></td><td style="white-space:nowrap">0/6</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>JBL</b> -0.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>PLXS</b> -0.8%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>BHE</b> -1.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>CLS</b> -2.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>FLEX</b> -3.8%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>SANM</b> -4.0%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">AI芯片/CPU</td><td style="white-space:nowrap"><span class="down">-2.27%</span></td><td style="white-space:nowrap">2/4</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>NVDA</b> +3.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>INTC</b> +0.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>CBRS</b> -5.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>AMD</b> -7.0%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">模拟/电源</td><td style="white-space:nowrap"><span class="down">-2.58%</span></td><td style="white-space:nowrap">1/5</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>MPWR</b> +0.8%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>ADI</b> -0.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>TXN</b> -2.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>POWI</b> -4.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>SITM</b> -6.8%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">MCU/嵌入式/FPGA</td><td style="white-space:nowrap"><span class="down">-2.77%</span></td><td style="white-space:nowrap">0/5</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>SLAB</b> -0.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>AMBA</b> -0.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>NXPI</b> -2.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>MCHP</b> -3.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>LSCC</b> -7.0%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">设备</td><td style="white-space:nowrap"><span class="down">-3.05%</span></td><td style="white-space:nowrap">0/15</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>KLIC</b> -0.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>KLAC</b> -1.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>VECO</b> -1.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>ASML</b> -2.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>COHU</b> -2.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>ACLS</b> -2.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>AMAT</b> -2.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>CAMT</b> -2.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>NVMI</b> -2.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>ACMR</b> -3.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>LRCX</b> -3.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>TER</b> -3.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>ONTO</b> -4.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>FORM</b> -4.9%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>AEHR</b> -10.1%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">射频</td><td style="white-space:nowrap"><span class="down">-3.16%</span></td><td style="white-space:nowrap">0/1</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>QCOM</b> -3.2%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">存储</td><td style="white-space:nowrap"><span class="down">-3.60%</span></td><td style="white-space:nowrap">1/8</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>MU</b> +0.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>STX</b> -0.9%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>SKHY</b> -2.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>RMBS</b> -3.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>PENG</b> -3.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>WDC</b> -5.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>SNDK</b> -5.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>SIMO</b> -8.1%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">封测</td><td style="white-space:nowrap"><span class="down">-3.74%</span></td><td style="white-space:nowrap">0/3</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>IMOS</b> -2.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>AMKR</b> -3.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>ASX</b> -5.0%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">功率/分立</td><td style="white-space:nowrap"><span class="down">-4.26%</span></td><td style="white-space:nowrap">0/4</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>STM</b> -2.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>NVTS</b> -2.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>ON</b> -4.8%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>WOLF</b> -6.9%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">零部件</td><td style="white-space:nowrap"><span class="down">-4.76%</span></td><td style="white-space:nowrap">0/4</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>MKSI</b> -2.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>AEIS</b> -3.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>UCTT</b> -5.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>ICHR</b> -8.0%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">Fab/代工</td><td style="white-space:nowrap"><span class="down">-4.81%</span></td><td style="white-space:nowrap">0/5</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>SKYT</b> 0.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>TSM</b> -0.8%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>GFS</b> -4.9%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>UMC</b> -6.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>TSEM</b> -11.8%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">网络设备</td><td style="white-space:nowrap"><span class="down">-5.22%</span></td><td style="white-space:nowrap">1/3</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>ANET</b> +3.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>CSCO</b> -0.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>EXTR</b> -19.0%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">网络/互连芯片</td><td style="white-space:nowrap"><span class="down">-5.64%</span></td><td style="white-space:nowrap">0/5</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>AVGO</b> +0.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>MRVL</b> -3.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>CRDO</b> -5.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>MXL</b> -7.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>ALAB</b> -12.0%</span></td></tr></tbody></table>
 </div>
 
-<div class="section">
+<div class="section" id="sec-scatter">
   <div class="title">💎 市值 vs 涨跌幅（X 轴：log₁₀ 市值（百万美元）· 涨红跌绿）</div>
   <div style="position:relative;height:480px"><canvas id="scatter"></canvas></div>
   <div style="margin-top:12px;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px;font-size:.87rem;color:#c9d1d9;line-height:1.7">
@@ -176,7 +189,7 @@ tr:hover td{background:#1c2128}
   </div>
 </div>
 
-<div class="section">
+<div id="sec-volume"><div class="section">
   <div class="title">📈 量能分析（当日 vs 20 日均值）</div>
   <div style="font-size:.87rem;color:#c9d1d9;line-height:1.8;margin-bottom:10px">
     池总成交额 <b>$214B</b>，为 20 日均值的 <b>0.95x</b>（<b>量能正常</b>）。
@@ -185,9 +198,9 @@ tr:hover td{background:#1c2128}
   </div>
   <table><thead><tr><th>放量异动</th><th>子行业</th><th>涨跌</th><th>量比</th><th>成交额</th><th>2 日累计</th><th>5 日累计</th></tr></thead>
   <tbody><tr><td><b>ANET</b></td><td>网络设备</td><td><span class="up">+3.57%</span></td><td><b>3.2x</b></td><td>$4.0B</td><td><span class="up">+6.72%</span></td><td><span class="up">+24.91%</span></td></tr><tr><td><b>AVT</b></td><td>分销</td><td><span class="up">+5.07%</span></td><td><b>3.0x</b></td><td>$0.3B</td><td><span class="up">+9.39%</span></td><td><span class="up">+16.32%</span></td></tr><tr><td><b>LSCC</b></td><td>MCU/嵌入式/FPGA</td><td><span class="down">-7.02%</span></td><td><b>2.3x</b></td><td>$0.5B</td><td><span class="up">+0.89%</span></td><td><span class="up">+13.59%</span></td></tr><tr><td><b>EXTR</b></td><td>网络设备</td><td><span class="down">-19.02%</span></td><td><b>2.2x</b></td><td>$0.1B</td><td><span class="down">-12.65%</span></td><td><span class="down">-9.91%</span></td></tr><tr><td><b>ALAB</b></td><td>网络/互连芯片</td><td><span class="down">-11.96%</span></td><td><b>1.9x</b></td><td>$2.9B</td><td><span class="down">-0.82%</span></td><td><span class="up">+27.50%</span></td></tr><tr><td><b>GFS</b></td><td>Fab/代工</td><td><span class="down">-4.92%</span></td><td><b>1.9x</b></td><td>$0.4B</td><td><span class="down">-1.10%</span></td><td><span class="up">+5.08%</span></td></tr></tbody></table>
-</div>
+</div></div>
 
-<div class="section">
+<div class="section" id="sec-macro">
   <div class="title">📌 宏观大盘 + 行业指数（GICS 11 板块 + 半导体专项）</div>
 
   <div style="font-size:.82rem;color:#8b949e;margin:6px 0 6px;font-weight:600">📊 宽基与宏观</div>
@@ -214,7 +227,7 @@ tr:hover td{background:#1c2128}
   </div>
 </div>
 
-<div class="section">
+<div class="section" id="sec-structure">
   <div class="title">🔄 市场结构 + 风格因子（板块轮动周期 + 5 因子领跑判断）</div>
 
   <div style="font-size:.82rem;color:#8b949e;margin-bottom:8px;font-weight:600">📐 4 个比值快照（自动算）</div>
@@ -259,7 +272,7 @@ tr:hover td{background:#1c2128}
   </div>
 </div>
 
-<div class="section">
+<div class="section" id="sec-themes">
   <div class="title">📊 板块 Beta 解读 · 跨子行业联动主题</div>
   <p style="font-size:.8rem;color:#8b949e;margin-bottom:12px">挑当日最有信号意义的 3-5 个板块联动主题。每个主题：涉及板块（市值加权涨跌 + 领涨领跌个股）+ 共同驱动 + 跨板块联动 + 时效判断。<b style="color:#79c0ff">板块联动的故事比单只个股的超额收益更重要</b>。</p>
   <div style="background:#0d1117;border:1px solid #30363d;border-left:4px solid #e57373;border-radius:6px;padding:14px 16px;margin-bottom:14px">
@@ -298,7 +311,7 @@ tr:hover td{background:#1c2128}
 </div>
 </div>
 
-<div class="section">
+<div class="section" id="sec-cards">
   <div class="title">🔍 重点个股深度解读</div>
   <div style="display:grid;grid-template-columns:1fr;gap:16px">
   <div style="background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:18px">
@@ -560,7 +573,7 @@ tr:hover td{background:#1c2128}
   </div>
 </div>
 
-<div class="section">
+<div class="section" id="sec-news">
   <div class="title">📰 产业新闻 · 按权威性分层（Tier 1-4）</div>
   <div style="margin-bottom:18px">
   <div style="font-size:.88rem;font-weight:700;color:#58a6ff;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #58a6ff55">Tier 1·宏观/大盘</div>
@@ -678,7 +691,7 @@ tr:hover td{background:#1c2128}
   </div>
 </div>
 
-<div class="section">
+<div id="sec-forward"><div class="section">
   <div class="title">🔭 未来 5 交易日观察（8/6 – 8/12）</div>
   <table>
     <thead><tr><th style="min-width:90px">日期</th><th>池内业绩</th><th>宏观数据</th><th>行业事件 / 大会</th></tr></thead>
@@ -692,7 +705,7 @@ tr:hover td{background:#1c2128}
   </table>
   <p style="margin-top:10px;font-size:.82rem;color:#8b949e">共池内 16 家公司在未来 5 交易日内披露业绩。宏观日历来自 MACRO_EVENTS（每周维护），行业大会来自 INDUSTRY_EVENTS。</p>
   <div style="margin-top:8px;font-size:.82rem;color:#8b949e">⏰ 时间转换：美东 → 北京 +12h（夏令时）；盘前 = 北京 21:00 前；盘后 = 北京次日凌晨 04:00 起</div>
-</div>
+</div></div>
 
 <div class="section">
   <div class="title">🎤 2026 行业大会日历（年度参考）</div>
