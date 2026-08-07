@@ -304,8 +304,9 @@ if _FMP_MACROS:
         for code, name, _close, _dp, hint in idx_list:
             m = _FMP_MACROS.get(code)
             if m and m[0] is not None:
-                close_str = _fmt_close(m[2], code, m[0])
-                out.append((code, name, close_str, m[1], hint))
+                # 数字来自当日 FMP 缓存时，硬编码的 4 月点评一律不展示——
+                # 旧文案配新数字必然错位（2026-08-07 用户抓到 SOX「18 连阳」stale 备注教训）
+                out.append((code, name, _fmt_close(m[2], code, m[0]), m[1], ''))
             else:
                 out.append((code, name, _close, _dp, hint))
         return out
@@ -323,7 +324,7 @@ if _FMP_MACROS:
             (code, name,
              _fmt_close(_soxx_group, code, _soxx_close) if code == 'SOX' else close,
              _soxx_dp if code == 'SOX' else dp,
-             (hint + '（^SOX 当日无数据，用 SOXX ETF 代理）') if code == 'SOX' else hint)
+             '^SOX 当日无数据，用 SOXX ETF 代理' if code == 'SOX' else hint)
             for code, name, close, dp, hint in SEMI_INDICES
         ]
 
