@@ -66,6 +66,15 @@ jobs:
           REVIEW_DATE: ${{ github.event.inputs.review_date }}
         run: python fetch_fmp.py
 
+      - name: Fetch FMP /quote (software pool)
+        id: fetchsoft
+        if: ${{ github.event.inputs.earnings_only != 'true' && env.AH_RUN != 'true' }}
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+          REVIEW_DATE: ${{ github.event.inputs.review_date }}
+          POOL: soft
+        run: python fetch_fmp.py
+
       - name: Fetch earnings history
         if: ${{ env.AH_RUN != 'true' }}
         env:
@@ -82,6 +91,9 @@ jobs:
             # 10 家实际报告日全漏），且旧的"周日 refresh-recent"兜底因 cron 只跑 1-5 从未执行过（死代码）
             python fetch_earnings_history.py
             python fetch_earnings_history.py --refresh-pool
+            # 软件池：delta（未来占位，1 call）+ 逐票纠错（~181 calls），upsert 进共享 earnings_history.json
+            POOL=soft python fetch_earnings_history.py
+            POOL=soft python fetch_earnings_history.py --refresh-pool
           fi
 
       - name: Fetch company profiles
@@ -95,19 +107,24 @@ jobs:
           if [ "$FORCE" = "true" ]; then
             echo "Manual force: fetching profiles"
             python fetch_earnings_history.py --profiles
+            POOL=soft python fetch_earnings_history.py --profiles
           elif [ ! -f company_profiles.json ]; then
             echo "company_profiles.json missing: bootstrapping"
             python fetch_earnings_history.py --profiles
+            POOL=soft python fetch_earnings_history.py --profiles
           elif [ "$(date -u +%u)" = "5" ]; then
             echo "Friday: refreshing profiles"
             python fetch_earnings_history.py --profiles
+            POOL=soft python fetch_earnings_history.py --profiles
           else
             echo "Skipping profiles (only runs Fridays or when missing)"
           fi
 
       - name: Generate pages
         if: ${{ github.event.inputs.earnings_only != 'true' && env.AH_RUN != 'true' }}
-        run: python gen.py
+        run: |
+          python gen.py
+          POOL=soft python gen.py
 
       - name: Show diff
         run: |
@@ -128,7 +145,7 @@ jobs:
           elif [ "${{ github.event.inputs.earnings_only }}" = "true" ]; then
             git commit -m "auto: earnings history backfill (manual, earnings_only)"
           else
-            git commit -m "auto: FMP daily fetch ${{ steps.fetch.outputs.date }} (hit ${{ steps.fetch.outputs.hit }}/${{ steps.fetch.outputs.total }})"
+            git commit -m "auto: FMP daily fetch ${{ steps.fetch.outputs.date }} (hw ${{ steps.fetch.outputs.hit }}/${{ steps.fetch.outputs.total }} + soft ${{ steps.fetchsoft.outputs.hit }}/${{ steps.fetchsoft.outputs.total }})"
           fi
           for i in 1 2 3 4; do
             git push origin main && break || sleep $((2**i))

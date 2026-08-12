@@ -115,8 +115,8 @@ def main(path):
         warn(f"themes 数量 {len(themes)}，规则为 2-5 个")
     try:
         sys.path.insert(0, REPO)
-        from gen import INDUSTRY_MAP
-        conf_path = os.path.join(REPO, f"confirmed_{d.get('date')}.json")
+        from gen import INDUSTRY_MAP, FILE_PFX
+        conf_path = os.path.join(REPO, f"{FILE_PFX}confirmed_{d.get('date')}.json")
         data = json.load(open(conf_path, encoding="utf-8"))["data"] if os.path.exists(conf_path) else None
         if data is None:
             warn(f"未找到 {os.path.basename(conf_path)}，跳过 sector 阈值校验")
@@ -182,6 +182,10 @@ if __name__ == "__main__":
     if len(sys.argv) != 2:
         print(__doc__)
         sys.exit(1)
+    # 软件池 narrative（soft_narrative_*.json）自动切换池子：必须在 import gen 之前设置 POOL
+    if os.path.basename(sys.argv[1]).startswith("soft_"):
+        os.environ["POOL"] = "soft"
+        print("[lint] soft_ 前缀 → 软件池口径（INDUSTRY_MAP_SOFT + soft_confirmed_*.json）")
     main(sys.argv[1])
     for m in fails:
         print(f"[FAIL] {m}")

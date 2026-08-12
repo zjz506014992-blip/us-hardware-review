@@ -6,10 +6,13 @@
 
 ## 1. 项目一句话
 
-每日产出 **美股硬件板块** 收盘复盘网页，发布到 GitHub Pages：
+每日产出 **美股 TMT（硬件 + 软件双板块）** 收盘复盘网页，发布到 GitHub Pages：
 <https://zjz506014992-blip.github.io/us-hardware-review/>
 
-覆盖 **102 只股票 / 22 个子行业 / 5 大板块**（2026-08-02 建模池改版，核心 84 + 跟踪 18），含 ECharts treemap、Chart.js scatter、个股深度卡、新闻 Tier 分层、业绩日历等。
+- **硬件板块**：102 只 / 22 个子行业 / 5 大板块（2026-08-02 建模池改版，核心 84 + 跟踪 18）
+- **软件板块**：181 只 / 21 个子行业 / 6 大板块（2026-08-12 上线，核心 96 + 跟踪 85，工作流见第 15 节）
+
+含 ECharts treemap、Chart.js scatter、个股深度卡、新闻 Tier 分层、业绩日历等。**每个交易日两份复盘都必须在北京 8 点前发布。**
 
 ## 2. 仓库结构
 
@@ -29,6 +32,12 @@ us-hardware-review/
 ├── confirmed_ah_{DATE}.json     # 当日盘后收盘价（第二个 cron 00:30 UTC 自动产出，供次日 recap 回补）
 ├── confirmed_ratings_{DATE}.json# 当日池内评级/目标价变动（FMP grades + price-target-news，gen.py 自动渲染成表）
 ├── a_share_map.json             # 美股子行业 → A 股映射链（cross_sector 写作必引，含方向判断规则）
+├── pool_soft.py                 # 软件建模池定义（INDUSTRY_MAP_SOFT / TRACK_TIER_SOFT / GROUP_MAP_SOFT）
+├── a_share_map_soft.json        # 软件子行业 → A 股映射链（软件 cross_sector 写作必引）
+├── soft_confirmed_{DATE}.json   # 软件池当日行情（GH Actions POOL=soft 自动产出，schema 同硬件）
+├── soft_confirmed_ratings_{DATE}.json # 软件池当日评级/目标价变动
+├── soft_narrative_{DATE}.json   # 软件当日叙事（schema 与 narrative_{DATE}.json 完全一致）
+├── soft-{DATE}.html / soft-stocks-{DATE}.html / soft-index.html / _meta_soft.json  # 软件版页面与统计
 ├── lint_narrative.py            # narrative 五项机器校验（写完必跑）
 ├── add_brief.py                 # earnings_briefs.json 安全追加工具
 ├── _meta.json                   # 累计每日统计（cap_w / up / down / flat / total）
@@ -650,19 +659,21 @@ git push origin main:claude/<random>   # ⚠️ 注意 src:dst，src 是本地 r
 - Routine 提示词（复制到 Claude Code on the Web 的 routine 配置里）：
 
 ```text
-今天美股硬件板块收盘复盘。
+今天美股 TMT 复盘：先硬件板块、后软件板块，两份都必须在北京 8 点前发布。
 
-【启动 — 按顺序做以下 4 件事，其他都按 CLAUDE.md】
+【启动 — 按顺序做以下 5 件事，其他都按 CLAUDE.md】
 1. git pull origin main
-2. 用 Read 工具完整读取 CLAUDE.md（一次读完，约 800 行；12.0 蒸馏硬规则 + 12.1 近期流水是重点，LESSONS_ARCHIVE.md 不用读）
-3. 【幂等检查】查最新 confirmed_*.json 对应日期 X，再查 git log 是否已有 "feat: X" 的 commit。
-   - 若已有 → routine 已成功跑过，**直接退出**（避免重复 commit）
-   - 若没有 → 继续第 4 步
-4. 严格按 CLAUDE.md 第 4 节执行完整工作流（含 lint、回补检查、commit + push）
+2. 用 Read 工具完整读取 CLAUDE.md（一次读完；第 4 节硬件工作流 + 第 15 节软件工作流 + 12.0 蒸馏硬规则 + 12.1 近期流水是重点，LESSONS_ARCHIVE.md 不用读）
+3. 【幂等检查】查最新 confirmed_*.json 对应日期 X，再查 git log 是否已有 "feat: X 复盘" 与 "feat: X 软件复盘" 两条 commit。
+   - 两条都有 → routine 已成功跑过，**直接退出**
+   - 只缺软件 → 跳过硬件，直接做第 5 步
+   - 都没有 → 按顺序做第 4、5 步
+4. 硬件复盘：严格按 CLAUDE.md 第 4 节执行完整工作流（含 lint、回补检查、commit + push + PR）——**写完立即发布，绝不等软件部分**
+5. 软件复盘：严格按 CLAUDE.md 第 15 节执行（soft_narrative_{DATE}.json → lint → POOL=soft python3 gen.py → 独立 commit + PR）；注意 15.3 的 recap 归属唯一铁律与云巨头稀释口径
 
 【架构提醒】
-- 叙事数据在 narrative_{DATE}.json，每天**只新建一个 JSON 文件**，gen.py 默认不动
-- 指数/ETF 由 confirmed_macros_*.json 自动覆盖
+- 叙事数据在 narrative_{DATE}.json（硬件）与 soft_narrative_{DATE}.json（软件），每天**各新建一个 JSON 文件**，gen.py 默认不动
+- 指数/ETF 由 confirmed_macros_*.json 自动覆盖（两池共享）
 - narrative 用 Python builder（dict + json.dump）构建，写完先跑
   python3 lint_narrative.py narrative_{DATE}.json（FAIL 必须修），再跑 python3 gen.py
 - earnings_briefs.json 增量一律走 python3 add_brief.py
@@ -803,6 +814,7 @@ git push origin main:claude/<random>   # ⚠️ 注意 src:dst，src 是本地 r
 | 2026-08-07 | **单 routine 顺利完成 + confirmed 文件 volume 字段全 0 异常**：新 cron（21:45 UTC）第二个交易日正常触发，FMP 延迟仅 34 min（22:18:51 落地），routine 启动时数据已就绪。本日为**「弱非农降息交易 + 财报兑现潮 vs SK 海力士扩产」普涨分化日**：7 月非农 -2.3 万（预期 +8.3 万）引爆宽松预期，SPX 收盘新高 7,755.61、XSD +4.66% 领跑、池内 76 涨 24 跌、算术 +2.70% 远超 cap-w +1.05%（中小盘广度 8/4 以来最佳）；强势端光通信 +5.59%（FCC 禁令预期 Day 4 + AAOI 财报）/ MCU +6.50%（MCHP 指引核爆但 Truist/UBS/Jefferies 齐降 PT 的罕见背离）/ 功率 +5.24%（WOLF-光宝 800 VDC）/ 材料 +4.59%（WFE 链财报共振）；弱势端存储 -2.53% —— SK 海力士董事会批准约 380 亿美元韩国两座新存储厂，「供给纪律」支柱被龙头亲手动摇，MU -0.44% 抗跌（HBM 占比）vs STX 盘中 -10.7% 收 -4.71%（动量兑现），设备/材料链同日受益扩产 capex 完成上下游镜像定价。8 KEY_STOCKS（COHR/MCHP/ONTO/TSEM/WOLF/SKHY/STX/QCOM）+ 5 themes 一次过无警告，lint 0 FAIL 0 WARN。无 earnings_recap（周五池内外零 AMC reporter，ACMR 为 BMO 已 WebSearch 确认）。**异常**：confirmed_2026-08-07.json 的 volume 字段 101/102 全为 0（8/6 仅 1/102），FMP 22:18 UTC 快照源侧问题 | 根因：FMP batch-quote 该时点快照 volume 字段异常返回 0，非 fetch_fmp.py 代码问题（8/6 同代码正常）。影响：卡片「量比」规则（2026-08-06 新增）无法执行——20 日均量与当日量均不可得 | **处置**：卡片 vol 字段用 MCP 实时报价的真实股数+成交额替代，并明确标注「量比未计」，不编造比值；若 volume=0 连续出现 2 日以上则应在 fetch_fmp.py 加 fallback（改用 aftermarket-quote 或次日回补），单日偶发则观察即可 |
 | 2026-08-07（用户指令） | **亚盘接力步骤取消**：用户明确「亚盘接力以后不要做了，我需要 8 点看到最终的复盘」。8/6 复盘（8/7 晨发布）实测该步骤两个硬伤：(1) 时点冲突——韩日 00:00 UTC（北京 8:00）才开盘、台北 01:00 UTC 开盘，等开盘本身就把发布推到 8 点后（8/6 设计时误算时区，原文「北京 7-8 点首尔已开盘 1-2 小时」实为开盘前 1 小时）；(2) 数据不可用——开盘后 20 分钟内 FMP 亚洲行情源仍返回前一日收盘缓存（三次重试均旧数据）。同日后续：官方 GH Actions run 最终于 01:04 UTC 以 schedule 事件触发（延迟 199 分钟创纪录，此前最长 100 分钟）——确认 cron 未被丢弃、只是当日改 workflow 文件导致注册严重延迟；官方数据无害覆盖自建文件（同值、仅 fetched_at 不同），「自建兜底」预期完全兑现；confirmed_ratings_2026-08-06.json 随官方 run 落地但为空（当日池内无评级变动） | 根因：亚盘接力设计时未实测时区与 FMP 亚洲盘初延迟；cron 延迟见 8/6 教训行 | **执行**：第 4 节 3.5 步已改为「不要做」；asia_relay 字段与 gen.py 渲染保留向后兼容；隔夜韩日行情（发生在美股时段之前的）照常写 tier3/theme 不受影响。**发布时效优先级高于任何可选增强块**：写完 narrative 即收尾，不为任何开盘时点等待 |
 | 2026-08-11 | **单 routine 顺利完成 + 两个基础设施异常确认**：(1) **第二个 cron（`30 0 * * 2-6` 盘后抓取）自 8/6 上线以来从未触发过**——Actions run 列表只有 21:45 cron 的 schedule run（每日 22:18-22:25 UTC 一条），00:30 UTC 时点从无任何 run；git 全历史零条 `auto: aftermarket` commit；`confirmed_ah_*.json` 从未产出。第 4 节步骤 2/7.5 里「读 confirmed_ah 回补」的路径实际从未可用过。(2) **confirmed 文件 volume 字段异常复发**：8/11 仅 6/102 只有量（8/7 首见 1/102、8/10 正常 101/102），确认为 FMP 快照源间歇性问题非代码问题。当日复盘本身顺利：lint 一次过 0 FAIL 0 WARN、gen.py 一次过无阈值警告；台积电 7 月营收创纪录（+44.7% YoY）引爆设备/零部件/材料/封测 27 只全红的完整生态联动，cap-w +0.36% 但算术 +1.77%/广度 77:21（AAPL 遭 Jefferies 降级 + AVGO/CSCO/DELL 权重齐跌稀释）；盘后三重磅财报 SMCI（FY27 指引 $650-720 亿对共识 $525 亿，盘后 +7%）/LITE（双超+指引大超，盘后 +1.6%）/池外 CRWV（积压订单 $1,040 亿，盘后 +8%）全数用 MCP 盘后端点取价 | 根因：(1) 疑似与 8/6「当日修改 workflow 文件导致 schedule 注册跳过」同源，但该跳过对新增的第二条 cron 成了**永久性未注册**（第一条 cron 8/7 起已恢复正常）；(2) FMP 批量快照源侧问题，与抓取时点相关 | **处置与判断准则**：(1) recap 盘后价取数直接用 `mcp__FMP__quote` 的 batch-aftermarket-quote 现查（本 session 实测可用、时间戳可验证），confirmed_ah 路径视为不存在；根治需用户在 GitHub 网页对 daily.yml 做一次 no-op 编辑重新注册 schedule（或删除该 cron 接受 MCP 兜底常态化）；(2) volume 全 0 属间歇性（未连续 2 日），沿用 8/7 方案：卡片 vol 用 MCP 实时报价真实股数+成交额、标注「量比未计」，不编造比值 |
+| 2026-08-12（用户指令） | **TMT 扩展：软件板块复盘上线（用户 Excel「建模池」181 只）**。用户四点拍板：181 家全量不瘦身 / SpaceX 归 AI算力/数据中心与 CoreWeave 同组 / 软硬件都必须 8 点前发布 / 退市微盘不进池。架构决策「同仓库同站点、分池分页」：gen.py 加模块级 POOL 环境变量开关（未设置 = 硬件路径逐字节不变，POOL=soft = 软件池 + soft_ 文件前缀 + soft- 页面前缀），跑两遍进程完全隔离；软件数据文件用 soft_ 前缀使硬件侧全部 confirmed_*/narrative_* glob 天然匹配不到（比在硬件 glob 里加排除项更稳）。fetch_fmp.py / fetch_earnings_history.py 因 `from gen import INDUSTRY_MAP` 自动继承 POOL 切换，零池子逻辑改动，仅输出文件名与 macros 跳过；lint_narrative.py 按文件名 soft_ 前缀自动切池（须在 import gen 前设 os.environ['POOL']）。daily.yml 双池跑（行情 + ratings + earnings delta/refresh-pool + 周五 profiles）。181 个 Wind 代码（.O/.N 后缀剥离）经 FMP batch-quote 验证 181/181 全命中（含 SPCX/NBIS/CRWV/中概全套）。回归验证：改造后硬件 python3 gen.py 输出逐字节不变（仅 index.html 新增软件入口按钮为预期改动）；软件 fixture 渲染 + lint 池切换（正确 FAIL 量子计算 cap-w -0.26% < 0.8%）全部通过 | 根因：用户需求打通 TMT。合池方案被否决的理由：软件云巨头 4 只占 57% 权重 + 硬件 AAPL/NVDA，合并 cap-w 会被 7-8 只超级权重决定、板块信号全灭；且软硬件叙事逻辑不同（供应链/涨价/capex vs RPO/NDR/AI 货币化） | **执行注意（下个交易日生效）**：(1) 首个软件复盘日按第 15 节流程，重点自查 recap 归属唯一（MSFT/GOOGL/AMZN/META/ORCL/IBM/CRWV/SPCX 完整卡只在软件侧）与云巨头稀释口径；(2) daily.yml 当日修改可能导致次日 schedule 跳过（8/6 教训）——若明晚 cron 未触发，按 8/6 自建兜底三条件走 MCP 自建 soft_confirmed + confirmed；(3) 软件盘后 recap 取价用 MCP batch-aftermarket-quote（confirmed_ah 路径两池都不存在）；(4) routine 提示词 v2 已写入 11.5，**需用户在 Claude Code on the Web 手动同步**，未同步前旧提示词只会做硬件——routine 自己读 CLAUDE.md 第 15 节也应主动补做软件部分 |
 
 ## 13. 用户偏好
 
@@ -823,6 +835,41 @@ git push origin main:claude/<random>   # ⚠️ 注意 src:dst，src 是本地 r
 - [x] 兜底 routine 设计 + 幂等检查（2026-04-28 完成；详见 11.5.1）
 - [ ] 验证 FMP 是否支持所有 MACRO_SYMBOLS（首次跑 fetch_macros 后看 `missing` 列表，把不支持的 symbol 替换成 ETF proxy，比如 `^TNX` 不行就用 `IEF` 10Y 国债 ETF 代理）
 - [ ] AI 自动生成新闻摘要（方式 B，把 Anthropic API 接进 GitHub Actions）
+- [ ] 软件板块 v2：软件版业绩日历/业绩历史页（当前 calendar.html / earnings.html 仍为硬件池专属）；软件专属 ETF（IGV/WCLD/HACK）加进 MACRO_SYMBOLS 与指数表
+
+## 15. 软件板块复盘（2026-08-12 上线）
+
+> 与硬件复盘**同仓库、同站点、分池分页**：两套池子独立计算 cap-w / 广度 / 板块 beta，独立叙事文件，页面互链。架构是「模块级 POOL 开关 + 跑两遍」——`POOL` 环境变量未设置 = 硬件（历史行为逐字节不变），`POOL=soft` = 软件。
+
+### 15.1 池子与文件
+
+- **池子定义**：`pool_soft.py`（181 只 / 21 子行业 / 6 大板块，核心 96 + 跟踪 85，来自用户 2026-08-12 Excel「建模池」）。SpaceX（SPCX）按用户决策归入「AI算力/数据中心」，与 CoreWeave 同组；退市/微盘/「需确认」名单全部不进池。
+- **21 个子行业**（写 theme 时 sectors 字段逐字照抄）：云与互联网巨头 · 企业应用软件 · 创意与内容软件 · EDA与工程软件 · 数据基础设施 · AI应用与数据智能 · 网络安全 · 开发运维与DevOps · 协同办公与通信 · 营销与广告科技 · 金融科技与支付 · 垂直行业SaaS · 互联网基础设施 · AI算力/数据中心 · 加密矿企与数字资产财库 · 消费互联网平台 · 中概/亚洲互联网 · IT服务与咨询 · 自动驾驶与AI出行 · 量子计算 · IP授权与内容技术
+- **文件命名**：软件数据文件一律 `soft_` 前缀（`soft_confirmed_*` / `soft_narrative_*` / `soft_confirmed_ratings_*` / `_meta_soft.json`），页面一律 `soft-` 前缀（`soft-{DATE}.html` / `soft-stocks-*` / `soft-index.html`）。硬件侧所有 `confirmed_*` / `narrative_*` glob 天然匹配不到 soft 文件，互不污染。
+- **共享不分池**：`confirmed_macros_*`（宏观指数）、`earnings_history.json`、`company_profiles.json`、`earnings_briefs.json`（brief 的 key 都是 `{SYM}_{DATE}`，两池共用一个文件）。
+- calendar.html / earnings.html **仍是硬件池专属**（POOL=soft 跑 gen 会自动跳过这两页），软件版 v2 再做。
+
+### 15.2 每日工作流（在第 4 节硬件流程完成后紧接着做）
+
+**发布顺序铁律：硬件先发（保 8 点前），软件紧随其后（也必须 8 点前）。研究可并行——等 FMP 数据期间就可以先做软件侧新闻研究（软件催化 = 财报/评级/AI 产品动态，多数不依赖当日盘面数字）。**
+
+1. 数据就位检查：`ls -t soft_confirmed_*.json | head -1`（与硬件 confirmed 同一 workflow 产出，同时落地）；`ls soft_confirmed_ratings_{DATE}.json`（软件 sellside 第一取数源）
+2. 看软件当日 stats：读 `_meta_soft.json` 最新一条
+3. 写 `soft_narrative_{DATE}.json`——**schema 与硬件 narrative 完全一致**（market_structure / key_stocks / sector_beta / news_tiers / earnings_recap），用 Python builder 构建，全部写作铁律（语言铁律 / 数据真实性 / 铁律 1-7 / verdict 完整性）原样适用，差异见 15.3
+4. `python3 lint_narrative.py soft_narrative_{DATE}.json`（lint 见文件名 `soft_` 前缀自动切软件池口径）
+5. `POOL=soft python3 gen.py`（产出 soft-{DATE}.html / soft-stocks / soft-index；sub-threshold 警告同样要处理）
+6. 独立 commit：`feat: {DATE} 软件复盘 (cap-w +X.XX%, 一句话)`，走同样的 MCP PR 路径（可与硬件复盘合并到同一个 PR 分支分两个 commit，也可分两个 PR——**硬件绝不等软件**）
+7. 幂等检查扩展：routine 启动时 `git log` 分别查 `feat: X 复盘` 与 `feat: X 软件复盘` 两条，缺哪条补哪条
+
+### 15.3 软件写作规则（与硬件的差异点）
+
+1. **云巨头稀释口径（最重要）**：云与互联网巨头 4 只（GOOGL/MSFT/AMZN/META）占软件池约 57% 权重，池 cap-w 基本由它们决定。market_structure 里**必须**给「剔除云巨头后的池 cap-w」口径（gen.py 已有剔除前二权重的 KPI 卡）；「云与互联网巨头」板块的行情本质是 4 只巨头各自的 alpha，参照硬件铁律 6 处理——**优先写卡片，theme 只在 4 只真正同向共振（共同催化）时才立**。
+2. **KPI 基准**：软件池强度用 Pool/NDX（不是 SOX）。
+3. **recap 归属唯一铁律**：MSFT/GOOGL/AMZN/META/ORCL/IBM/CRWV/SPCX 等此前硬件复盘的「池外重大 reporter」现在是**软件池内票**——完整 earnings_recap 卡**只写在软件复盘**；硬件复盘对其财报只写一句传导逻辑 +「详见软件复盘」。反向同理（如 NVDA/AAPL 财报对软件板块的影响，软件侧一句话引用）。TSLA 仍是两边池外。**同一份财报绝不写两份完整 recap。**
+4. **A 股映射**：引 `a_share_map_soft.json`。软件映射普遍弱于硬件（美股软件是订阅/货币化逻辑，A 股软件跟信创政策 + AI 主题情绪），cross_sector 必须显式判断传导强度；例外是「中概/亚洲互联网」——与港股/A 股几乎一对一强映射，美股夜盘是次日港股互联网的直接前瞻。
+5. **sellside 取数**：第一来源 `soft_confirmed_ratings_{DATE}.json`，缺失再 WebSearch，仍无写「当日卖方静默」。
+6. **跟踪票**：TRACK_TIER_SOFT 85 只，上卡条件同硬件（|dp| > 10% + 可验证催化）。
+7. **软件版新闻 Tier 口径微调**：tier2 = 软件/SaaS/AI 应用垂媒与卖方深度（The Information / SemiAnalysis AI 侧 / 各大行软件组），tier3 = 中概/亚洲互联网与全球 SaaS 供应链，其余同硬件。
 
 ---
 
