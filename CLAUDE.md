@@ -666,10 +666,14 @@ git push origin main:claude/<random>   # ⚠️ 注意 src:dst，src 是本地 r
 2. 用 Read 工具完整读取 CLAUDE.md（一次读完；第 4 节硬件工作流 + 第 15 节软件工作流 + 12.0 蒸馏硬规则 + 12.1 近期流水是重点，LESSONS_ARCHIVE.md 不用读）
 3. 【幂等检查】查最新 confirmed_*.json 对应日期 X，再查 git log 是否已有 "feat: X 复盘" 与 "feat: X 软件复盘" 两条 commit。
    - 两条都有 → routine 已成功跑过，**直接退出**
-   - 只缺软件 → 跳过硬件，直接做第 5 步
-   - 都没有 → 按顺序做第 4、5 步
+   - 只缺软件 → 跳过硬件，直接做第 5 步（研究子代理照发）
+   - 都没有 → 按顺序做第 3.5、4、5 步
+3.5.【并行】用 Agent 工具立即后台发射软件研究子代理（提示词要点见 CLAUDE.md 15.2 并行子代理条款），
+   发射后不等待、直接进第 4 步；token 用量不设限，但 git 操作只允许主会话做
 4. 硬件复盘：严格按 CLAUDE.md 第 4 节执行完整工作流（含 lint、回补检查、commit + push + PR）——**写完立即发布，绝不等软件部分**
-5. 软件复盘：严格按 CLAUDE.md 第 15 节执行（soft_narrative_{DATE}.json → lint → POOL=soft python3 gen.py → 独立 commit + PR）；注意 15.3 的 recap 归属唯一铁律与云巨头稀释口径
+5. 软件复盘：读子代理研究简报（所有数字从 soft_confirmed_{DATE}.json 复核），严格按 CLAUDE.md 第 15 节执行
+   （soft_narrative_{DATE}.json → lint → POOL=soft python3 gen.py → 独立 commit + PR）；
+   注意 15.3 的 recap 归属唯一铁律与云巨头稀释口径；子代理失败则按 15.2 降级路径自己研究
 
 【架构提醒】
 - 叙事数据在 narrative_{DATE}.json（硬件）与 soft_narrative_{DATE}.json（软件），每天**各新建一个 JSON 文件**，gen.py 默认不动
@@ -849,9 +853,16 @@ git push origin main:claude/<random>   # ⚠️ 注意 src:dst，src 是本地 r
 - **共享不分池**：`confirmed_macros_*`（宏观指数）、`earnings_history.json`、`company_profiles.json`、`earnings_briefs.json`（brief 的 key 都是 `{SYM}_{DATE}`，两池共用一个文件）。
 - calendar.html / earnings.html **仍是硬件池专属**（POOL=soft 跑 gen 会自动跳过这两页），软件版 v2 再做。
 
-### 15.2 每日工作流（在第 4 节硬件流程完成后紧接着做）
+### 15.2 每日工作流（研究并行、发布串行）
 
-**发布顺序铁律：硬件先发（保 8 点前），软件紧随其后（也必须 8 点前）。研究可并行——等 FMP 数据期间就可以先做软件侧新闻研究（软件催化 = 财报/评级/AI 产品动态，多数不依赖当日盘面数字）。**
+**发布顺序铁律：硬件先发（保 8 点前），软件紧随其后（也必须 8 点前）。**
+
+**并行子代理条款（2026-08-12 用户确认，token 用量不设限）**：routine 启动后（git pull + 读完 CLAUDE.md 后）**立即用 Agent 工具后台发射一个软件研究子代理**，然后主会话继续做硬件全流程——软件研究的 20-30 分钟被完全隐藏在硬件关键路径里。
+
+- **子代理提示词要点**（general-purpose 型，后台运行）：完整读 CLAUDE.md 第 15 节 + 第 4 节写作规则；读 `soft_confirmed_{DATE}.json` 计算 21 子行业 cap-w/广度/涨跌幅榜与 |dp|×cap 双榜；跑第 0 步业绩过滤脚本（软件池口径）+ WebSearch 验证 BMO/AMC；WebSearch 研究当日软件板块催化（财报/评级/AI 产品动态/大单），每批最多 3 个并发；用 ToolSearch 加载 `mcp__FMP__*` 查真值与盘后价（batch-aftermarket-quote）；产出**结构化研究简报**写到 scratchpad 文件（候选 themes 及每个板块的催化考证、候选 6-8 张卡片的素材、recap 名单+已核实数字+盘后价时间线、tier 新闻清单），并在最终回复里给出文件路径
+- **硬规则：git 操作只允许主会话执行**——子代理禁止 git add/commit/push（防 git 索引锁冲突与 race），也不写 soft_narrative 正式文件、只写 scratchpad
+- **主会话**：硬件复盘按第 4 节走完（commit + PR + merge 不等软件）→ 读子代理简报 → **所有 dp/close/cap 从 soft_confirmed 直接复核**（子代理转述的数字一律不直接采信，同 WebSearch 数字纪律）→ 写 soft_narrative → lint → gen → commit + PR
+- **降级路径**：子代理失败/超时/简报质量差 → 主会话按下方串行步骤自己做软件研究，子代理是加速器不是依赖；发射后不要轮询等待，硬件做完后用任务通知结果
 
 1. 数据就位检查：`ls -t soft_confirmed_*.json | head -1`（与硬件 confirmed 同一 workflow 产出，同时落地）；`ls soft_confirmed_ratings_{DATE}.json`（软件 sellside 第一取数源）
 2. 看软件当日 stats：读 `_meta_soft.json` 最新一条
