@@ -5,6 +5,16 @@ import json, hashlib, os
 
 REPO_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# ── 池子开关（2026-08-12 软件板块扩展）────────────────────────────────
+# POOL 环境变量未设置 = 硬件池（历史行为逐字节不变）；POOL=soft = 软件池。
+# 软件池数据文件用 soft_ 前缀（soft_confirmed_*.json / soft_narrative_*.json），
+# 硬件侧所有 confirmed_* / narrative_* glob 天然匹配不到，互不污染。
+# 用法：python3 gen.py（硬件）→ POOL=soft python3 gen.py（软件），两个进程完全隔离。
+POOL = os.environ.get('POOL', 'hw')
+IS_SOFT = (POOL == 'soft')
+FILE_PFX = 'soft_' if IS_SOFT else ''   # 数据文件前缀
+PAGE_PFX = 'soft-' if IS_SOFT else ''   # 页面文件前缀
+
 DATE = "2026-04-27"
 # FMP_API_KEY: 从 GitHub Secrets / shell env 读, fetch_*.py 用 os.environ.get('FMP_API_KEY').
 # 这里不再硬编码 (calendar.html / earnings.html 已改为读本地 JSON, 客户端不再需要 key).
@@ -175,6 +185,19 @@ SECTOR_ALIAS = {
 '无线/卫星通信': '网络设备', '量子/加密算力': '服务器/存储系统', '传感器/安防/无人机': '仪器/工业设备',
 }
 
+# 软件池：整体替换池子定义（narrative 桩数据一并置空，防止 4 月硬件桩文本渲染进软件页）
+if IS_SOFT:
+    from pool_soft import INDUSTRY_MAP_SOFT, TRACK_TIER_SOFT, GROUP_MAP_SOFT
+    INDUSTRY_MAP = INDUSTRY_MAP_SOFT
+    TRACK_TIER = TRACK_TIER_SOFT
+    GROUP_MAP = GROUP_MAP_SOFT
+    SECTOR_ALIAS = {}
+    MARKET_STRUCTURE = {'narrative': '<b>市场结构</b>：（软件板块叙事待发布）'}
+    KEY_STOCKS = []
+    SECTOR_BETA = {'tldr': '（软件板块叙事待发布）', 'themes': []}
+    NEWS_TIERS = {}
+    INDUSTRY_EVENTS = {}
+
 # 子行业 → 大类 反查
 SUB_TO_GROUP = {sub: g for g, subs in GROUP_MAP.items() for sub in subs}
 SYM_TO_IND = {sym: ind for ind, syms in INDUSTRY_MAP.items() for sym in syms}
@@ -224,16 +247,16 @@ def _load_fmp_cache():
     # REVIEW_DATE=YYYY-MM-DD 可强制重渲染指定历史日期（回补昨日 narrative 后重跑用）
     _want = os.environ.get('REVIEW_DATE')
     if _want:
-        p = os.path.join(repo_dir, f'confirmed_{_want}.json')
+        p = os.path.join(repo_dir, f'{FILE_PFX}confirmed_{_want}.json')
         if os.path.exists(p):
             files = [p]
         else:
-            print(f"[FMP] REVIEW_DATE={_want} 但 confirmed_{_want}.json 不存在，回退最新")
+            print(f"[FMP] REVIEW_DATE={_want} 但 {FILE_PFX}confirmed_{_want}.json 不存在，回退最新")
             _want = None
     if not _want:
         # 排除三类衍生文件：macros（指数）/ ah（盘后）/ ratings（评级）——它们的 schema 没有 cap 字段，
         # 且文件名字典序在纯日期文件之后，混入会复现 4/29 的 KeyError 回归
-        files = sorted([f for f in glob.glob(os.path.join(repo_dir, 'confirmed_*.json'))
+        files = sorted([f for f in glob.glob(os.path.join(repo_dir, f'{FILE_PFX}confirmed_*.json'))
                         if not any(t in os.path.basename(f) for t in ('macros', '_ah_', 'ratings'))],
                        reverse=True)
     if not files:
@@ -341,11 +364,11 @@ def _load_narrative():
     import os, glob
     repo_dir = os.path.dirname(os.path.abspath(__file__))
     # 优先取与当日 stock cache 同日期的 narrative（REVIEW_DATE 重渲染历史日期时必需）
-    _same_day = os.path.join(repo_dir, f'narrative_{_FMP_DATE}.json') if _FMP_DATE else None
+    _same_day = os.path.join(repo_dir, f'{FILE_PFX}narrative_{_FMP_DATE}.json') if _FMP_DATE else None
     if _same_day and os.path.exists(_same_day):
         files = [_same_day]
     else:
-        files = sorted(glob.glob(os.path.join(repo_dir, 'narrative_*.json')), reverse=True)
+        files = sorted(glob.glob(os.path.join(repo_dir, f'{FILE_PFX}narrative_*.json')), reverse=True)
     if not files:
         return None
     try:
@@ -504,11 +527,11 @@ def _load_history_stats(current_date, n=20):
     repo_dir = os.path.dirname(os.path.abspath(__file__))
     hist = {}
     files = []
-    for f in _g.glob(os.path.join(repo_dir, 'confirmed_*.json')):
+    for f in _g.glob(os.path.join(repo_dir, f'{FILE_PFX}confirmed_*.json')):
         b = os.path.basename(f)
         if any(t in b for t in ('macros', '_ah_', 'ratings')):
             continue
-        m = _re.match(r'confirmed_(\d{4}-\d{2}-\d{2})\.json$', b)
+        m = _re.match(FILE_PFX + r'confirmed_(\d{4}-\d{2}-\d{2})\.json$', b)
         if m and (not current_date or m.group(1) < current_date):
             files.append((m.group(1), f))
     for _d, f in sorted(files, reverse=True)[:n]:
@@ -851,7 +874,7 @@ def _render_volume_block(stocks):
 
 def _render_ratings(date_str):
     """当日评级/目标价变动区块（2026-08-06 新增）：读 confirmed_ratings_{DATE}.json，无文件/无记录则不渲染。"""
-    path = os.path.join(REPO_DIR, f'confirmed_ratings_{date_str}.json')
+    path = os.path.join(REPO_DIR, f'{FILE_PFX}confirmed_ratings_{date_str}.json')
     if not os.path.exists(path):
         return ''
     try:
@@ -1271,12 +1294,22 @@ def write_html(data):
                   '<b>半导体跟涨</b>（与科技同节奏）' if r >= 0.8 else
                   '<b>半导体跑输</b>（板块走弱）'),
     )
-    pool_kpi = kpi_card(
-        '🖥️ 硬件池强度 Pool/SOX', pool_dp, sox_dp, pool_ratio, 'Pool', 'SOX',
-        lambda r: '<b>硬件池跑赢 SOX</b>（中小盘强于大盘）' if r >= 1 else (
-                  '<b>跟随 SOX</b>（同节奏）' if r >= 0.7 else
-                  '<b>跑输 SOX</b>（半导体大盘股领涨而中小盘跟不上）'),
-    )
+    if IS_SOFT:
+        # 软件池基准用 NDX（半导体指数 SOX 与软件池无关）
+        pool_ratio = safe_ratio(pool_dp, ndx_dp)
+        pool_kpi = kpi_card(
+            '💽 软件池强度 Pool/NDX', pool_dp, ndx_dp, pool_ratio, 'Pool', 'NDX',
+            lambda r: '<b>软件池跑赢 NDX</b>（软件强于科技大盘）' if r >= 1 else (
+                      '<b>跟随 NDX</b>（同节奏）' if r >= 0.7 else
+                      '<b>跑输 NDX</b>（科技权重股领涨而软件跟不上）'),
+        )
+    else:
+        pool_kpi = kpi_card(
+            '🖥️ 硬件池强度 Pool/SOX', pool_dp, sox_dp, pool_ratio, 'Pool', 'SOX',
+            lambda r: '<b>硬件池跑赢 SOX</b>（中小盘强于大盘）' if r >= 1 else (
+                      '<b>跟随 SOX</b>（同节奏）' if r >= 0.7 else
+                      '<b>跑输 SOX</b>（半导体大盘股领涨而中小盘跟不上）'),
+        )
     # 第 5 卡：剔除前二权重后的池 cap-w — 直接量化「权重股撑指数/掩盖广度」程度
     _ex2 = totals.get('cap_w_ex2')
     _full_cw = totals.get('cap_w')
@@ -1335,7 +1368,7 @@ def write_html(data):
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>美股硬件板块复盘 {DATE}</title>
+<title>{'美股软件板块复盘' if IS_SOFT else '美股硬件板块复盘'} {DATE}</title>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
@@ -1369,12 +1402,13 @@ tr:hover td{{background:#1c2128}}
 </style>
 </head>
 <body>
-<h1>🖥️ 美股硬件板块每日复盘</h1>
+<h1>{'💽 美股软件板块每日复盘' if IS_SOFT else '🖥️ 美股硬件板块每日复盘'}</h1>
 <div class="sub">数据日期 <b>{DATE}</b> · 覆盖 {totals['total']} 只股票 · {len(INDUSTRY_MAP)} 个子行业 · {len(GROUP_MAP)} 大板块</div>
 
 <div class="navlinks">
-  <a href="index.html">← 历史存档</a>
-  <a href="stocks-{DATE}.html">📋 全部个股数据</a>
+  <a href="{PAGE_PFX}index.html">← 历史存档</a>
+  <a href="{PAGE_PFX}stocks-{DATE}.html">📋 全部个股数据</a>
+  {(('<a href="' + DATE + '.html">🖥️ 当日硬件复盘</a>') if os.path.exists(os.path.join(REPO_DIR, DATE + '.html')) else '') if IS_SOFT else (('<a href="soft-' + DATE + '.html">💽 当日软件复盘</a>') if os.path.exists(os.path.join(REPO_DIR, 'soft-' + DATE + '.html')) else '')}
   <a href="calendar.html">📅 业绩日历</a>
   <a href="earnings.html">🗂️ 业绩历史</a>
 </div>
@@ -1614,10 +1648,10 @@ new Chart(document.getElementById('scatter'), {{
 </body>
 </html>'''
 
-    out = os.path.join(REPO_DIR, f'{DATE}.html')
+    out = os.path.join(REPO_DIR, f'{PAGE_PFX}{DATE}.html')
     with open(out, 'w', encoding='utf-8') as f:
         f.write(html)
-    print(f"{DATE}.html written, {len(html)} bytes")
+    print(f"{PAGE_PFX}{DATE}.html written, {len(html)} bytes")
 
 def write_stocks_page(stocks, date):
     all_stocks = sorted(stocks, key=lambda x: -x['dp'])
@@ -1678,13 +1712,13 @@ function filterTable() {{
 </script>
 </body>
 </html>'''
-    out = os.path.join(REPO_DIR, f'stocks-{date}.html')
+    out = os.path.join(REPO_DIR, f'{PAGE_PFX}stocks-{date}.html')
     with open(out, 'w', encoding='utf-8') as f:
         f.write(html)
-    print(f"stocks-{date}.html written, {len(all_stocks)} stocks")
+    print(f"{PAGE_PFX}stocks-{date}.html written, {len(all_stocks)} stocks")
 
 def update_meta(totals):
-    meta_path = os.path.join(REPO_DIR, '_meta.json')
+    meta_path = os.path.join(REPO_DIR, '_meta_soft.json' if IS_SOFT else '_meta.json')
     if os.path.exists(meta_path):
         with open(meta_path, encoding='utf-8') as f:
             meta = json.load(f)
@@ -1707,7 +1741,7 @@ def write_index(meta):
         sign = '+' if m['cap_w'] > 0 else ''
         color = '#e53935' if m['cap_w'] > 0 else '#43a047'
         rows += f'''<tr>
-          <td><a href="{d}.html" style="color:#58a6ff;text-decoration:none;font-weight:600">{d}</a></td>
+          <td><a href="{PAGE_PFX}{d}.html" style="color:#58a6ff;text-decoration:none;font-weight:600">{d}</a></td>
           <td style="color:{color};font-weight:700">{sign}{m["cap_w"]}%</td>
           <td style="color:#e53935">{m["up"]}</td>
           <td style="color:#43a047">{m["down"]}</td>
@@ -1720,7 +1754,7 @@ def write_index(meta):
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>美股硬件板块复盘 — 历史存档</title>
+<title>{'美股软件板块复盘' if IS_SOFT else '美股硬件板块复盘'} — 历史存档</title>
 <style>
 *{{box-sizing:border-box;margin:0;padding:0}}
 body{{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:40px 20px;max-width:800px;margin:0 auto}}
@@ -1734,9 +1768,9 @@ tr:hover td{{background:#161b22}}
 </style>
 </head>
 <body>
-<h1>🖥️ 美股硬件板块复盘 — 历史存档</h1>
+<h1>{'💽 美股软件板块复盘' if IS_SOFT else '🖥️ 美股硬件板块复盘'} — 历史存档</h1>
 <div class="sub">覆盖 {sum(len(v) for v in INDUSTRY_MAP.values())} 只股票 · {len(INDUSTRY_MAP)} 个子行业 · {len(GROUP_MAP)} 大板块 · 点击日期查看当日完整复盘</div>
-<div style="margin-bottom:18px;display:flex;gap:10px;flex-wrap:wrap"><a href="calendar.html" style="display:inline-block;background:#1f6feb;color:#fff;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:.88rem;font-weight:600">📅 业绩日历（FMP 实时）</a><a href="earnings.html" style="display:inline-block;background:#8957e5;color:#fff;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:.88rem;font-weight:600">🗂️ 业绩历史（25 年回填 + 持续更新）</a></div>
+<div style="margin-bottom:18px;display:flex;gap:10px;flex-wrap:wrap">{'<a href="index.html" style="display:inline-block;background:#238636;color:#fff;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:.88rem;font-weight:600">🖥️ 硬件板块复盘</a>' if IS_SOFT else '<a href="soft-index.html" style="display:inline-block;background:#238636;color:#fff;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:.88rem;font-weight:600">💽 软件板块复盘</a><a href="calendar.html" style="display:inline-block;background:#1f6feb;color:#fff;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:.88rem;font-weight:600">📅 业绩日历（FMP 实时）</a><a href="earnings.html" style="display:inline-block;background:#8957e5;color:#fff;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:.88rem;font-weight:600">🗂️ 业绩历史（25 年回填 + 持续更新）</a>'}</div>
 <table>
   <thead>
     <tr><th>日期</th><th>市值加权均</th><th>上涨</th><th>下跌</th><th>平盘</th><th>总数</th></tr>
@@ -1746,9 +1780,9 @@ tr:hover td{{background:#161b22}}
 <div style="margin-top:20px;color:#8b949e;font-size:.82rem">数据来源：Finnhub /quote + WebSearch 公开市场数据交叉核对</div>
 </body>
 </html>'''
-    with open(os.path.join(REPO_DIR, 'index.html'), 'w', encoding='utf-8') as f:
+    with open(os.path.join(REPO_DIR, f'{PAGE_PFX}index.html'), 'w', encoding='utf-8') as f:
         f.write(html)
-    print(f"index.html updated, {len(dates)} dates listed")
+    print(f"{PAGE_PFX}index.html updated, {len(dates)} dates listed")
 
 def write_calendar_page():
     """生成 calendar.html — 加载 earnings_history.json + company_profiles.json，
@@ -2555,5 +2589,7 @@ if __name__ == '__main__':
     write_stocks_page(data['stocks'], DATE)
     meta = update_meta(data['totals'])
     write_index(meta)
-    write_calendar_page()
-    write_earnings_page()
+    if not IS_SOFT:
+        # calendar.html / earnings.html 写固定文件名且内嵌硬件池，软件跑一律跳过（软件版日历 v2 再做）
+        write_calendar_page()
+        write_earnings_page()

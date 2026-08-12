@@ -16,7 +16,9 @@ from urllib.request import urlopen, Request
 from urllib.error import HTTPError, URLError
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from gen import INDUSTRY_MAP
+# POOL=soft 时 gen 模块自动换成软件池（INDUSTRY_MAP_SOFT），本文件零池子逻辑；
+# 输出文件同步带 soft_ 前缀（FILE_PFX），与硬件数据文件互不污染。
+from gen import INDUSTRY_MAP, FILE_PFX, IS_SOFT
 
 TICKERS = sorted({s for syms in INDUSTRY_MAP.values() for s in syms})
 
@@ -320,7 +322,7 @@ def fetch_ratings(trading_date, repo_dir):
         'grades': grades, 'pt_news': pt_news,
         'endpoint_failures': {'grades': g_fail, 'pt_news': p_fail},
     }
-    path = os.path.join(repo_dir, f'confirmed_ratings_{trading_date}.json')
+    path = os.path.join(repo_dir, f'{FILE_PFX}confirmed_ratings_{trading_date}.json')
     with open(path, 'w', encoding='utf-8') as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
     print(f"Wrote {path}  grades={len(grades)} pt_news={len(pt_news)} (fail g={g_fail}/p={p_fail})")
@@ -377,18 +379,19 @@ def main():
     }
 
     repo_dir = os.path.dirname(os.path.abspath(__file__))
-    path = os.path.join(repo_dir, f'confirmed_{trading_date}.json')
+    path = os.path.join(repo_dir, f'{FILE_PFX}confirmed_{trading_date}.json')
     with open(path, 'w', encoding='utf-8') as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
     print(f"Wrote {path}  hit={len(confirmed)}/{len(TICKERS)}  missing={len(missing)}")
     if missing:
         print(f"Missing: {','.join(missing[:30])}{'...' if len(missing)>30 else ''}")
 
-    # 同步拉宏观指数（失败不阻塞主流程）
-    try:
-        fetch_macros(trading_date, repo_dir)
-    except Exception as e:
-        print(f"WARN: macros fetch failed (non-fatal): {e}")
+    # 同步拉宏观指数（失败不阻塞主流程）；软件池跑时跳过——共用硬件跑落地的 confirmed_macros
+    if not IS_SOFT:
+        try:
+            fetch_macros(trading_date, repo_dir)
+        except Exception as e:
+            print(f"WARN: macros fetch failed (non-fatal): {e}")
 
     # 同步拉当日评级/目标价变动（失败不阻塞主流程）
     try:
@@ -404,6 +407,9 @@ def main():
 
 if __name__ == '__main__':
     if '--aftermarket' in sys.argv:
-        fetch_aftermarket(os.path.dirname(os.path.abspath(__file__)))
+        if IS_SOFT:
+            print("aftermarket 仅硬件池使用（软件盘后价由 routine 用 FMP MCP 现查），POOL=soft 跳过")
+        else:
+            fetch_aftermarket(os.path.dirname(os.path.abspath(__file__)))
     else:
         main()
