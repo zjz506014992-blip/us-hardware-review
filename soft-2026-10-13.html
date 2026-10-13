@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>美股软件板块复盘 2026-10-13</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:20px;max-width:1400px;margin:0 auto}
+h1{font-size:1.6rem;margin-bottom:6px}
+#toc{position:fixed;left:14px;top:90px;width:158px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:10px 12px;font-size:.78rem;z-index:50;display:none;max-height:82vh;overflow-y:auto}
+#toc a{display:block;color:#8b949e;text-decoration:none;padding:4px 2px;border-radius:4px;white-space:nowrap}
+#toc a:hover{color:#58a6ff;background:#0d1117}
+@media(min-width:1780px){#toc{display:block}}
+#toc.open{display:block;left:auto;right:18px;bottom:64px;top:auto}
+#tocbtn{position:fixed;right:18px;bottom:18px;z-index:60;background:#21262d;border:1px solid #30363d;color:#c9d1d9;border-radius:20px;padding:8px 14px;font-size:.8rem;cursor:pointer}
+@media(min-width:1780px){#tocbtn{display:none}}
+[id^="sec-"]{scroll-margin-top:12px}
+.sub{color:#8b949e;font-size:.88rem;margin-bottom:18px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px 14px}
+.lbl{color:#8b949e;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em}
+.val{font-size:1.5rem;font-weight:700;margin-top:4px}
+.up{color:#e53935}.down{color:#43a047}.neutral{color:#8b949e}
+.section{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;margin-bottom:16px}
+.title{font-size:.95rem;color:#8b949e;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{background:#21262d;color:#8b949e;padding:8px 10px;text-align:left;font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em}
+td{padding:7px 10px;border-bottom:1px solid #21262d;vertical-align:middle}
+tr:hover td{background:#1c2128}
+.navlinks{display:flex;gap:10px;margin-bottom:16px;font-size:.88rem}
+.navlinks a{color:#58a6ff;text-decoration:none;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:6px 14px}
+.navlinks a:hover{background:#21262d}
+</style>
+</head>
+<body>
+<h1>💽 美股软件板块每日复盘</h1>
+<div class="sub">数据日期 <b>2026-10-13</b> · 覆盖 181 只股票 · 21 个子行业 · 6 大板块</div>
+
+<div class="navlinks">
+  <a href="soft-index.html">← 历史存档</a>
+  <a href="soft-stocks-2026-10-13.html">📋 全部个股数据</a>
+  <a href="2026-10-13.html">🖥️ 当日硬件复盘</a>
+  <a href="calendar.html">📅 业绩日历</a>
+  <a href="earnings.html">🗂️ 业绩历史</a>
+</div>
+
+<div class="stats">
+  <div class="card"><div class="lbl">总数</div><div class="val">181</div></div>
+  <div class="card"><div class="lbl">上涨</div><div class="val up">80</div></div>
+  <div class="card"><div class="lbl">下跌</div><div class="val down">95</div></div>
+  <div class="card"><div class="lbl">平盘</div><div class="val neutral">6</div></div>
+  <div class="card"><div class="lbl">市值加权均</div><div class="val up">+0.02%</div></div>
+  <div class="card"><div class="lbl">算术均</div><div class="val down">-0.02%</div></div>
+</div>
+
+<nav id="toc"><div style="color:#e6edf3;font-weight:700;font-size:.8rem;margin-bottom:6px">📑 目录</div><a href="#sec-tldr">🔥 当日核心叙事</a><a href="#sec-treemap">🗺️ 市值热力图</a><a href="#sec-industry">📊 子行业涨跌榜</a><a href="#sec-scatter">💎 市值 vs 涨跌</a><a href="#sec-volume">📈 量能分析</a><a href="#sec-macro">📌 宏观大盘指数</a><a href="#sec-structure">🔄 市场结构因子</a><a href="#sec-themes">📊 板块 Beta 主题</a><a href="#sec-cards">🔍 个股深度解读</a><a href="#sec-news">📰 产业新闻分层</a><a href="#sec-forward">📅 未来 5 日观察</a></nav>
+<button id="tocbtn" onclick="document.getElementById('toc').classList.toggle('open')">☰ 目录</button>
+
+<div class="section" id="sec-tldr">
+  <div class="title">🔥 当日核心叙事</div>
+  <div style="line-height:1.85;color:#c9d1d9;font-size:.92rem">银行财报季开门日的软件池三速结构：市值加权 +0.02% 表面持平、剔除云巨头后 -0.72%（META 单巨头把读数拉浅的「剔除后更差」第四例）、广度 80:95:6 跌多涨少。当日定价主轴是「AI 融资可持续性」的可转债形态同日双样本——Cipher Digital 8.5 亿美元零息可转债 -12.77%、SentinelOne 12.5 亿美元可转债 -6.43%，融资轴首次从算力链扩散到年内翻倍的软件个股；对面是收现金流的两角齐涨：金融科技与支付 +1.56%（四大行开门、Visa 贴历史新高收盘）与 IT 服务 +1.77%（印度财报周 + 银行客户景气，11:1 全池最强广度）。<br><br>板块脉络：强势端 IT服务与咨询 +1.77%、金融科技与支付 +1.56%；弱势端 AI算力/数据中心剔除 SPCX 后 -2.18%（1:7）、EDA与工程软件 -2.23%（0:6 全灭）、数据基础设施 -1.08%（0:5 全灭）。伪读数两处：企业应用 +1.65% 系 ORCL 单股（剔除后 +0.27%）、云巨头 +0.54% 系 META 单股——均按卡片处理。大盘侧 SPX 持平、10Y 回落至 5.22%，但下跌板块全是事件驱动（发债）与动量回吐，不是利率贝塔。<br><br>后市看点：CRWV 11 月初财报是举债算力链的集中检验点；10/15 Wipro 开启印度 IT 财报下半场、10/23 Infosys 接棒；10/21 Meta 三季报（资本开支指引 + Muse 商业化口径）与 10 月末云巨头财报潮是「收钱方 vs 花钱方」分层定价的总裁决。</div>
+</div>
+
+<div id="sec-recap"></div>
+
+<div id="sec-asia"></div>
+
+<div id="sec-ratings"></div>
+
+<div class="section" id="sec-treemap">
+  <div class="title">🗺️ 市值热力图（面积≈√市值 · 颜色：涨红跌绿 · 点击子行业可下钻）</div>
+  <div id="treemap" style="height:620px"></div>
+  <div style="margin-top:10px;font-size:.78rem;color:#8b949e">
+    色阶：
+    <span style="background:#1b5e20;color:#fff;padding:2px 8px;border-radius:3px">跌≥4%</span>
+    <span style="background:#388e3c;color:#fff;padding:2px 8px;border-radius:3px;margin-left:4px">-4~-1%</span>
+    <span style="background:#a5d6a7;color:#000;padding:2px 8px;border-radius:3px;margin-left:4px">-1~0%</span>
+    <span style="background:#ef9a9a;color:#000;padding:2px 8px;border-radius:3px;margin-left:4px">0~1%</span>
+    <span style="background:#e57373;color:#fff;padding:2px 8px;border-radius:3px;margin-left:4px">1~4%</span>
+    <span style="background:#c62828;color:#fff;padding:2px 8px;border-radius:3px;margin-left:4px">4~7%</span>
+    <span style="background:#7f0000;color:#fff;padding:2px 8px;border-radius:3px;margin-left:4px">涨≥7%</span>
+  </div>
+</div>
+
+<div class="section" id="sec-industry">
+  <div class="title">📊 子行业涨跌榜 · 成份股</div>
+  <table><thead><tr><th>子行业</th><th>均涨跌</th><th>上涨/总数</th><th>成份股（按涨幅排序）</th></tr></thead><tbody><tr><td style="white-space:nowrap;font-weight:600">IT服务与咨询</td><td style="white-space:nowrap"><span class="up">+2.28%</span></td><td style="white-space:nowrap">11/12</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>WIT</b> +5.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>INFY</b> +5.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>KD</b> +3.9%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>CTSH</b> +2.8%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>EPAM</b> +2.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>GLOB</b> +2.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>GIB</b> +2.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>IBM</b> +1.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>IT</b> +1.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>DOX</b> +0.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>ACN</b> +0.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>ULS</b> -0.1%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">AI应用与数据智能</td><td style="white-space:nowrap"><span class="up">+1.14%</span></td><td style="white-space:nowrap">3/6</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>BBAI</b> +4.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>AI</b> +3.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>CRNC</b> +1.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>PLTR</b> -0.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>PATH</b> -0.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>SOUN</b> -1.8%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">云与互联网巨头</td><td style="white-space:nowrap"><span class="up">+0.75%</span></td><td style="white-space:nowrap">3/4</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>META</b> +2.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>MSFT</b> +0.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>GOOGL</b> +0.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>AMZN</b> -0.4%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">垂直行业SaaS</td><td style="white-space:nowrap"><span class="up">+0.69%</span></td><td style="white-space:nowrap">9/17</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>AGYS</b> +3.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>BLKB</b> +2.8%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>MANH</b> +2.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>TYL</b> +2.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>EVCM</b> +1.9%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>DSGX</b> +1.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>ALRM</b> +0.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>GWRE</b> +0.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>ROP</b> +0.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>APPF</b> +0.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>INTA</b> 0.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>PCOR</b> -0.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>KARO</b> -0.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>TTAN</b> -0.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>IOT</b> -0.8%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>LSPD</b> -0.8%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>SPSC</b> -1.0%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">协同办公与通信</td><td style="white-space:nowrap"><span class="up">+0.63%</span></td><td style="white-space:nowrap">5/9</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>BOX</b> +2.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>DBX</b> +2.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>DOCU</b> +1.9%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>RNG</b> +0.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>ZM</b> +0.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>MNDY</b> -0.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>ASAN</b> -0.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>TWLO</b> -0.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>FIVN</b> -0.7%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">IP授权与内容技术</td><td style="white-space:nowrap"><span class="up">+0.53%</span></td><td style="white-space:nowrap">2/3</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>IDCC</b> +1.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>DLB</b> +0.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>ADEA</b> -0.3%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">企业应用软件</td><td style="white-space:nowrap"><span class="up">+0.47%</span></td><td style="white-space:nowrap">6/17</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>DCBO</b> +7.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>ORCL</b> +4.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>OTEX</b> +3.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>CRM</b> +1.8%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>SAP</b> +0.9%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>BL</b> +0.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>NICE</b> -0.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>FRSH</b> -0.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>AVPT</b> -0.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>APPN</b> -0.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>WK</b> -0.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>HUBS</b> -1.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>WDAY</b> -1.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>NOW</b> -1.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>VERX</b> -1.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>INTU</b> -1.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>PEGA</b> -1.5%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">营销与广告科技</td><td style="white-space:nowrap"><span class="up">+0.43%</span></td><td style="white-space:nowrap">8/11</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>TTD</b> +1.9%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>CXM</b> +1.8%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>SPT</b> +1.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>ZETA</b> +0.9%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>APP</b> +0.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>AMPL</b> +0.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>RAMP</b> +0.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>DV</b> +0.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>BRZE</b> -0.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>KVYO</b> -0.9%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>SMWB</b> -1.6%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">中概/亚洲互联网</td><td style="white-space:nowrap"><span class="up">+0.38%</span></td><td style="white-space:nowrap">5/12</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>API</b> +7.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>ZH</b> +1.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>KC</b> +0.8%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>JOYY</b> +0.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>WB</b> +0.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>MOMO</b> 0.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>BZ</b> -0.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>ATHM</b> -0.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>NTES</b> -0.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>BIDU</b> -0.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>BILI</b> -1.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>IQ</b> -2.8%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">金融科技与支付</td><td style="white-space:nowrap"><span class="up">+0.23%</span></td><td style="white-space:nowrap">9/13</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>PGY</b> +2.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>V</b> +1.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>MA</b> +1.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>NCNO</b> +0.9%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>DAVE</b> +0.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>ALKT</b> +0.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>ACIW</b> +0.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>PYPL</b> +0.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>QTWO</b> +0.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>BILL</b> -0.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>NYAX</b> -1.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>WAY</b> -1.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>FICO</b> -2.3%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">网络安全</td><td style="white-space:nowrap"><span class="up">+0.09%</span></td><td style="white-space:nowrap">8/18</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>VRNS</b> +5.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>YOU</b> +2.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>CVLT</b> +2.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>GEN</b> +2.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>ZS</b> +1.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>TENB</b> +1.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>QLYS</b> +0.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>CHKP</b> +0.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>RPD</b> -0.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>OKTA</b> -0.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>CLBT</b> -0.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>CRWD</b> -0.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>ATEN</b> -0.8%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>SAIL</b> -1.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>FTNT</b> -1.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>RBRK</b> -1.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>PANW</b> -1.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>S</b> -6.4%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">创意与内容软件</td><td style="white-space:nowrap"><span class="down">-0.45%</span></td><td style="white-space:nowrap">0/2</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>U</b> -0.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>ADBE</b> -0.8%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">消费互联网平台</td><td style="white-space:nowrap"><span class="down">-0.73%</span></td><td style="white-space:nowrap">3/11</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>OPRA</b> +2.8%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>EBAY</b> +1.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>CVNA</b> +1.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>SE</b> +0.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>NFLX</b> -0.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>UBER</b> -0.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>BKNG</b> -0.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>SHOP</b> -1.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>LIF</b> -2.9%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>RDDT</b> -3.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>GRAB</b> -5.4%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">互联网基础设施</td><td style="white-space:nowrap"><span class="down">-0.77%</span></td><td style="white-space:nowrap">2/7</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>FSLY</b> +2.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>GDDY</b> +0.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>VRSN</b> -0.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>NET</b> -0.9%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>AKAM</b> -1.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>DOCN</b> -2.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>WIX</b> -3.3%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">开发运维与DevOps</td><td style="white-space:nowrap"><span class="down">-0.81%</span></td><td style="white-space:nowrap">4/7</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>PD</b> +2.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>PRGS</b> +1.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>FROG</b> +0.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>TEAM</b> +0.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>DT</b> -1.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>DDOG</b> -1.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>GTLB</b> -7.2%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">加密矿企与数字资产财库</td><td style="white-space:nowrap"><span class="down">-1.18%</span></td><td style="white-space:nowrap">1/7</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>RIOT</b> +1.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>MSTR</b> -0.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>BTDR</b> -0.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>HIVE</b> -1.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>CLSK</b> -1.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>BTBT</b> -2.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>MARA</b> -3.5%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">数据基础设施</td><td style="white-space:nowrap"><span class="down">-1.30%</span></td><td style="white-space:nowrap">0/5</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>TDC</b> -0.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>SNOW</b> -0.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>ESTC</b> -1.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>NTNX</b> -1.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>MDB</b> -2.2%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">EDA与工程软件</td><td style="white-space:nowrap"><span class="down">-1.47%</span></td><td style="white-space:nowrap">0/6</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>PTC</b> -0.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>BSY</b> -0.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>ADSK</b> -1.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>AIP</b> -1.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>SNPS</b> -1.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>CDNS</b> -4.1%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">量子计算</td><td style="white-space:nowrap"><span class="down">-1.75%</span></td><td style="white-space:nowrap">0/2</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>QUBT</b> -0.9%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>QBTS</b> -2.6%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">AI算力/数据中心</td><td style="white-space:nowrap"><span class="down">-2.72%</span></td><td style="white-space:nowrap">1/10</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>CORZ</b> +2.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>IREN</b> 0.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>VNET</b> -1.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>WULF</b> -1.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>NBIS</b> -1.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>GDS</b> -2.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>CRWV</b> -3.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>APLD</b> -3.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>SPCX</b> -4.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>CIFR</b> -12.8%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">自动驾驶与AI出行</td><td style="white-space:nowrap"><span class="down">-4.13%</span></td><td style="white-space:nowrap">0/2</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#388e3c;white-space:nowrap;font-size:.78rem"><b>PONY</b> -2.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>AUR</b> -5.7%</span></td></tr></tbody></table>
+</div>
+
+<div class="section" id="sec-scatter">
+  <div class="title">💎 市值 vs 涨跌幅（X 轴：log₁₀ 市值（百万美元）· 涨红跌绿）</div>
+  <div style="position:relative;height:480px"><canvas id="scatter"></canvas></div>
+  <div style="margin-top:12px;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px;font-size:.87rem;color:#c9d1d9;line-height:1.7">
+    <b style="color:#e6edf3">📐 大小市值风格分析：</b>
+    大市值（≥$50B，36 只）均涨 <b class="down">-0.17%</b>，
+    中市值（$5–50B，74 只）均涨 <b class="down">-0.14%</b>，
+    小市值（&lt;$5B，71 只）均涨 <b class="up">+0.18%</b>。
+    大中小市值表现相近（大盘 +-0.17%，中盘 +-0.14%，小盘 +0.18%），板块整体同步，无明显风格分化。
+  </div>
+</div>
+
+<div id="sec-volume"><div class="section">
+  <div class="title">📈 量能分析（当日 vs 20 日均值）</div>
+  <div style="font-size:.87rem;color:#c9d1d9;line-height:1.8;margin-bottom:10px">
+    池总成交额 <b>$124B</b>，为 20 日均值的 <b>0.91x</b>（<b>量能正常</b>）。
+    放量上涨（量比≥1.5）<b class="up">8 只</b> · 放量下跌 <b class="down">4 只</b> · 缩量（&lt;0.7x）57 只。
+    <span style="color:#8b949e">判读：缩量下跌偏仓位调整、放量下跌偏筹码出逃；放量上涨才是有效突破。</span>
+  </div>
+  <table><thead><tr><th>放量异动</th><th>子行业</th><th>涨跌</th><th>量比</th><th>成交额</th><th>2 日累计</th><th>5 日累计</th></tr></thead>
+  <tbody><tr><td><b>API</b></td><td>中概/亚洲互联网</td><td><span class="up">+7.54%</span></td><td><b>4.7x</b></td><td>$0.0B</td><td><span class="up">+8.34%</span></td><td><span class="up">+7.29%</span></td></tr><tr><td><b>S</b></td><td>网络安全</td><td><span class="down">-6.43%</span></td><td><b>3.1x</b></td><td>$0.7B</td><td><span class="down">-8.60%</span></td><td><span class="down">-6.93%</span></td></tr><tr><td><b>DCBO</b></td><td>企业应用软件</td><td><span class="up">+6.95%</span></td><td><b>3.1x</b></td><td>$0.0B</td><td><span class="up">+7.54%</span></td><td><span class="up">+13.61%</span></td></tr><tr><td><b>CIFR</b></td><td>AI算力/数据中心</td><td><span class="down">-12.77%</span></td><td><b>2.7x</b></td><td>$1.5B</td><td><span class="down">-16.13%</span></td><td><span class="down">-26.84%</span></td></tr><tr><td><b>GTLB</b></td><td>开发运维与DevOps</td><td><span class="down">-7.25%</span></td><td><b>2.5x</b></td><td>$0.5B</td><td><span class="down">-5.70%</span></td><td><span class="up">+0.62%</span></td></tr><tr><td><b>BBAI</b></td><td>AI应用与数据智能</td><td><span class="up">+4.35%</span></td><td><b>2.1x</b></td><td>$0.1B</td><td><span class="up">+0.42%</span></td><td><span class="down">-7.54%</span></td></tr></tbody></table>
+</div></div>
+
+<div class="section" id="sec-macro">
+  <div class="title">📌 宏观大盘 + 行业指数（GICS 11 板块 + 半导体专项）</div>
+
+  <div style="font-size:.82rem;color:#8b949e;margin:6px 0 6px;font-weight:600">📊 宽基与宏观</div>
+  <table>
+    <thead><tr><th>代码</th><th>名称</th><th>收盘</th><th>涨跌</th><th>备注</th></tr></thead>
+    <tbody><tr><td><b>SPX</b></td><td>S&P 500</td><td>7,805.37</td><td><span class="neutral">-0.02%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>NDX</b></td><td>Nasdaq 100</td><td>30,569.48</td><td><span class="down">-0.31%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>DJI</b></td><td>Dow Jones</td><td>51,670.10</td><td><span class="down">-0.35%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>RUT</b></td><td>Russell 2000</td><td>2,783.37</td><td><span class="down">-0.40%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>VIX</b></td><td>VIX</td><td>15.27</td><td><span class="up">+0.39%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>DXY</b></td><td>US Dollar</td><td>102.22</td><td><span class="down">-0.36%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>US10Y</b></td><td>10Y 收益率</td><td>5.22%</td><td><span class="down">-0.46%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>WTI</b></td><td>WTI 原油</td><td>$94.57</td><td><span class="up">+0.46%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr></tbody>
+  </table>
+
+  <div style="font-size:.82rem;color:#8b949e;margin:14px 0 6px;font-weight:600">💎 半导体/硬件专项</div>
+  <table>
+    <thead><tr><th>代码</th><th>名称</th><th>收盘</th><th>涨跌</th><th>备注</th></tr></thead>
+    <tbody><tr><td><b>SOX</b></td><td>PHLX 半导体</td><td>12,208.79</td><td><span class="down">-0.23%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>SOXX</b></td><td>iShares 半导体</td><td>$543.90</td><td><span class="down">-0.17%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>SMH</b></td><td>VanEck 半导体</td><td>$588.12</td><td><span class="down">-0.49%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>XSD</b></td><td>SPDR 半导体（小盘等权重）</td><td>$509.78</td><td><span class="up">+0.12%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>PSI</b></td><td>Invesco 动态半导体</td><td>$141.96</td><td><span class="down">-0.68%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr></tbody>
+  </table>
+
+  <div style="font-size:.82rem;color:#8b949e;margin:14px 0 6px;font-weight:600">🌐 GICS 11 板块（SPDR Sector ETF）— 横向跨行业对比</div>
+  <table>
+    <thead><tr><th>代码</th><th>名称</th><th>收盘</th><th>涨跌</th><th>备注</th></tr></thead>
+    <tbody><tr><td><b>XLK</b></td><td>信息科技 Tech</td><td>$196.28</td><td><span class="neutral">-0.04%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>XLC</b></td><td>通信服务 Comm Svc</td><td>$112.28</td><td><span class="up">+0.74%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>XLY</b></td><td>可选消费 Cons Disc</td><td>$112.36</td><td><span class="up">+0.08%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>XLF</b></td><td>金融 Financials</td><td>$54.82</td><td><span class="down">-0.41%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>XLI</b></td><td>工业 Industrials</td><td>$168.67</td><td><span class="down">-0.28%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>XLB</b></td><td>材料 Materials</td><td>$49.72</td><td><span class="up">+0.57%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>XLRE</b></td><td>房地产 Real Estate</td><td>$41.83</td><td><span class="down">-0.21%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>XLV</b></td><td>医疗 Health Care</td><td>$169.66</td><td><span class="down">-1.35%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>XLU</b></td><td>公用事业 Utilities</td><td>$41.87</td><td><span class="up">+0.58%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>XLP</b></td><td>必选消费 Cons Staples</td><td>$84.19</td><td><span class="down">-0.26%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>XLE</b></td><td>能源 Energy</td><td>$67.20</td><td><span class="up">+1.80%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr></tbody>
+  </table>
+
+  <div style="margin-top:14px;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px;font-size:.87rem;color:#c9d1d9;line-height:1.7">
+    <b style="color:#e6edf3">🎯 跨行业风格分析：</b>
+    今日 11 个 GICS 板块中 <b class="up">5 涨</b> / <b class="down">6 跌</b>，<b>能源 Energy（XLE <span class="up">+1.80%</span>）</b>领涨，<b>医疗 Health Care（XLV <span class="down">-1.35%</span>）</b>垫底，强弱差 <b>3.15 个点</b>。 板块间无明显风格分化，市场整体方向性较弱。
+  </div>
+</div>
+
+<div class="section" id="sec-structure">
+  <div class="title">🔄 市场结构 + 风格因子（板块轮动周期 + 5 因子领跑判断）</div>
+
+  <div style="font-size:.82rem;color:#8b949e;margin-bottom:8px;font-weight:600">📐 4 个比值快照（自动算）</div>
+  <div class="stats" style="margin-bottom:18px">
+    <div class="card">
+  <div class="lbl">📊 普涨度 RSP/SPX</div>
+  <div style="font-size:1.4rem;font-weight:700;color:#43a047;margin-top:4px">-2.50x</div>
+  <div style="font-size:.72rem;color:#8b949e;margin-top:2px">RSP +0.05% ÷ SPX -0.02%</div>
+  <div style="font-size:.74rem;color:#c9d1d9;margin-top:6px;padding-top:6px;border-top:1px solid #30363d"><b>极窄幅</b>（仅头部权重股拉指数）</div>
+</div><div class="card">
+  <div class="lbl">🚀 科技强度 NDX/SPX</div>
+  <div style="font-size:1.4rem;font-weight:700;color:#e57373;margin-top:4px">15.50x</div>
+  <div style="font-size:.72rem;color:#8b949e;margin-top:2px">NDX -0.31% ÷ SPX -0.02%</div>
+  <div style="font-size:.74rem;color:#c9d1d9;margin-top:6px;padding-top:6px;border-top:1px solid #30363d"><b>科技独强</b>（NDX 领跑）</div>
+</div><div class="card">
+  <div class="lbl">⚡ 半导体强度 SOX/NDX</div>
+  <div style="font-size:1.4rem;font-weight:700;color:#c9d1d9;margin-top:4px">0.74x</div>
+  <div style="font-size:.72rem;color:#8b949e;margin-top:2px">SOX -0.23% ÷ NDX -0.31%</div>
+  <div style="font-size:.74rem;color:#c9d1d9;margin-top:6px;padding-top:6px;border-top:1px solid #30363d"><b>半导体跑输</b>（板块走弱）</div>
+</div><div class="card">
+  <div class="lbl">💽 软件池强度 Pool/NDX</div>
+  <div style="font-size:1.4rem;font-weight:700;color:#43a047;margin-top:4px">-0.06x</div>
+  <div style="font-size:.72rem;color:#8b949e;margin-top:2px">Pool +0.02% ÷ NDX -0.31%</div>
+  <div style="font-size:.74rem;color:#c9d1d9;margin-top:6px;padding-top:6px;border-top:1px solid #30363d"><b>跑输 NDX</b>（科技权重股领涨而软件跟不上）</div>
+</div><div class="card">
+  <div class="lbl">🏋️ 剔除前二权重</div>
+  <div class="val" style="color:#43a047">-0.18%</div>
+  <div style="font-size:.72rem;color:#8b949e;margin-top:2px">全池 +0.02% · 剔除 GOOGL+MSFT</div>
+  <div style="font-size:.74rem;color:#c9d1d9;margin-top:6px;padding-top:6px;border-top:1px solid #30363d"><b>权重股温和放大</b>（方向一致、幅度略有出入）</div>
+</div>
+  </div>
+
+  <div style="font-size:.82rem;color:#8b949e;margin:14px 0 6px;font-weight:600">🎨 风格因子 ETF（5 因子 + 等权基准）</div>
+  <table>
+    <thead><tr><th>代码</th><th>名称</th><th>收盘</th><th>涨跌</th><th>备注</th></tr></thead>
+    <tbody><tr><td><b>IWF</b></td><td>Russell 1000 Growth</td><td>$127.12</td><td><span class="neutral">-0.01%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>IWD</b></td><td>Russell 1000 Value</td><td>$254.53</td><td><span class="neutral">-0.05%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>MTUM</b></td><td>iShares Momentum Factor</td><td>$313.11</td><td><span class="down">-0.63%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>SPLV</b></td><td>S&P 500 Low Volatility</td><td>$72.98</td><td><span class="up">+0.26%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>QUAL</b></td><td>iShares Quality Factor</td><td>$227.09</td><td><span class="down">-0.28%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>RSP</b></td><td>S&P 500 Equal Weight</td><td>$213.30</td><td><span class="neutral">+0.05%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr></tbody>
+  </table>
+
+  <div style="margin-top:14px;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:14px;font-size:.87rem;color:#c9d1d9;line-height:1.85">
+    <b style="color:#e6edf3">💬 综合解读：</b>
+    <b>市场结构</b>：银行财报季开门日，软件池市值加权 +0.02% 表面持平，但剔除云巨头后 -0.72%——「剔除后更差」形态第四次出现：META +2.63%（单股贡献约 +0.23 个百分点）加 MSFT/GOOGL 微涨把表面读数拉回正，中小盘实际仍在消化（算术平均 -0.02%、广度 80:95:6）。SPX -0.02% 持平、NDX -0.31%，软件池微跑赢纳指约 0.3 个百分点；十年期收益率回落至 5.22% 给了喘息，但 VIX 15.27 纹丝不动说明今天不是利率行情。<br><br>风格因子：动量 MTUM -0.63% 继续回吐、低波 SPLV +0.26% 承接，成长价值打平——与硬件池同日的「动量退、防御进」完全同构。当日定价主轴是「AI 融资可持续性」的可转债形态同日双样本：Cipher Digital 8.5 亿美元零息可转债砸出 -12.77%、SentinelOne 12.5 亿美元可转债砸出 -6.43%——市场对「高位发可转债」一律按稀释与资金饥渴定价，新云链全灭；对面是收现金流的两个角落齐涨：金融科技与支付 +1.56%（四大行财报开门、V 贴历史新高收盘）与 IT 服务 +1.77%（11:1 全池最强广度）。<br><br>综合判断：今日属于「收现金流的涨、举债的杀、高位动量回吐」三速结构日——与 10/8 OpenAI 收入证伪日一脉相承，信用层质疑未被收入口径澄清化解，正在用每一单新融资公告反复定价。后市看 CRWV 11 月初财报（举债链自证）、10/21 特斯拉与 10 月末云巨头财报潮（资本开支指引），以及 10/15 Wipro 开启的印度 IT 财报下半场。
+  </div>
+</div>
+
+<div class="section" id="sec-themes">
+  <div class="title">📊 板块 Beta 解读 · 跨子行业联动主题</div>
+  <p style="font-size:.8rem;color:#8b949e;margin-bottom:12px">挑当日最有信号意义的 3-5 个板块联动主题。每个主题：涉及板块（市值加权涨跌 + 领涨领跌个股）+ 共同驱动 + 跨板块联动 + 时效判断。<b style="color:#79c0ff">板块联动的故事比单只个股的超额收益更重要</b>。</p>
+  <div style="background:#0d1117;border:1px solid #30363d;border-left:4px solid #43a047;border-radius:6px;padding:14px 16px;margin-bottom:14px">
+  <div style="font-size:1.02rem;font-weight:700;color:#e6edf3;margin-bottom:10px;line-height:1.5">AI 算力链融资轴再爆：可转债形态同日双样本引发举债链清算</div>
+  <div style="background:#161b22;border-radius:4px;padding:10px 12px;margin-bottom:10px"><div style="margin-bottom:6px"><b style="color:#79c0ff">AI算力/数据中心</b> <span style="color:#43a047;font-weight:600">-4.08%</span> <span style="color:#8b949e;font-size:.78rem">(10 只)</span><br><span style="font-size:.82rem"><span style="color:#43a047">SPCX -4.2%</span> · <span style="color:#43a047">CIFR -12.8%</span> · <span style="color:#43a047">CRWV -3.0%</span> · <span style="color:#43a047">NBIS -1.5%</span> · <span style="color:#43a047">APLD -3.5%</span></span></div></div>
+  <div style="margin-bottom:8px"><span style="color:#79c0ff;font-weight:600;font-size:.82rem">💡 共同驱动</span><p style="margin-top:4px;font-size:.85rem;line-height:1.7;color:#c9d1d9">AI算力/数据中心板块表面 -4.08%，剔除 SPCX（权重约 94%，-4.21%，无当日公司级新闻、按权重波动放大处理，详见市场结构）后其余九只 -2.18%（1:7:1）仍显著达标——真板块行情。共同催化是融资轴的可转债形态落地：CIFR 官宣 8.5 亿美元零息可转债（-12.77% 贴 52 周低点，详见个股卡），APLD -3.48% 被媒体点名联动，CRWV -3.05%、GDS -2.60%、NBIS -1.52% 举债新云全线连坐；唯一逆行者 CORZ +2.73% 无催化核实。这是 10/8 OpenAI 收入证伪日之后信用层质疑的直接延续：收入口径澄清修复了叙事层，但「债务怎么还」的审查没有停——每一单新融资公告都在被市场用脚投票。板块广度 1:7 说明清算是无差别的，个体质地暂不构成保护。</p></div>
+  <div style="margin-bottom:8px"><span style="color:#79c0ff;font-weight:600;font-size:.82rem">🔗 跨板块联动</span><p style="margin-top:4px;font-size:.85rem;line-height:1.7;color:#c9d1d9">扩散证据是本日最重要信号：网络安全板块的 SentinelOne 同日官宣 12.5 亿美元可转债收 -6.43%（详见个股卡）——融资轴首次打到年内翻倍的软件个股，审查范围从「AI 基建举债方」扩大到「所有高位融资行为」。A 股映射（a_share_map_soft）：算力租赁/IDC 链（润泽科技/奥飞数据/光环新网）同向偏负，与硬件复盘「服务器/存储系统」共用标的，融资质疑类催化传导时滞一日内；自动驾驶微板块 -5.17%（AUR/PONY，无独立催化）为同类久期连坐。</p></div>
+  <div style="background:#161b22;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">⏱️ 时效判断：</b>融资轴是以月计的结构性审查；CRWV 11 月初财报与每一单后续融资公告都是重定价节点，修复需要财报级现金流证据而非口径辩护。</div>
+</div>
+<div style="background:#0d1117;border:1px solid #30363d;border-left:4px solid #e57373;border-radius:6px;padding:14px 16px;margin-bottom:14px">
+  <div style="font-size:1.02rem;font-weight:700;color:#e6edf3;margin-bottom:10px;line-height:1.5">金融科技与支付：银行财报开门，「交易桌轰鸣、网络收费」的分流定价</div>
+  <div style="background:#161b22;border-radius:4px;padding:10px 12px;margin-bottom:10px"><div style="margin-bottom:6px"><b style="color:#79c0ff">金融科技与支付</b> <span style="color:#e57373;font-weight:600">+1.56%</span> <span style="color:#8b949e;font-size:.78rem">(13 只)</span><br><span style="font-size:.82rem"><span style="color:#e57373">V +1.7%</span> · <span style="color:#e57373">MA +1.6%</span> · <span style="color:#43a047">FICO -2.3%</span> · <span style="color:#43a047">WAY -1.3%</span> · <span style="color:#e57373">PGY +2.4%</span></span></div></div>
+  <div style="margin-bottom:8px"><span style="color:#79c0ff;font-weight:600;font-size:.82rem">💡 共同驱动</span><p style="margin-top:4px;font-size:.85rem;line-height:1.7;color:#c9d1d9">板块 +1.56%（9:4），剔除 Visa（权重约 54%）后 +1.34% 仍达标，真板块行情。催化是四大行 10/13 盘前齐报：高盛股票交易收入同比 +72% 创纪录、花旗十年最佳三季 vs 摩根大通每股收益不及共识（含一次性证券损失）。关键结构在分流——银行板块 XLF 自身 -0.41%「超共识仍平淡」（净息差与信贷损失的双重折价），而不承担信用风险的收费网络获资金承接：V +1.74% 贴历史新高收盘（详见个股卡）、MA +1.63%、PGY +2.35%；逆行者 FICO -2.29% 为房贷评分政策压制的独立弱势延续。银行财报里的消费交易量数据稳健，是支付网络费率模式的宏观底仓确认。</p></div>
+  <div style="margin-bottom:8px"><span style="color:#79c0ff;font-weight:600;font-size:.82rem">🔗 跨板块联动</span><p style="margin-top:4px;font-size:.85rem;line-height:1.7;color:#c9d1d9">与 IT 服务板块共享「银行盈利回暖」催化但受益路径不同：支付吃交易量、IT 服务吃 IT 预算（见主题三）。A 股映射：恒生电子/东方财富等金融 IT 与 V/MA 的消费宏观信号共振极弱，以情绪传导为主、强度弱，不建议作为次日 A 股交易依据。</p></div>
+  <div style="background:#161b22;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">⏱️ 时效判断：</b>银行财报周持续至 10/15（美银/摩根士丹利 10/14-15 接棒），消费数据二次确认前分流定价可延续；V/MA 自身财报 10 月末是兑现点。</div>
+</div>
+<div style="background:#0d1117;border:1px solid #30363d;border-left:4px solid #e57373;border-radius:6px;padding:14px 16px;margin-bottom:14px">
+  <div style="font-size:1.02rem;font-weight:700;color:#e6edf3;margin-bottom:10px;line-height:1.5">IT 服务与咨询全池最强广度：印度财报周与银行客户景气双线共振</div>
+  <div style="background:#161b22;border-radius:4px;padding:10px 12px;margin-bottom:10px"><div style="margin-bottom:6px"><b style="color:#79c0ff">IT服务与咨询</b> <span style="color:#e57373;font-weight:600">+1.77%</span> <span style="color:#8b949e;font-size:.78rem">(12 只)</span><br><span style="font-size:.82rem"><span style="color:#e57373">INFY +5.3%</span> · <span style="color:#e57373">IBM +1.7%</span> · <span style="color:#e57373">WIT +5.6%</span> · <span style="color:#e57373">CTSH +2.8%</span> · <span style="color:#e57373">GIB +2.0%</span></span></div></div>
+  <div style="margin-bottom:8px"><span style="color:#79c0ff;font-weight:600;font-size:.82rem">💡 共同驱动</span><p style="margin-top:4px;font-size:.85rem;line-height:1.7;color:#c9d1d9">板块 +1.77%（11:1，全池最强广度）：WIT +5.57%、INFY +5.26%（详见个股卡）、KD +3.90%、CTSH +2.76%、EPAM +2.18%、GLOB +2.03%、IBM +1.66% 全线上涨，仅 ULS -0.14% 掉队。双线催化：其一，印度 IT 财报周进行中（塔塔咨询 10/8、HCLTech 10/12 已报——后者细节未独立核实，Wipro 10/15、Infosys 10/23 在途），财报周预期修复集中释放，亚洲 ADR 整体持平背景下印度 IT 独秀确认板块级行情；其二，高盛/花旗资本市场业务核爆——金融服务是 IT 外包最大垂直客户，银行盈利回暖直接上修 IT 支出预期，美元走弱（-0.36%）为出口商背景顺风。</p></div>
+  <div style="margin-bottom:8px"><span style="color:#79c0ff;font-weight:600;font-size:.82rem">🔗 跨板块联动</span><p style="margin-top:4px;font-size:.85rem;line-height:1.7;color:#c9d1d9">9/12 该板块曾因「AI 落地执行方」叙事 12:0 全红、9/16 又 0:12 全灭——本轮是第三次方向切换，但这次有财报周与客户盈利的实据支撑，成色高于纯叙事轮动。A 股映射：软通动力/汉得信息弱同向（印度双雄财报是全球外包景气锚），传导强度弱。</p></div>
+  <div style="background:#161b22;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">⏱️ 时效判断：</b>10/15 Wipro 与 10/23 Infosys 财报是双裁决点：指引企稳则修复延续为周期反转，证伪则本轮预期修复以日计回吐。</div>
+</div>
+<div style="background:#0d1117;border:1px solid #30363d;border-left:4px solid #43a047;border-radius:6px;padding:14px 16px;margin-bottom:14px">
+  <div style="font-size:1.02rem;font-weight:700;color:#e6edf3;margin-bottom:10px;line-height:1.5">EDA 与工程软件零涨六跌全灭：无催化的高位动量回吐第三次重演</div>
+  <div style="background:#161b22;border-radius:4px;padding:10px 12px;margin-bottom:10px"><div style="margin-bottom:6px"><b style="color:#79c0ff">EDA与工程软件</b> <span style="color:#43a047;font-weight:600">-2.23%</span> <span style="color:#8b949e;font-size:.78rem">(6 只)</span><br><span style="font-size:.82rem"><span style="color:#43a047">CDNS -4.1%</span> · <span style="color:#43a047">SNPS -1.6%</span> · <span style="color:#43a047">ADSK -1.3%</span> · <span style="color:#43a047">AIP -1.4%</span> · <span style="color:#43a047">PTC -0.2%</span></span></div></div>
+  <div style="margin-bottom:8px"><span style="color:#79c0ff;font-weight:600;font-size:.82rem">💡 共同驱动</span><p style="margin-top:4px;font-size:.85rem;line-height:1.7;color:#c9d1d9">板块 -2.23%（0:6 全灭），剔除最深的 CDNS（-4.08%）后其余五只 -1.27% 仍达标。定向搜索「EDA + 当日 + 政策/管制/评级」无政策级或公司级催化命中，十年期收益率当日回落也排除利率归因——归因为推断（显式标注）：9/22「芯片设计重估」行情的高位回吐延续，这是该板块 9 月以来第三次无催化全灭（9/2、10/8 后），久期 + 动量双重属性使其成为动量回吐日的固定受害者；叠加 CDNS/SNPS 10 月底财报前的减仓盘。成分全览：CDNS -4.08%、SNPS -1.59%、AIP -1.37%、ADSK -1.33%、BSY -0.26%、PTC -0.22%。</p></div>
+  <div style="margin-bottom:8px"><span style="color:#79c0ff;font-weight:600;font-size:.82rem">🔗 跨板块联动</span><p style="margin-top:4px;font-size:.85rem;line-height:1.7;color:#c9d1d9">与数据基础设施 -1.08%（0:5 全灭，剔 SNOW 后 -1.80%）同属「无催化久期杀」，两板块在动量回吐日联动已成固定形态。硬件侧同日设备板块 -3.21% 获利了结（见硬件复盘）——芯片设计与制造的上游工具层两池同日被卖，是「芯片链动量税」的跨池同构。A 股映射：华大九天/概伦电子——本日为景气/动量回吐（非管制催化），同向弱传导；若后续出现管制新闻则方向反转。</p></div>
+  <div style="background:#161b22;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">⏱️ 时效判断：</b>动量回吐以日计；CDNS/SNPS 10 月底财报与 10/15 台积电资本开支指引（设计工具需求的上游锚）是重新定价节点。</div>
+</div>
+</div>
+
+<div class="section" id="sec-cards">
+  <div class="title">🔍 重点个股深度解读</div>
+  <div style="display:grid;grid-template-columns:1fr;gap:16px">
+  <div style="background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:18px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #30363d;padding-bottom:10px;margin-bottom:12px">
+    <div>
+      <span style="font-size:1.2rem;font-weight:700;color:#43a047">CIFR</span>
+      <span style="color:#c9d1d9;margin-left:8px;font-size:.95rem">— 零息可转债 8.5 亿美元引爆清算：-12.77% 贴 52 周低点（天量 1.28 亿股）</span>
+    </div>
+    <div style="font-weight:700;font-size:1.1rem;color:#43a047">-12.77%</div>
+  </div>
+  <div style="font-size:.82rem;color:#8b949e;margin-bottom:14px">收盘 $11.34 · 市值 $46 亿 · 成交额 约 $14.5 亿（1.28 亿股天量换手，量比未计） · 52w $10.68 – $30.14</div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">📊 基本面变化</div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.75;margin-bottom:14px">AI算力/数据中心板块剔除 SPCX 后 -2.18%（1:7）的最深单股。Cipher Digital 官宣发行 8.5 亿美元零息可转债（2032 年到期）+ 1.5 亿美元超额配售选择权（合计至多 10 亿美元），并将部分 2030 年 1.75% 可转债置换为普通股；资金投向上限期权交易、Barber Lake 项目与高性能计算。多源当日报道一致，收盘 -12.77% 至 11.34 美元、贴 52 周低点创六个月新低。叙事位置的反转最有信息量：9/16 它还是「矿转算」电力资产重估的标杆（ERCOT 3.2 吉瓦电网容量核准日 +10.80%），三周前刚披露 Barber Lake 成本超支 3.593 亿美元，今天又融资——「已核准的电网容量也要钱来建」，一个月内从重估标杆跌成融资轴反面教材。</p>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">🏛️ 卖方观点</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:14px"><li><b>—</b>（—，—）：当日卖方静默（两池 ratings 文件缺失日，grades 端点核验无当日记录）</li></ul>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div style="background:#161b22;border-left:3px solid #e57373;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#e57373;font-weight:600;margin-bottom:6px">🐂 多方逻辑</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>零息票 = 几乎无利息成本的长钱，换股安排同时清理了 2030 年旧债</li><li>ERCOT 已核准 3.2 吉瓦电网容量仍是稀缺资产</li><li>贴 52 周低点后坏消息定价充分</li></ul>
+    </div>
+    <div style="background:#161b22;border-left:3px solid #43a047;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#43a047;font-weight:600;margin-bottom:6px">🐻 空方担忧</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>成本超支三周后即再融资，资金饥渴的时间线自己说话</li><li>零息可转债的转股稀释在股价低位时尤其昂贵</li><li>「矿转算」板块整体进入融资轴审查期，个体公告都会被连坐定价</li></ul>
+    </div>
+  </div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">⏭️ 后续催化</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:10px"><li><b>Barber Lake 项目进度与资本开支更新</b></li><li><b>CRWV 11 月初财报</b>：举债算力链的共同检验点</li><li><b>比特币价格</b>：矿业现金流的底仓变量</li></ul>
+
+  <div style="background:#161b22;border:1px solid #30363d;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">📈 技术面：</b>收 11.34 美元贴 52 周低点 10.68，50 日线 16.74 远在上方，技术面全面走坏；天量换手 1.28 亿股为恐慌出清特征，10.68 失守则无历史支撑。</div>
+</div>
+<div style="background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:18px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #30363d;padding-bottom:10px;margin-bottom:12px">
+    <div>
+      <span style="font-size:1.2rem;font-weight:700;color:#43a047">S</span>
+      <span style="color:#c9d1d9;margin-left:8px;font-size:.95rem">— 年内翻倍后首次大额融资：12.5 亿美元可转债砸出 -6.43%（融资轴扩散到软件股）</span>
+    </div>
+    <div style="font-weight:700;font-size:1.1rem;color:#43a047">-6.43%</div>
+  </div>
+  <div style="font-size:.82rem;color:#8b949e;margin-bottom:14px">收盘 $24.01 · 市值 $81 亿 · 成交额 约 $6.6 亿（2,756 万股放量，量比未计） · 52w $11.81 – $26.50</div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">📊 基本面变化</div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.75;margin-bottom:14px">网络安全板块 -0.93%（8:10 劈叉）中的发债端。SentinelOne 官宣 12.5 亿美元可转债（2031 年到期），部分资金用于上限期权，同时宣布最高 1.5 亿美元 A 类股回购、并拟签 4 亿美元有担保循环信贷（未签署、发债不以其为条件）。月初股价刚创 52 周新高 26.50、年内接近翻倍（收盘价仍高出 200 日线约 41%），高位官宣大额可转债被市场按稀释定价、盘中一度 -7%。这是「AI 融资可持续性」轴首次从算力/矿业链扩散到年内大涨的软件个股——与 CIFR 同日双样本说明市场对「高位发可转债」的定价已经模式化，无论发行方质地。另有 CFO Sonalee Parekh 于 10/12 披露售股约 41.3 万美元（金额小、常规性质），时点上构成情绪注脚。</p>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">🏛️ 卖方观点</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:14px"><li><b>FBN Securities</b>（降至与大市同步，$24 不变）：聚合页出现于发债当日，原始日期未独立核实，谨慎引用</li><li><b>TD Cowen</b>（买入维持，$26 → $29）：同上，日期未独立核实</li></ul>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div style="background:#161b22;border-left:3px solid #e57373;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#e57373;font-weight:600;margin-bottom:6px">🐂 多方逻辑</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>可转债票息低 + 配套回购对冲稀释，资本结构操作本身偏中性</li><li>端点安全平台化叙事未变，年内基本面无恶化</li><li>回调后估值回到 9 月中旬水平</li></ul>
+    </div>
+    <div style="background:#161b22;border-left:3px solid #43a047;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#43a047;font-weight:600;margin-bottom:6px">🐻 空方担忧</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>年内翻倍后高位融资 = 管理层自己给出的估值信号</li><li>融资轴审查期内，循环信贷若落签会被二次定价</li><li>网络安全板块两周内方向第八次切换，动量资金不稳定</li></ul>
+    </div>
+  </div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">⏭️ 后续催化</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:10px"><li><b>可转债定价与配售结果</b>（数日内）</li><li><b>12 月初 Q3 FY27 财报</b></li><li><b>4 亿美元循环信贷是否落签</b></li></ul>
+
+  <div style="background:#161b22;border:1px solid #30363d;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">📈 技术面：</b>收 24.01 美元跌破 50 日线（22.38 上方回落中仍高于它），距月初 52 周高点 26.50 回撤约 9%；200 日线 17.01 远在下方，中期上升趋势未破、短线动量转弱。</div>
+</div>
+<div style="background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:18px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #30363d;padding-bottom:10px;margin-bottom:12px">
+    <div>
+      <span style="font-size:1.2rem;font-weight:700;color:#e57373">ORCL</span>
+      <span style="color:#c9d1d9;margin-left:8px;font-size:.95rem">— 双杀后的修复第三日：+4.24% 为企业应用板块表面读数的全部来源</span>
+    </div>
+    <div style="font-weight:700;font-size:1.1rem;color:#e57373">+4.24%</div>
+  </div>
+  <div style="font-size:.82rem;color:#8b949e;margin-bottom:14px">收盘 $143.22 · 市值 $4,125 亿 · 成交额 约 $37 亿（2,592 万股，量比未计） · 52w $114.50 – $322.54</div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">📊 基本面变化</div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.75;margin-bottom:14px">企业应用软件板块 +1.65% 是教科书级伪读数：剔除甲骨文（板块权重约 35%）后仅 +0.27%（5:11 跌多涨少）。甲骨文自身是 9/24 Project Jupiter 不可抗力冲击与 10/8 OpenAI 收入证伪双杀后的修复第三日，当日无新公司级公告（核实）——修复的支撑是存量证据：Blue Owl 与 Bloom Energy 公开确认 Jupiter 合同与财务承诺不变、FY27 资本开支 900-950 亿美元指引仍在执行、巨额在手订单未动。但股价仍同时压在 50 日线（145.90）与200 日线（161.45）下方、距 52 周高点 322.54 腰斩有余——修复是超跌反弹性质，信用层问题（标普 9 月初将评级下调至 BBB-、举债扩建的利息成本）没有一项被解决。</p>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">🏛️ 卖方观点</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:14px"><li><b>—</b>（—，—）：当日卖方静默（grades 端点核至 10/2，无当日记录）</li></ul>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div style="background:#161b22;border-left:3px solid #e57373;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#e57373;font-weight:600;margin-bottom:6px">🐂 多方逻辑</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>Jupiter 两家交易对手公开确认承诺不变，最坏情形定价过度</li><li>OpenAI 之外的多客户 RPO 仍是行业最大之一</li><li>腰斩后估值回到 AI 叙事启动前水平</li></ul>
+    </div>
+    <div style="background:#161b22;border-left:3px solid #43a047;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#43a047;font-weight:600;margin-bottom:6px">🐻 空方担忧</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>BBB- 评级悬崖边的举债扩建，利率 5.2% 环境下利息成本实打实</li><li>OpenAI 依赖度是收入质疑的根源，11 月底财报前无法自证</li><li>Jupiter 空气质量许可 11/23 节点是下一个二元事件</li></ul>
+    </div>
+  </div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">⏭️ 后续催化</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:10px"><li><b>10/25-28 Oracle AI World 大会</b>：管理层正面回应融资质疑的窗口</li><li><b>11/23 Jupiter 空气质量许可节点</b></li><li><b>12 月 Q2 FY27 财报</b></li></ul>
+
+  <div style="background:#161b22;border:1px solid #30363d;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">📈 技术面：</b>收 143.22 美元仍低于 50 日线 145.90，三日反弹未收复任何均线；114.50 的 52 周低点为 9/24 恐慌低点，修复若无法站上 146 则是弱反弹。</div>
+</div>
+<div style="background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:18px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #30363d;padding-bottom:10px;margin-bottom:12px">
+    <div>
+      <span style="font-size:1.2rem;font-weight:700;color:#e57373">META</span>
+      <span style="color:#c9d1d9;margin-left:8px;font-size:.95rem">— Muse 新模型次日续涨 +2.63%：距 52 周高点仅 2%、财报前定位买盘</span>
+    </div>
+    <div style="font-weight:700;font-size:1.1rem;color:#e57373">+2.63%</div>
+  </div>
+  <div style="font-size:.82rem;color:#8b949e;margin-bottom:14px">收盘 $762.5 · 市值 $1.94 万亿 · 成交额 约 $173 亿（2,263 万股，量比未计） · 52w $520.26 – $779.82</div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">📊 基本面变化</div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.75;margin-bottom:14px">云与互联网巨头板块 +0.54% 即 META 单巨头行情（四巨头 3:1，AMZN -0.37% 唯一下跌）。周一 Muse 系列新模型发布（媒体对产品名口径不一，一说图像模型——官方稿未独立核实）次日续涨，叠加 10/21 三季报前的定位买盘，通信服务 XLC +0.74% 为当日最强成长板块。Muse 主代理 9/8 发布以来股价累计涨幅超 20%、应用曾登苹果谷歌双商店免费榜第一，「个人 AI 代理」是四巨头中唯一还在上行定价的消费级叙事。另一条当日牵连：特拉华陪审团认定 Arm蓄意干扰高通与 Meta 的业务关系（判决当日落地、详见硬件复盘）——Meta 数据中心自研 CPU 的供应商选择自由度获法律背书，边际利好。</p>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">🏛️ 卖方观点</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:14px"><li><b>摩根大通等</b>（增持（存量），$820（9 月存量））：9 月 Muse 后目标价潮（Cantor $860/KeyBanc $900/Canaccord $950）全部为存量，当日无新动作（grades 端点核验）</li></ul>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div style="background:#161b22;border-left:3px solid #e57373;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#e57373;font-weight:600;margin-bottom:6px">🐂 多方逻辑</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>Muse 代理的消费级货币化路径（商务抽佣/广告）尚未计入盈利模型</li><li>10/21 财报若广告与 AI 叙事双确认则直接挑战历史新高</li><li>Arm 判决对自研 CPU 供应链选择的法律背书</li></ul>
+    </div>
+    <div style="background:#161b22;border-left:3px solid #43a047;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#43a047;font-weight:600;margin-bottom:6px">🐻 空方担忧</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>Muse 70 万日活的产能瓶颈未解（9 月末报道）</li><li>财报日资本开支指引上修风险——市场当前只奖励「收钱方」</li><li>距 52 周高点仅 2%，利好兑现空间有限</li></ul>
+    </div>
+  </div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">⏭️ 后续催化</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:10px"><li><b>10/21 Q3 财报</b>：广告增速 + 资本开支指引 + Muse 商业化口径</li><li><b>Muse 产能扩容进展</b></li><li><b>代理商务抽佣模式官宣</b></li></ul>
+
+  <div style="background:#161b22;border:1px solid #30363d;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">📈 技术面：</b>收 762.50 美元距 52 周高点 779.82 约 2.2%，50 日线 643.46 远在下方，上升通道完好；财报前若放量破 780 则进入价格发现区。</div>
+</div>
+<div style="background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:18px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #30363d;padding-bottom:10px;margin-bottom:12px">
+    <div>
+      <span style="font-size:1.2rem;font-weight:700;color:#e57373">V</span>
+      <span style="color:#c9d1d9;margin-left:8px;font-size:.95rem">— 银行财报开门日的分流赢家：+1.74% 贴历史新高收盘</span>
+    </div>
+    <div style="font-weight:700;font-size:1.1rem;color:#e57373">+1.74%</div>
+  </div>
+  <div style="font-size:.82rem;color:#8b949e;margin-bottom:14px">收盘 $396.06 · 市值 $7,395 亿 · 成交额 约 $30 亿（748 万股，量比未计） · 52w $293.89 – $396.35</div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">📊 基本面变化</div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.75;margin-bottom:14px">金融科技与支付板块 +1.56%（9:4，剔除 Visa 后 +1.34% 仍达标）的权重锚。四大行 10/13 盘前齐报三季报：高盛股票交易收入同比 +72% 至 64.4 亿美元、总营收超共识近 20 亿美元；花旗 EPS 2.85 美元超共识、238 亿美元营收为十年最佳三季度；摩根大通 EPS 不及共识（含 6.58 亿美元投资证券损失，剔除后有另一口径，以公司财报原文为准）。关键结构信号在分流：金融板块 XLF 自身 -0.41%「超共识仍平淡」，而不受净息差与信贷损失影响的收费网络获资金承接——Visa 收 396.06 美元、距 52 周高点 396.35 仅 0.07%，几乎以历史新高收盘，MA +1.63% 同向。银行财报里的消费交易量数据稳健，是 V/MA 费率模式的宏观底仓确认。</p>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">🏛️ 卖方观点</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:14px"><li><b>—</b>（—，—）：当日卖方静默（grades 端点核验）</li></ul>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div style="background:#161b22;border-left:3px solid #e57373;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#e57373;font-weight:600;margin-bottom:6px">🐂 多方逻辑</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>收费网络不承担信用风险，银行财报季的「卖铲人」</li><li>消费交易量宏观数据稳健 + 跨境支付量回升</li><li>历史新高收盘 = 动量与防御双属性确认</li></ul>
+    </div>
+    <div style="background:#161b22;border-left:3px solid #43a047;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#43a047;font-weight:600;margin-bottom:6px">🐻 空方担忧</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>自身 10 月末财报若激励费用超预期则利好兑现</li><li>监管对交换费的长期压制未消</li><li>估值处于历史区间上沿</li></ul>
+    </div>
+  </div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">⏭️ 后续催化</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:10px"><li><b>10 月末 Q4 FY26 财报</b></li><li><b>10/14-15 美银/摩根士丹利财报</b>：消费数据的二次确认</li><li><b>假日季跨境支付量</b></li></ul>
+
+  <div style="background:#161b22;border:1px solid #30363d;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">📈 技术面：</b>收 396.06 美元贴 52 周高点 396.35，50 日线 370.19 上方运行，突破即创历史新高进入价格发现；393-396 为双顶压力带，放量突破有效。</div>
+</div>
+<div style="background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:18px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #30363d;padding-bottom:10px;margin-bottom:12px">
+    <div>
+      <span style="font-size:1.2rem;font-weight:700;color:#e57373">INFY</span>
+      <span style="color:#c9d1d9;margin-left:8px;font-size:.95rem">— 印度 IT 财报周独秀：+5.26% 领衔全池最强广度板块</span>
+    </div>
+    <div style="font-weight:700;font-size:1.1rem;color:#e57373">+5.26%</div>
+  </div>
+  <div style="font-size:.82rem;color:#8b949e;margin-bottom:14px">收盘 $11.4 · 市值 $463 亿 · 成交额 约 $2.9 亿（2,556 万股，量比未计） · 52w $10.12 – $30.00</div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">📊 基本面变化</div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.75;margin-bottom:14px">IT 服务与咨询板块 +1.77%（11:1，全池最强广度）的领涨者，WIT +5.57%、KD +3.90%、CTSH +2.76% 全线跟涨。双线驱动：其一，印度 IT 财报周进行中——塔塔咨询 10/8、HCLTech 10/12 已报（HCLTech 细节未独立核实，市场反应积极待确认），Wipro 定档 10/15、Infosys 自身 10/23，财报周的预期修复集中释放；其二，高盛与花旗资本市场业务核爆——金融服务是印度 IT 外包最大垂直客户，银行盈利回暖直接上修 IT 支出预期。亚洲 ADR 整体持平（标普亚洲 50 ADR 指数 +0.02%）背景下印度 IT 独秀，确认是板块级行情而非大盘贝塔。股价自年内 30 美元跌至 10 美元区后的低位修复，52 周低点 10.12 近在咫尺。</p>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">🏛️ 卖方观点</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:14px"><li><b>—</b>（—，—）：当日卖方静默（grades 端点核验）</li></ul>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div style="background:#161b22;border-left:3px solid #e57373;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#e57373;font-weight:600;margin-bottom:6px">🐂 多方逻辑</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>银行客户 IT 支出预期随资本市场回暖上修</li><li>年内跌去三分之二后估值与股息率进入深度价值区</li><li>10/23 自身财报若指引企稳则是周期反转确认点</li></ul>
+    </div>
+    <div style="background:#161b22;border-left:3px solid #43a047;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#43a047;font-weight:600;margin-bottom:6px">🐻 空方担忧</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>AI 代理对人力外包模式的长期替代叙事未消（年内暴跌主因）</li><li>卢比与签证政策的双重不确定性</li><li>财报周预期修复若被 Wipro 10/15 证伪则快速回吐</li></ul>
+    </div>
+  </div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">⏭️ 后续催化</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:10px"><li><b>10/15 Wipro Q2 FY27</b>：财报周下半场开启</li><li><b>10/23 自身 Q2 FY27 财报</b></li><li><b>美国银行业 IT 预算季节确认</b></li></ul>
+
+  <div style="background:#161b22;border:1px solid #30363d;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">📈 技术面：</b>收 11.40 美元贴 50 日线（11.49）争夺，200 日线 13.24 为修复目标位；52 周低点 10.12 构成双底颈线，低位放量反弹首日。</div>
+</div>
+<div style="background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:18px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #30363d;padding-bottom:10px;margin-bottom:12px">
+    <div>
+      <span style="font-size:1.2rem;font-weight:700;color:#43a047">GTLB</span>
+      <span style="color:#c9d1d9;margin-left:8px;font-size:.95rem">— 无催化的高位动量回吐：-7.25% 为 DevOps 板块最深（归因为推断）</span>
+    </div>
+    <div style="font-weight:700;font-size:1.1rem;color:#43a047">-7.25%</div>
+  </div>
+  <div style="font-size:.82rem;color:#8b949e;margin-bottom:14px">收盘 $51.95 · 市值 $88 亿 · 成交额 约 $4.9 亿（936 万股放量，量比未计） · 52w $18.73 – $57.89</div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">📊 基本面变化</div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.75;margin-bottom:14px">开发运维与 DevOps 板块 -1.05% 的单股主导者。当日无公司级公告、无评级变动（FMP grades 端点核至 9/2 财报日全维持，检索亦无新闻）——归因只能是推断：股价年内接近三倍、收盘价仍高出 200 日线约 59%，在 MTUM -0.63% 的动量回吐日被资金优先获利了结，与 EDA 板块 0:6 全灭（CDNS -4.08% 同样无催化）属同一类「高位动量税」。防翻炒核验：检索命中的「Datadog 收购兴趣」为 2025 年 10 月旧闻，与本日下跌无关，严禁当作当日催化引用。基本面侧 9/2 财报后无增量信息，全年指引双上调的框架未变。</p>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">🏛️ 卖方观点</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:14px"><li><b>—</b>（—，—）：当日卖方静默（grades 端点核至 9/2，财报日评级全维持）</li></ul>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div style="background:#161b22;border-left:3px solid #e57373;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#e57373;font-weight:600;margin-bottom:6px">🐂 多方逻辑</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>9/2 财报全年双上调 + 净 ARR +40% 的基本面框架未变</li><li>无催化下跌 = 纯仓位行为，基本面派的加仓窗口</li><li>AI 代码审查产品线的货币化仍在早期</li></ul>
+    </div>
+    <div style="background:#161b22;border-left:3px solid #43a047;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#43a047;font-weight:600;margin-bottom:6px">🐻 空方担忧</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>年内近三倍涨幅的动量筹码出清需要时间</li><li>GPT-6 级代码代理对 DevOps 工具链的长期替代叙事反复</li><li>52 美元下方缺乏近期成交密集区支撑</li></ul>
+    </div>
+  </div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">⏭️ 后续催化</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:10px"><li><b>12 月初 Q3 FY27 财报</b></li><li><b>AI 代码代理产品竞品动态</b>（OpenAI/Anthropic 编码代理迭代）</li><li><b>动量因子方向</b></li></ul>
+
+  <div style="background:#161b22;border:1px solid #30363d;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">📈 技术面：</b>收 51.95 美元跌破上行通道下沿但仍高于 50 日线（45.86）；距 52 周高点 57.89 回撤约 10%，45.9-46 的 50 日线是多空分界。</div>
+</div>
+<div style="background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:18px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #30363d;padding-bottom:10px;margin-bottom:12px">
+    <div>
+      <span style="font-size:1.2rem;font-weight:700;color:#e57373">VRNS</span>
+      <span style="color:#c9d1d9;margin-left:8px;font-size:.95rem">— 并购预期延续 +5.07%：网络安全劈叉日的并购端（无当日新动作）</span>
+    </div>
+    <div style="font-weight:700;font-size:1.1rem;color:#e57373">+5.07%</div>
+  </div>
+  <div style="font-size:.82rem;color:#8b949e;margin-bottom:14px">收盘 $48.72 · 市值 $56 亿 · 成交额 约 $0.7 亿（145 万股，量比未计） · 52w $19.70 – $63.80</div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">📊 基本面变化</div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.75;margin-bottom:14px">网络安全板块 -0.93%（8:10 剧烈劈叉）中的并购端代表：同板块 S 因发债 -6.43%、PANW -1.68% 无催化续弱，Varonis 却 +5.07%——驱动是 Thoma Bravo 旗下 Proofpoint 洽购的并购溢价延续（彭博 9/2 首报「数周内或官宣」，10 月以来无新进展报道，当日无新动作核实，本卡按「预期延续」而非「当日消息」定性）。「数周内」窗口已超一个月，市场仍愿意为其定价说明交易可信度未被证伪；但窗口拖得越久，9/23 ALKT「战略评估结束维持独立」式的溢价拆除风险就越大（当日 -19.29% 的前车之鉴）。数据安全态势管理（DSPM）赛道本身是 AI 数据治理需求的直接受益方。</p>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">🏛️ 卖方观点</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:14px"><li><b>—</b>（—，—）：当日卖方静默（grades 端点核验）</li></ul>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div style="background:#161b22;border-left:3px solid #e57373;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#e57373;font-weight:600;margin-bottom:6px">🐂 多方逻辑</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>Proofpoint 洽购若官宣，对标交易溢价通常 20-30%</li><li>DSPM 赛道在 AI 数据治理周期中的稀缺标的</li><li>板块劈叉日逆势放量 = 套利资金仍在</li></ul>
+    </div>
+    <div style="background:#161b22;border-left:3px solid #43a047;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#43a047;font-weight:600;margin-bottom:6px">🐻 空方担忧</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>「数周内」窗口超期，溢价拆除风险随时间累积（ALKT 前车 -19%）</li><li>若交易告吹，回到基本面定价则估值偏高</li><li>网络安全板块方向两周八次切换，贝塔不稳</li></ul>
+    </div>
+  </div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">⏭️ 后续催化</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:10px"><li><b>Proofpoint 收购官宣与否</b>（二元事件）</li><li><b>10 月末 Q3 财报</b></li><li><b>同业并购案（GEN/GDDY 等）对估值锚的牵引</b></li></ul>
+
+  <div style="background:#161b22;border:1px solid #30363d;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">📈 技术面：</b>收 48.72 美元站上 50 日线（45.33），距 52 周高点 63.80 约 24%；并购预期托底下 45-46 支撑有效，方向等官宣。</div>
+</div>
+  </div>
+</div>
+
+<div class="section" id="sec-news">
+  <div class="title">📰 产业新闻 · 按权威性分层（Tier 1-4）</div>
+  <div style="margin-bottom:18px">
+  <div style="font-size:.88rem;font-weight:700;color:#58a6ff;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #58a6ff55">Tier 1·宏观/大盘</div>
+  <div style="font-size:.78rem;color:#8b949e;margin-bottom:8px">Bloomberg / Reuters / CNBC / Forbes 一线财经媒体</div>
+  <div style="background:#0d1117;border:1px solid #30363d;border-left:3px solid #58a6ff;border-radius:4px;padding:10px 14px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <span style="font-weight:600;font-size:.92rem;color:#e6edf3">四大行三季报开门：放贷端平稳、交易桌轰鸣</span>
+    <span style="background:#21262d;color:#58a6ff;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:600">Forbes/CNBC</span>
+  </div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.7;margin-bottom:6px">高盛股票交易收入 +72% 至 64.4 亿美元、总营收超共识近 20 亿；花旗 238 亿美元营收为十年最佳三季、宣布 30 亿回购；摩根大通每股收益不及共识（含 6.58 亿美元证券投资损失，剔除口径另计，以财报原文为准）。XLF -0.41% 超共识仍平淡。</p>
+  <div style="font-size:.78rem;color:#8b949e"><b style="color:#58a6ff">影响：</b>资本市场活跃直接利好支付网络（交易量）与 IT 服务（银行 IT 预算），是今日软件池两大强势板块的共同源头。</div>
+</div><div style="background:#0d1117;border:1px solid #30363d;border-left:3px solid #58a6ff;border-radius:4px;padding:10px 14px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <span style="font-weight:600;font-size:.92rem;color:#e6edf3">十年期回落至 5.22%、VIX 15.27 平静：今日下跌不是利率行情</span>
+    <span style="background:#21262d;color:#58a6ff;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:600">宏观组合</span>
+  </div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.7;margin-bottom:6px">收益率自 19 年高位 5.24% 回落 2 个基点，威廉姆斯称 2027 年预计无需再加息。但软件长久期板块未获普遍修复——下跌集中在发债事件股与高动量回吐，确认事件驱动性质。</p>
+  <div style="font-size:.78rem;color:#8b949e"><b style="color:#58a6ff">影响：</b>利率喘息日跌的板块，修复需要的是自身证据而非宏观顺风。</div>
+</div><div style="background:#0d1117;border:1px solid #30363d;border-left:3px solid #58a6ff;border-radius:4px;padding:10px 14px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <span style="font-weight:600;font-size:.92rem;color:#e6edf3">ARM-高通判决落地：陪审团认定 Arm 蓄意干扰高通与 Meta 的业务关系</span>
+    <span style="background:#21262d;color:#58a6ff;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:600">CNBC/法庭记录</span>
+  </div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.7;margin-bottom:6px">特拉华陪审团 10/13 裁定 Arm 违反架构许可协议并蓄意干扰高通-Meta 合作，象征性赔偿 2 美元。完整拆解详见硬件复盘；软件侧要点：Meta 数据中心自研 CPU 的供应商选择自由获法律背书。</p>
+  <div style="font-size:.78rem;color:#8b949e"><b style="color:#58a6ff">影响：</b>两池共同二元事件出清，META 牵连定性为边际利好。</div>
+</div>
+</div>
+<div style="margin-bottom:18px">
+  <div style="font-size:.88rem;font-weight:700;color:#e57373;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #e5737355">Tier 2·软件/SaaS/AI 垂直</div>
+  <div style="font-size:.78rem;color:#8b949e;margin-bottom:8px">软件与 AI 应用垂媒、卖方深度</div>
+  <div style="background:#0d1117;border:1px solid #30363d;border-left:3px solid #e57373;border-radius:4px;padding:10px 14px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <span style="font-weight:600;font-size:.92rem;color:#e6edf3">Cipher Digital 官宣 8.5 亿美元零息可转债：矿转算标杆跌成融资轴反面教材</span>
+    <span style="background:#21262d;color:#e57373;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:600">Fool/Benzinga 等多源</span>
+  </div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.7;margin-bottom:6px">零息可转债 2032 到期 + 1.5 亿美元超额配售 + 2030 年旧债换股，资金投向上限期权、Barber Lake 与高性能计算；三周前刚披露成本超支 3.593 亿美元。收盘 -12.77% 创六个月新低。</p>
+  <div style="font-size:.78rem;color:#8b949e"><b style="color:#e57373">影响：</b>「已核准的电网容量也要钱来建」——融资轴可转债形态首个样本，新云链全灭。</div>
+</div><div style="background:#0d1117;border:1px solid #30363d;border-left:3px solid #e57373;border-radius:4px;padding:10px 14px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <span style="font-weight:600;font-size:.92rem;color:#e6edf3">SentinelOne 12.5 亿美元可转债 + 回购 + 拟签循环信贷：融资轴扩散到软件股</span>
+    <span style="background:#21262d;color:#e57373;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:600">Investing.com</span>
+  </div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.7;margin-bottom:6px">2031 年到期可转债、最高 1.5 亿美元回购、拟签 4 亿美元有担保循环信贷（未签署）。年内接近翻倍后高位融资，盘中一度 -7%、收 -6.43%。</p>
+  <div style="font-size:.78rem;color:#8b949e"><b style="color:#e57373">影响：</b>市场对「高位发可转债」按稀释模式化定价，审查范围从 AI 基建扩大到全部高位融资行为。</div>
+</div><div style="background:#0d1117;border:1px solid #30363d;border-left:3px solid #e57373;border-radius:4px;padding:10px 14px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <span style="font-weight:600;font-size:.92rem;color:#e6edf3">Meta 周一发布 Muse 系列新模型（媒体产品名口径不一），股价次日续涨</span>
+    <span style="background:#21262d;color:#e57373;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:600">Fool</span>
+  </div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.7;margin-bottom:6px">Muse 主代理 9/8 发布以来股价累计涨超 20%、曾登双商店免费榜第一；新模型官方稿未独立核实，10/21 三季报临近。</p>
+  <div style="font-size:.78rem;color:#8b949e"><b style="color:#e57373">影响：</b>个人 AI 代理是四巨头中唯一仍在上行定价的消费级叙事，XLC 领涨成长板块。</div>
+</div><div style="background:#0d1117;border:1px solid #30363d;border-left:3px solid #e57373;border-radius:4px;padding:10px 14px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <span style="font-weight:600;font-size:.92rem;color:#e6edf3">甲骨文修复第三日：双杀后的超跌反弹、信用层问题未解</span>
+    <span style="background:#21262d;color:#e57373;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:600">TradingKey</span>
+  </div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.7;margin-bottom:6px">盘中 +3.11%（收盘真值 +4.24%），Jupiter 交易对手公开确认承诺不变 + FY27 资本开支指引执行中；但股价仍压在全部均线下方、标普 BBB- 评级与举债成本问题无一解决。</p>
+  <div style="font-size:.78rem;color:#8b949e"><b style="color:#e57373">影响：</b>企业应用板块 +1.65% 为其单股伪读数（剔除后 +0.27%），板块信号弱于表面。</div>
+</div>
+</div>
+<div style="margin-bottom:18px">
+  <div style="font-size:.88rem;font-weight:700;color:#ffd54f;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #ffd54f55">Tier 3·中概/亚洲互联网与全球外包链</div>
+  <div style="font-size:.78rem;color:#8b949e;margin-bottom:8px">亚洲供应链与外包景气</div>
+  <div style="background:#0d1117;border:1px solid #30363d;border-left:3px solid #ffd54f;border-radius:4px;padding:10px 14px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <span style="font-weight:600;font-size:.92rem;color:#e6edf3">亚洲 ADR 整体持平、印度 IT 独秀：Infosys/Wipro 领涨</span>
+    <span style="background:#21262d;color:#ffd54f;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:600">Finimize</span>
+  </div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.7;margin-bottom:6px">标普亚洲 50 ADR 指数 +0.02% 几乎持平，印度 IT 双雄逆势大涨（INFY 收盘 +5.26%/WIT +5.57%，FMP 真值）。财报周进行中：塔塔 10/8、HCLTech 10/12 已报，Wipro 10/15、Infosys 10/23 在途。</p>
+  <div style="font-size:.78rem;color:#8b949e"><b style="color:#ffd54f">影响：</b>IT 服务 11:1 全池最强广度的直接印证；A 股 IT 外包链弱同向。</div>
+</div><div style="background:#0d1117;border:1px solid #30363d;border-left:3px solid #ffd54f;border-radius:4px;padding:10px 14px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <span style="font-weight:600;font-size:.92rem;color:#e6edf3">中概板块 -0.48% 平淡：无板块级催化</span>
+    <span style="background:#21262d;color:#ffd54f;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:600">盘面观察</span>
+  </div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.7;margin-bottom:6px">IQ -2.78%、BILI -1.38%、BIDU -0.66%，5:6:1 双向市；美股时段利率平稳，无增量催化核实。</p>
+  <div style="font-size:.78rem;color:#8b949e"><b style="color:#ffd54f">影响：</b>映射无增量信号，次日港股互联网以自身叙事为主。</div>
+</div><div style="background:#0d1117;border:1px solid #30363d;border-left:3px solid #ffd54f;border-radius:4px;padding:10px 14px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <span style="font-weight:600;font-size:.92rem;color:#e6edf3">比特币日内偏强而矿企收跌：「跟算力不跟币价」又一日</span>
+    <span style="background:#21262d;color:#ffd54f;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:600">币价观察</span>
+  </div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.7;margin-bottom:6px">美股时段币价约 8.1-8.3 万偏强，矿企板块 1:6 收跌（剔 MSTR 后 -0.73%）——矿转算标的跟举债算力链连坐而非跟币价。</p>
+  <div style="font-size:.78rem;color:#8b949e"><b style="color:#ffd54f">影响：</b>幅度未达阈值不立主题，但形态延续确认矿企定价权已交给融资轴。</div>
+</div>
+</div>
+<div style="margin-bottom:18px">
+  <div style="font-size:.88rem;font-weight:700;color:#a5d6a7;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #a5d6a755">Tier 4·公司公告/评级</div>
+  <div style="font-size:.78rem;color:#8b949e;margin-bottom:8px">8-K / 并购 / 评级变动</div>
+  <div style="background:#0d1117;border:1px solid #30363d;border-left:3px solid #a5d6a7;border-radius:4px;padding:10px 14px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <span style="font-weight:600;font-size:.92rem;color:#e6edf3">两池 ratings 文件缺失日的兜底核验：当日评级近乎静默</span>
+    <span style="background:#21262d;color:#a5d6a7;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:600">FMP grades 核验</span>
+  </div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.7;margin-bottom:6px">逐票核验 grades 端点：GTLB 停 9/2、ORCL 停 10/2、META 停 6/2（库滞后常态）；S 的 FBN 下调与 TD Cowen 上调出现在发债当日聚合页但原始日期未独立核实，谨慎引用。META 的 9 月目标价潮（摩根大通 $820 等）全部为存量。</p>
+  <div style="font-size:.78rem;color:#8b949e"><b style="color:#a5d6a7">影响：</b>媒体在异动日引用的评级多为存量翻炒，已逐票排除。</div>
+</div><div style="background:#0d1117;border:1px solid #30363d;border-left:3px solid #a5d6a7;border-radius:4px;padding:10px 14px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <span style="font-weight:600;font-size:.92rem;color:#e6edf3">Varonis：Proofpoint 洽购「数周内」窗口已超一个月</span>
+    <span style="background:#21262d;color:#a5d6a7;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:600">彭博（9/2 首报）</span>
+  </div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.7;margin-bottom:6px">当日 +5.07% 为并购预期延续而非新动作；窗口超期后溢价拆除风险累积（9/23 ALKT 战略评估告吹 -19% 为前车）。</p>
+  <div style="font-size:.78rem;color:#8b949e"><b style="color:#a5d6a7">影响：</b>网络安全板块 8:10 劈叉的并购端，二元事件待官宣。</div>
+</div><div style="background:#0d1117;border:1px solid #30363d;border-left:3px solid #a5d6a7;border-radius:4px;padding:10px 14px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <span style="font-weight:600;font-size:.92rem;color:#e6edf3">SentinelOne CFO 于发债前夜（10/12）披露售股约 41.3 万美元</span>
+    <span style="background:#21262d;color:#a5d6a7;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:600">SEC 披露</span>
+  </div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.7;margin-bottom:6px">金额小、常规性质，但时点上构成发债公告的情绪注脚。</p>
+  <div style="font-size:.78rem;color:#8b949e"><b style="color:#a5d6a7">影响：</b>个股卡 bear 论据级别，不构成独立信号。</div>
+</div><div style="background:#0d1117;border:1px solid #30363d;border-left:3px solid #a5d6a7;border-radius:4px;padding:10px 14px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <span style="font-weight:600;font-size:.92rem;color:#e6edf3">GTLB -7.25%/CDNS -4.08%/数据基础设施 0:5 全灭：均无当日公告</span>
+    <span style="background:#21262d;color:#a5d6a7;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:600">盘面观察</span>
+  </div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.7;margin-bottom:6px">三处均为无催化的高位动量回吐（归因为推断已标注）；GTLB 的 Datadog 收购报道为 2025 年旧闻，防翻炒排除。</p>
+  <div style="font-size:.78rem;color:#8b949e"><b style="color:#a5d6a7">影响：</b>动量税型下跌，基本面无增量利空。</div>
+</div>
+</div>
+  <div style="margin-top:14px;padding:10px 14px;background:#0d1117;border:1px solid #30363d;border-radius:6px;font-size:.78rem;color:#8b949e;line-height:1.7">
+    <b style="color:#c9d1d9">📚 渠道说明：</b>Tier 1 宏观大盘（Bloomberg/Reuters/WSJ/CNBC/FT）；Tier 2 半导体深度（SemiAnalysis/SemiWiki/Semiconductor Engineering/EETimes/TechInsights/ServeTheHome）；Tier 3 亚洲供应链（DigiTimes/TrendForce/Nikkei Asia/日经亚洲）；Tier 4 公司公告 + 分析师评级（公司 IR / Bloomberg Analyst Estimates）。
+  </div>
+</div>
+
+<div id="sec-forward"><div class="section">
+  <div class="title">🔭 未来 5 交易日观察（10/14 – 10/20）</div>
+  <table>
+    <thead><tr><th style="min-width:90px">日期</th><th>池内业绩</th><th>宏观数据</th><th>行业事件 / 大会</th></tr></thead>
+    <tbody>
+      <tr><td><b>10/14 周三</b></td><td><span style="color:#8b949e">—</span></td><td><span style="color:#8b949e">—</span></td><td><span style="color:#8b949e">—</span></td></tr>
+      <tr><td><b>10/15 周四</b></td><td><div style="margin-bottom:6px">WIT<br><span style="font-size:.74rem;color:#8b949e">EPS $0.04 / Rev $2.58B</span></div></td><td><span style="color:#8b949e">—</span></td><td><span style="color:#8b949e">—</span></td></tr>
+      <tr><td><b>10/16 周五</b></td><td><span style="color:#8b949e">—</span></td><td><span style="color:#8b949e">—</span></td><td><span style="color:#8b949e">—</span></td></tr>
+      <tr><td><b>10/19 周一</b></td><td><div style="margin-bottom:6px">KARO<br><span style="font-size:.74rem;color:#8b949e">EPS $0.59 / Rev $99M</span></div></td><td><span style="color:#8b949e">—</span></td><td><span style="color:#8b949e">—</span></td></tr>
+      <tr><td><b>10/20 周二</b></td><td><div style="margin-bottom:6px"><b class="up">NFLX</b><br><span style="font-size:.74rem;color:#8b949e">EPS $0.82 / Rev $12.87B</span></div><div style="margin-bottom:6px">PEGA<br><span style="font-size:.74rem;color:#8b949e">EPS $0.49 / Rev $423M</span></div></td><td><span style="color:#8b949e">—</span></td><td><span style="color:#8b949e">—</span></td></tr>
+    </tbody>
+  </table>
+  <p style="margin-top:10px;font-size:.82rem;color:#8b949e">共池内 4 家公司在未来 5 交易日内披露业绩。宏观日历来自 MACRO_EVENTS（每周维护），行业大会来自 INDUSTRY_EVENTS。</p>
+  <div style="margin-top:8px;font-size:.82rem;color:#8b949e">⏰ 时间转换：美东 → 北京 +12h（夏令时）；盘前 = 北京 21:00 前；盘后 = 北京次日凌晨 04:00 起</div>
+</div></div>
+
+<div class="section">
+  <div class="title">🎤 2026 行业大会日历（年度参考）</div>
+  <table>
+    <thead><tr><th>时段</th><th>大会</th><th>看点</th><th>距今</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <p style="margin-top:10px;font-size:.82rem;color:#8b949e">🎯 大会窗口前后 5 个交易日通常有 sector rotation，重点关注产品发布预期与实际差异</p>
+</div>
+
+<script>
+const TREEMAP_DATA = [{"name": "平台与互联网", "children": [{"name": "云与互联网巨头", "value": 7139.534718247329, "children": [{"name": "GOOGL", "value": 2069.174956353377, "dp": 0.3, "close": 353.78, "cap": 4281485, "ind": "云与互联网巨头", "itemStyle": {"color": "#ef9a9a"}}, {"name": "MSFT", "value": 2008.8342390550795, "dp": 0.43, "close": 543.45, "cap": 4035415, "ind": "云与互联网巨头", "itemStyle": {"color": "#ef9a9a"}}, {"name": "AMZN", "value": 1667.8042451079202, "dp": -0.37, "close": 258.58, "cap": 2781571, "ind": "云与互联网巨头", "itemStyle": {"color": "#a5d6a7"}}, {"name": "META", "value": 1393.7212777309528, "dp": 2.63, "close": 762.5, "cap": 1942459, "ind": "云与互联网巨头", "itemStyle": {"color": "#e57373"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "消费互联网平台", "value": 2855.9277371931657, "children": [{"name": "NFLX", "value": 541.6557947626887, "dp": -0.21, "close": 70.46, "cap": 293391, "ind": "消费互联网平台", "itemStyle": {"color": "#a5d6a7"}}, {"name": "SHOP", "value": 478.6042206249335, "dp": -1.51, "close": 176.52, "cap": 229062, "ind": "消费互联网平台", "itemStyle": {"color": "#388e3c"}}, {"name": "BKNG", "value": 349.3579825909235, "dp": -0.58, "close": 157.51, "cap": 122051, "ind": "消费互联网平台", "itemStyle": {"color": "#a5d6a7"}}, {"name": "UBER", "value": 381.02362131500456, "dp": -0.25, "close": 71.32, "cap": 145179, "ind": "消费互联网平台", "itemStyle": {"color": "#a5d6a7"}}, {"name": "CVNA", "value": 257.3674416082967, "dp": 1.48, "close": 60.39, "cap": 66238, "ind": "消费互联网平台", "itemStyle": {"color": "#e57373"}}, {"name": "SE", "value": 239.98333275458944, "dp": 0.05, "close": 95.93, "cap": 57592, "ind": "消费互联网平台", "itemStyle": {"color": "#ef9a9a"}}, {"name": "EBAY", "value": 227.34555196880365, "dp": 1.54, "close": 116.41, "cap": 51686, "ind": "消费互联网平台", "itemStyle": {"color": "#e57373"}}, {"name": "RDDT", "value": 172.78888853164142, "dp": -3.03, "close": 155.09, "cap": 29856, "ind": "消费互联网平台", "itemStyle": {"color": "#388e3c"}}, {"name": "GRAB", "value": 108.80716888146662, "dp": -5.4, "close": 2.98, "cap": 11839, "ind": "消费互联网平台", "itemStyle": {"color": "#1b5e20"}}, {"name": "LIF", "value": 58.71967302361279, "dp": -2.92, "close": 42.55, "cap": 3448, "ind": "消费互联网平台", "itemStyle": {"color": "#388e3c"}}, {"name": "OPRA", "value": 40.27406113120453, "dp": 2.84, "close": 18.11, "cap": 1622, "ind": "消费互联网平台", "itemStyle": {"color": "#e57373"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "中概/亚洲互联网", "value": 893.2580090623237, "children": [{"name": "NTES", "value": 282.22154418116276, "dp": -0.52, "close": 124.76, "cap": 79649, "ind": "中概/亚洲互联网", "itemStyle": {"color": "#a5d6a7"}}, {"name": "BIDU", "value": 168.76611034209446, "dp": -0.66, "close": 83.74, "cap": 28482, "ind": "中概/亚洲互联网", "itemStyle": {"color": "#a5d6a7"}}, {"name": "BZ", "value": 85.8079250419214, "dp": -0.06, "close": 16.09, "cap": 7363, "ind": "中概/亚洲互联网", "itemStyle": {"color": "#a5d6a7"}}, {"name": "BILI", "value": 79.27168473042566, "dp": -1.38, "close": 14.98, "cap": 6284, "ind": "中概/亚洲互联网", "itemStyle": {"color": "#388e3c"}}, {"name": "JOYY", "value": 65.34523701081817, "dp": 0.43, "close": 82.53, "cap": 4270, "ind": "中概/亚洲互联网", "itemStyle": {"color": "#ef9a9a"}}, {"name": "KC", "value": 52.507142371300304, "dp": 0.76, "close": 9.32, "cap": 2757, "ind": "中概/亚洲互联网", "itemStyle": {"color": "#ef9a9a"}}, {"name": "ATHM", "value": 24.269322199023193, "dp": -0.44, "close": 20.35, "cap": 589, "ind": "中概/亚洲互联网", "itemStyle": {"color": "#a5d6a7"}}, {"name": "WB", "value": 39.59797974644666, "dp": 0.23, "close": 6.56, "cap": 1568, "ind": "中概/亚洲互联网", "itemStyle": {"color": "#ef9a9a"}}, {"name": "IQ", "value": 30.919249667480614, "dp": -2.78, "close": 0.99, "cap": 956, "ind": "中概/亚洲互联网", "itemStyle": {"color": "#388e3c"}}, {"name": "MOMO", "value": 27.83882181415011, "dp": 0.0, "close": 4.75, "cap": 775, "ind": "中概/亚洲互联网", "itemStyle": {"color": "#ef9a9a"}}, {"name": "API", "value": 19.949937343260004, "dp": 7.54, "close": 4.42, "cap": 398, "ind": "中概/亚洲互联网", "itemStyle": {"color": "#7f0000"}}, {"name": "ZH", "value": 16.76305461424021, "dp": 1.46, "close": 3.48, "cap": 281, "ind": "中概/亚洲互联网", "itemStyle": {"color": "#e57373"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "企业软件", "children": [{"name": "企业应用软件", "value": 3164.9363415714124, "children": [{"name": "ORCL", "value": 642.2935465968812, "dp": 4.24, "close": 143.22, "cap": 412541, "ind": "企业应用软件", "itemStyle": {"color": "#c62828"}}, {"name": "SAP", "value": 506.02371485929393, "dp": 0.87, "close": 219.75, "cap": 256060, "ind": "企业应用软件", "itemStyle": {"color": "#ef9a9a"}}, {"name": "CRM", "value": 441.50877680970285, "dp": 1.75, "close": 238.01, "cap": 194930, "ind": "企业应用软件", "itemStyle": {"color": "#e57373"}}, {"name": "NOW", "value": 378.55514789789873, "dp": -1.22, "close": 138.61, "cap": 143304, "ind": "企业应用软件", "itemStyle": {"color": "#388e3c"}}, {"name": "INTU", "value": 287.1550104037887, "dp": -1.48, "close": 301.45, "cap": 82458, "ind": "企业应用软件", "itemStyle": {"color": "#388e3c"}}, {"name": "WDAY", "value": 220.73966566976583, "dp": -1.18, "close": 186.02, "cap": 48726, "ind": "企业应用软件", "itemStyle": {"color": "#388e3c"}}, {"name": "HUBS", "value": 106.39548862616309, "dp": -1.05, "close": 221.02, "cap": 11320, "ind": "企业应用软件", "itemStyle": {"color": "#388e3c"}}, {"name": "NICE", "value": 82.07313811473277, "dp": -0.08, "close": 114.95, "cap": 6736, "ind": "企业应用软件", "itemStyle": {"color": "#a5d6a7"}}, {"name": "OTEX", "value": 77.80745465570763, "dp": 3.18, "close": 24.95, "cap": 6054, "ind": "企业应用软件", "itemStyle": {"color": "#e57373"}}, {"name": "PEGA", "value": 75.17978451685, "dp": -1.52, "close": 34.38, "cap": 5652, "ind": "企业应用软件", "itemStyle": {"color": "#388e3c"}}, {"name": "WK", "value": 62.80923498976882, "dp": -0.74, "close": 72.5, "cap": 3945, "ind": "企业应用软件", "itemStyle": {"color": "#a5d6a7"}}, {"name": "FRSH", "value": 61.98386886924694, "dp": -0.14, "close": 13.9, "cap": 3842, "ind": "企业应用软件", "itemStyle": {"color": "#a5d6a7"}}, {"name": "AVPT", "value": 55.50675634551167, "dp": -0.27, "close": 14.53, "cap": 3081, "ind": "企业应用软件", "itemStyle": {"color": "#a5d6a7"}}, {"name": "APPN", "value": 53.51635264103861, "dp": -0.57, "close": 38.71, "cap": 2864, "ind": "企业应用软件", "itemStyle": {"color": "#a5d6a7"}}, {"name": "VERX", "value": 45.42025979670306, "dp": -1.4, "close": 12.72, "cap": 2063, "ind": "企业应用软件", "itemStyle": {"color": "#388e3c"}}, {"name": "BL", "value": 41.60528812542944, "dp": 0.72, "close": 29.51, "cap": 1731, "ind": "企业应用软件", "itemStyle": {"color": "#ef9a9a"}}, {"name": "DCBO", "value": 26.362852652928137, "dp": 6.95, "close": 27.39, "cap": 695, "ind": "企业应用软件", "itemStyle": {"color": "#c62828"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "垂直行业SaaS", "value": 1430.2530334732976, "children": [{"name": "ROP", "value": 192.81856757065694, "dp": 0.3, "close": 368.41, "cap": 37179, "ind": "垂直行业SaaS", "itemStyle": {"color": "#ef9a9a"}}, {"name": "IOT", "value": 154.32109382712397, "dp": -0.84, "close": 41.27, "cap": 23815, "ind": "垂直行业SaaS", "itemStyle": {"color": "#a5d6a7"}}, {"name": "GWRE", "value": 117.48191350161096, "dp": 0.63, "close": 165.78, "cap": 13802, "ind": "垂直行业SaaS", "itemStyle": {"color": "#ef9a9a"}}, {"name": "TYL", "value": 119.18892566006289, "dp": 2.05, "close": 346.9, "cap": 14206, "ind": "垂直行业SaaS", "itemStyle": {"color": "#e57373"}}, {"name": "MANH", "value": 113.95174417269794, "dp": 2.21, "close": 222.71, "cap": 12985, "ind": "垂直行业SaaS", "itemStyle": {"color": "#e57373"}}, {"name": "PCOR", "value": 92.08148565265441, "dp": -0.05, "close": 56.19, "cap": 8479, "ind": "垂直行业SaaS", "itemStyle": {"color": "#a5d6a7"}}, {"name": "TTAN", "value": 82.73451516749222, "dp": -0.72, "close": 71.76, "cap": 6845, "ind": "垂直行业SaaS", "itemStyle": {"color": "#a5d6a7"}}, {"name": "APPF", "value": 84.32674546073743, "dp": 0.01, "close": 199.03, "cap": 7111, "ind": "垂直行业SaaS", "itemStyle": {"color": "#ef9a9a"}}, {"name": "DSGX", "value": 85.28188553262645, "dp": 1.45, "close": 84.88, "cap": 7273, "ind": "垂直行业SaaS", "itemStyle": {"color": "#e57373"}}, {"name": "AGYS", "value": 55.51576352712804, "dp": 3.36, "close": 109.26, "cap": 3082, "ind": "垂直行业SaaS", "itemStyle": {"color": "#e57373"}}, {"name": "INTA", "value": 55.27205442174191, "dp": 0.0, "close": 39.64, "cap": 3055, "ind": "垂直行业SaaS", "itemStyle": {"color": "#ef9a9a"}}, {"name": "ALRM", "value": 52.76362383309168, "dp": 0.64, "close": 56.29, "cap": 2784, "ind": "垂直行业SaaS", "itemStyle": {"color": "#ef9a9a"}}, {"name": "SPSC", "value": 54.909015653169384, "dp": -0.99, "close": 83.76, "cap": 3015, "ind": "垂直行业SaaS", "itemStyle": {"color": "#a5d6a7"}}, {"name": "BLKB", "value": 46.70117771534247, "dp": 2.8, "close": 48.06, "cap": 2181, "ind": "垂直行业SaaS", "itemStyle": {"color": "#e57373"}}, {"name": "KARO", "value": 43.61192497471305, "dp": -0.15, "close": 61.57, "cap": 1902, "ind": "垂直行业SaaS", "itemStyle": {"color": "#a5d6a7"}}, {"name": "EVCM", "value": 40.93897898091744, "dp": 1.94, "close": 9.47, "cap": 1676, "ind": "垂直行业SaaS", "itemStyle": {"color": "#e57373"}}, {"name": "LSPD", "value": 38.353617821530214, "dp": -0.84, "close": 10.68, "cap": 1471, "ind": "垂直行业SaaS", "itemStyle": {"color": "#a5d6a7"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "创意与内容软件", "value": 449.13978707639086, "children": [{"name": "ADBE", "value": 306.4653324602964, "dp": -0.78, "close": 236.28, "cap": 93921, "ind": "创意与内容软件", "itemStyle": {"color": "#a5d6a7"}}, {"name": "U", "value": 142.67445461609447, "dp": -0.11, "close": 46.63, "cap": 20356, "ind": "创意与内容软件", "itemStyle": {"color": "#a5d6a7"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "EDA与工程软件", "value": 1113.829150387978, "children": [{"name": "CDNS", "value": 303.37435620038815, "dp": -4.08, "close": 334.2, "cap": 92036, "ind": "EDA与工程软件", "itemStyle": {"color": "#1b5e20"}}, {"name": "SNPS", "value": 307.7141530706704, "dp": -1.59, "close": 494.51, "cap": 94688, "ind": "EDA与工程软件", "itemStyle": {"color": "#388e3c"}}, {"name": "ADSK", "value": 220.5765173358216, "dp": -1.33, "close": 230.43, "cap": 48654, "ind": "EDA与工程软件", "itemStyle": {"color": "#388e3c"}}, {"name": "PTC", "value": 149.67965793654128, "dp": -0.22, "close": 193.96, "cap": 22404, "ind": "EDA与工程软件", "itemStyle": {"color": "#a5d6a7"}}, {"name": "BSY", "value": 101.22746662838105, "dp": -0.26, "close": 35.06, "cap": 10247, "ind": "EDA与工程软件", "itemStyle": {"color": "#a5d6a7"}}, {"name": "AIP", "value": 31.25699921617557, "dp": -1.37, "close": 21.16, "cap": 977, "ind": "EDA与工程软件", "itemStyle": {"color": "#388e3c"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "协同办公与通信", "value": 903.8766482403095, "children": [{"name": "TWLO", "value": 206.7317101946385, "dp": -0.38, "close": 281.59, "cap": 42738, "ind": "协同办公与通信", "itemStyle": {"color": "#a5d6a7"}}, {"name": "ZM", "value": 169.65848048358797, "dp": 0.22, "close": 98.16, "cap": 28784, "ind": "协同办公与通信", "itemStyle": {"color": "#ef9a9a"}}, {"name": "DOCU", "value": 117.50319144601988, "dp": 1.89, "close": 72.31, "cap": 13807, "ind": "协同办公与通信", "itemStyle": {"color": "#e57373"}}, {"name": "MNDY", "value": 59.833101206606365, "dp": -0.08, "close": 84.69, "cap": 3580, "ind": "协同办公与通信", "itemStyle": {"color": "#a5d6a7"}}, {"name": "DBX", "value": 95.1892851112981, "dp": 2.09, "close": 35.6, "cap": 9061, "ind": "协同办公与通信", "itemStyle": {"color": "#e57373"}}, {"name": "RNG", "value": 82.37111144084436, "dp": 0.67, "close": 78.69, "cap": 6785, "ind": "协同办公与通信", "itemStyle": {"color": "#ef9a9a"}}, {"name": "BOX", "value": 72.11795892841117, "dp": 2.26, "close": 37.54, "cap": 5201, "ind": "协同办公与通信", "itemStyle": {"color": "#e57373"}}, {"name": "FIVN", "value": 52.06726418777925, "dp": -0.73, "close": 35.41, "cap": 2711, "ind": "协同办公与通信", "itemStyle": {"color": "#a5d6a7"}}, {"name": "ASAN", "value": 48.40454524112379, "dp": -0.3, "close": 9.86, "cap": 2343, "ind": "协同办公与通信", "itemStyle": {"color": "#a5d6a7"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "开发运维与DevOps", "value": 970.949132566123, "children": [{"name": "DDOG", "value": 317.5814856064503, "dp": -1.37, "close": 283.34, "cap": 100858, "ind": "开发运维与DevOps", "itemStyle": {"color": "#388e3c"}}, {"name": "TEAM", "value": 233.76697799304333, "dp": 0.14, "close": 208.04, "cap": 54647, "ind": "开发运维与DevOps", "itemStyle": {"color": "#ef9a9a"}}, {"name": "DT", "value": 137.0729732660673, "dp": -1.21, "close": 64.46, "cap": 18789, "ind": "开发运维与DevOps", "itemStyle": {"color": "#388e3c"}}, {"name": "FROG", "value": 109.65856099730654, "dp": 0.26, "close": 99.28, "cap": 12025, "ind": "开发运维与DevOps", "itemStyle": {"color": "#ef9a9a"}}, {"name": "GTLB", "value": 93.66963221877195, "dp": -7.25, "close": 51.95, "cap": 8774, "ind": "开发运维与DevOps", "itemStyle": {"color": "#1b5e20"}}, {"name": "PRGS", "value": 40.19950248448356, "dp": 1.08, "close": 39.41, "cap": 1616, "ind": "开发运维与DevOps", "itemStyle": {"color": "#e57373"}}, {"name": "PD", "value": 39.0, "dp": 2.71, "close": 16.68, "cap": 1521, "ind": "开发运维与DevOps", "itemStyle": {"color": "#e57373"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "基础软件与安全", "children": [{"name": "数据基础设施", "value": 818.2957861697311, "children": [{"name": "SNOW", "value": 352.1363372331802, "dp": -0.72, "close": 357.76, "cap": 124000, "ind": "数据基础设施", "itemStyle": {"color": "#a5d6a7"}}, {"name": "MDB", "value": 173.22528683769008, "dp": -2.16, "close": 373.07, "cap": 30007, "ind": "数据基础设施", "itemStyle": {"color": "#388e3c"}}, {"name": "NTNX", "value": 140.360250783475, "dp": -1.7, "close": 72.88, "cap": 19701, "ind": "数据基础设施", "itemStyle": {"color": "#388e3c"}}, {"name": "ESTC", "value": 99.02019995940222, "dp": -1.26, "close": 94.32, "cap": 9805, "ind": "数据基础设施", "itemStyle": {"color": "#388e3c"}}, {"name": "TDC", "value": 53.55371135598354, "dp": -0.65, "close": 30.48, "cap": 2868, "ind": "数据基础设施", "itemStyle": {"color": "#a5d6a7"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "网络安全", "value": 2935.137040023354, "children": [{"name": "PANW", "value": 568.8400478166072, "dp": -1.68, "close": 397.03, "cap": 323579, "ind": "网络安全", "itemStyle": {"color": "#388e3c"}}, {"name": "CRWD", "value": 517.1672843481111, "dp": -0.68, "close": 261.21, "cap": 267462, "ind": "网络安全", "itemStyle": {"color": "#a5d6a7"}}, {"name": "FTNT", "value": 374.11629208041717, "dp": -1.13, "close": 190.76, "cap": 139963, "ind": "网络安全", "itemStyle": {"color": "#388e3c"}}, {"name": "ZS", "value": 192.29144546755063, "dp": 1.28, "close": 228.66, "cap": 36976, "ind": "网络安全", "itemStyle": {"color": "#e57373"}}, {"name": "OKTA", "value": 193.98711297403239, "dp": -0.24, "close": 226.53, "cap": 37631, "ind": "网络安全", "itemStyle": {"color": "#a5d6a7"}}, {"name": "RBRK", "value": 156.1537703675451, "dp": -1.28, "close": 118.47, "cap": 24384, "ind": "网络安全", "itemStyle": {"color": "#388e3c"}}, {"name": "CHKP", "value": 117.40102214205803, "dp": 0.5, "close": 134.99, "cap": 13783, "ind": "网络安全", "itemStyle": {"color": "#ef9a9a"}}, {"name": "SAIL", "value": 104.81412118603103, "dp": -1.02, "close": 19.37, "cap": 10986, "ind": "网络安全", "itemStyle": {"color": "#388e3c"}}, {"name": "S", "value": 89.9166280506559, "dp": -6.43, "close": 24.01, "cap": 8085, "ind": "网络安全", "itemStyle": {"color": "#1b5e20"}}, {"name": "GEN", "value": 119.3817406473871, "dp": 1.97, "close": 23.81, "cap": 14252, "ind": "网络安全", "itemStyle": {"color": "#e57373"}}, {"name": "YOU", "value": 66.17401302626281, "dp": 2.5, "close": 43.52, "cap": 4379, "ind": "网络安全", "itemStyle": {"color": "#e57373"}}, {"name": "QLYS", "value": 83.52843827104634, "dp": 0.68, "close": 198.11, "cap": 6977, "ind": "网络安全", "itemStyle": {"color": "#ef9a9a"}}, {"name": "CVLT", "value": 81.13568881817667, "dp": 2.24, "close": 158.85, "cap": 6583, "ind": "网络安全", "itemStyle": {"color": "#e57373"}}, {"name": "VRNS", "value": 74.80641683706017, "dp": 5.07, "close": 48.72, "cap": 5596, "ind": "网络安全", "itemStyle": {"color": "#c62828"}}, {"name": "TENB", "value": 67.47592163134935, "dp": 1.28, "close": 41.29, "cap": 4553, "ind": "网络安全", "itemStyle": {"color": "#e57373"}}, {"name": "CLBT", "value": 53.28226721902888, "dp": -0.52, "close": 11.38, "cap": 2839, "ind": "网络安全", "itemStyle": {"color": "#a5d6a7"}}, {"name": "ATEN", "value": 45.28796749689701, "dp": -0.8, "close": 28.49, "cap": 2051, "ind": "网络安全", "itemStyle": {"color": "#a5d6a7"}}, {"name": "RPD", "value": 29.376861643136763, "dp": -0.08, "close": 12.92, "cap": 863, "ind": "网络安全", "itemStyle": {"color": "#a5d6a7"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "互联网基础设施", "value": 1002.7145836067275, "children": [{"name": "NET", "value": 351.33175205210244, "dp": -0.89, "close": 347.76, "cap": 123434, "ind": "互联网基础设施", "itemStyle": {"color": "#a5d6a7"}}, {"name": "VRSN", "value": 165.16355530200966, "dp": -0.31, "close": 301.76, "cap": 27279, "ind": "互联网基础设施", "itemStyle": {"color": "#a5d6a7"}}, {"name": "AKAM", "value": 120.53215338655491, "dp": -1.69, "close": 99.93, "cap": 14528, "ind": "互联网基础设施", "itemStyle": {"color": "#388e3c"}}, {"name": "GDDY", "value": 116.79897259822108, "dp": 0.69, "close": 103.03, "cap": 13642, "ind": "互联网基础设施", "itemStyle": {"color": "#ef9a9a"}}, {"name": "DOCN", "value": 122.42957159118053, "dp": -2.44, "close": 128.21, "cap": 14989, "ind": "互联网基础设施", "itemStyle": {"color": "#388e3c"}}, {"name": "WIX", "value": 61.34329629226001, "dp": -3.28, "close": 71.74, "cap": 3763, "ind": "互联网基础设施", "itemStyle": {"color": "#388e3c"}}, {"name": "FSLY", "value": 65.11528238439882, "dp": 2.5, "close": 27.09, "cap": 4240, "ind": "互联网基础设施", "itemStyle": {"color": "#e57373"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "AI与算力", "children": [{"name": "AI应用与数据智能", "value": 918.9429510040505, "children": [{"name": "PLTR", "value": 692.1856687334692, "dp": -0.16, "close": 208.67, "cap": 479121, "ind": "AI应用与数据智能", "itemStyle": {"color": "#a5d6a7"}}, {"name": "PATH", "value": 83.95236744726142, "dp": -0.56, "close": 13.25, "cap": 7048, "ind": "AI应用与数据智能", "itemStyle": {"color": "#a5d6a7"}}, {"name": "SOUN", "value": 46.10856753359401, "dp": -1.81, "close": 4.88, "cap": 2126, "ind": "AI应用与数据智能", "itemStyle": {"color": "#388e3c"}}, {"name": "AI", "value": 42.720018726587654, "dp": 3.45, "close": 12.01, "cap": 1825, "ind": "AI应用与数据智能", "itemStyle": {"color": "#e57373"}}, {"name": "BBAI", "value": 33.926390907374746, "dp": 4.35, "close": 2.4, "cap": 1151, "ind": "AI应用与数据智能", "itemStyle": {"color": "#c62828"}}, {"name": "CRNC", "value": 20.049937655763422, "dp": 1.6, "close": 8.89, "cap": 402, "ind": "AI应用与数据智能", "itemStyle": {"color": "#e57373"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "AI算力/数据中心", "value": 2405.22352253568, "children": [{"name": "NBIS", "value": 237.16028335284136, "dp": -1.52, "close": 206.86, "cap": 56245, "ind": "AI算力/数据中心", "itemStyle": {"color": "#388e3c"}}, {"name": "CRWV", "value": 206.03640455026388, "dp": -3.05, "close": 77.81, "cap": 42451, "ind": "AI算力/数据中心", "itemStyle": {"color": "#388e3c"}}, {"name": "IREN", "value": 111.44056711987785, "dp": 0.0, "close": 34.8, "cap": 12419, "ind": "AI算力/数据中心", "itemStyle": {"color": "#ef9a9a"}}, {"name": "APLD", "value": 80.37412518964048, "dp": -3.48, "close": 22.44, "cap": 6460, "ind": "AI算力/数据中心", "itemStyle": {"color": "#388e3c"}}, {"name": "WULF", "value": 80.90735442467513, "dp": -1.2, "close": 13.21, "cap": 6546, "ind": "AI算力/数据中心", "itemStyle": {"color": "#388e3c"}}, {"name": "CIFR", "value": 68.11020481543129, "dp": -12.77, "close": 11.34, "cap": 4639, "ind": "AI算力/数据中心", "itemStyle": {"color": "#1b5e20"}}, {"name": "CORZ", "value": 70.41306696913578, "dp": 2.73, "close": 15.43, "cap": 4958, "ind": "AI算力/数据中心", "itemStyle": {"color": "#e57373"}}, {"name": "GDS", "value": 75.96051605933177, "dp": -2.6, "close": 29.6, "cap": 5770, "ind": "AI算力/数据中心", "itemStyle": {"color": "#388e3c"}}, {"name": "VNET", "value": 38.34057902536163, "dp": -1.13, "close": 5.26, "cap": 1470, "ind": "AI算力/数据中心", "itemStyle": {"color": "#388e3c"}}, {"name": "SPCX", "value": 1436.4804210291206, "dp": -4.21, "close": 156.54, "cap": 2063476, "ind": "AI算力/数据中心", "itemStyle": {"color": "#1b5e20"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "量子计算", "value": 109.38096735609224, "children": [{"name": "QBTS", "value": 70.09992867328754, "dp": -2.62, "close": 13.38, "cap": 4914, "ind": "量子计算", "itemStyle": {"color": "#388e3c"}}, {"name": "QUBT", "value": 39.28103868280471, "dp": -0.87, "close": 6.87, "cap": 1543, "ind": "量子计算", "itemStyle": {"color": "#a5d6a7"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "自动驾驶与AI出行", "value": 146.77864843307313, "children": [{"name": "AUR", "value": 102.33767634649519, "dp": -5.65, "close": 5.34, "cap": 10473, "ind": "自动驾驶与AI出行", "itemStyle": {"color": "#1b5e20"}}, {"name": "PONY", "value": 44.44097208657794, "dp": -2.61, "close": 5.59, "cap": 1975, "ind": "自动驾驶与AI出行", "itemStyle": {"color": "#388e3c"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "金融与数字资产", "children": [{"name": "金融科技与支付", "value": 2436.336881061933, "children": [{"name": "V", "value": 859.9203451483166, "dp": 1.74, "close": 396.06, "cap": 739463, "ind": "金融科技与支付", "itemStyle": {"color": "#e57373"}}, {"name": "MA", "value": 728.306940788017, "dp": 1.63, "close": 604.8, "cap": 530431, "ind": "金融科技与支付", "itemStyle": {"color": "#e57373"}}, {"name": "PYPL", "value": 219.2053831455788, "dp": 0.21, "close": 56.17, "cap": 48051, "ind": "金融科技与支付", "itemStyle": {"color": "#ef9a9a"}}, {"name": "FICO", "value": 124.96399481450646, "dp": -2.29, "close": 723.03, "cap": 15616, "ind": "金融科技与支付", "itemStyle": {"color": "#388e3c"}}, {"name": "BILL", "value": 66.18156843109719, "dp": -0.43, "close": 43.98, "cap": 4380, "ind": "金融科技与支付", "itemStyle": {"color": "#a5d6a7"}}, {"name": "ACIW", "value": 72.14568594171102, "dp": 0.27, "close": 51.2, "cap": 5205, "ind": "金融科技与支付", "itemStyle": {"color": "#ef9a9a"}}, {"name": "WAY", "value": 71.01408311032397, "dp": -1.31, "close": 26.3, "cap": 5043, "ind": "金融科技与支付", "itemStyle": {"color": "#388e3c"}}, {"name": "QTWO", "value": 60.794736614282655, "dp": 0.14, "close": 59.28, "cap": 3696, "ind": "金融科技与支付", "itemStyle": {"color": "#ef9a9a"}}, {"name": "DAVE", "value": 69.8426803609369, "dp": 0.49, "close": 362.87, "cap": 4878, "ind": "金融科技与支付", "itemStyle": {"color": "#ef9a9a"}}, {"name": "NYAX", "value": 40.0374824383352, "dp": -1.13, "close": 43.8, "cap": 1603, "ind": "金融科技与支付", "itemStyle": {"color": "#388e3c"}}, {"name": "NCNO", "value": 46.46504062195577, "dp": 0.87, "close": 19.71, "cap": 2159, "ind": "金融科技与支付", "itemStyle": {"color": "#ef9a9a"}}, {"name": "ALKT", "value": 38.897300677553446, "dp": 0.43, "close": 14.15, "cap": 1513, "ind": "金融科技与支付", "itemStyle": {"color": "#ef9a9a"}}, {"name": "PGY", "value": 38.561638969317684, "dp": 2.35, "close": 17.82, "cap": 1487, "ind": "金融科技与支付", "itemStyle": {"color": "#e57373"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "加密矿企与数字资产财库", "value": 506.14986241714803, "children": [{"name": "MSTR", "value": 224.37022975430585, "dp": -0.33, "close": 152.18, "cap": 50342, "ind": "加密矿企与数字资产财库", "itemStyle": {"color": "#a5d6a7"}}, {"name": "RIOT", "value": 79.39773296511683, "dp": 1.21, "close": 16.67, "cap": 6304, "ind": "加密矿企与数字资产财库", "itemStyle": {"color": "#e57373"}}, {"name": "MARA", "value": 58.93216439263028, "dp": -3.5, "close": 9.11, "cap": 3473, "ind": "加密矿企与数字资产财库", "itemStyle": {"color": "#388e3c"}}, {"name": "CLSK", "value": 51.03920062069938, "dp": -1.46, "close": 10.15, "cap": 2605, "ind": "加密矿企与数字资产财库", "itemStyle": {"color": "#388e3c"}}, {"name": "BTDR", "value": 46.36809247747852, "dp": -0.54, "close": 9.21, "cap": 2150, "ind": "加密矿企与数字资产财库", "itemStyle": {"color": "#a5d6a7"}}, {"name": "HIVE", "value": 25.475478405713993, "dp": -1.25, "close": 2.37, "cap": 649, "ind": "加密矿企与数字资产财库", "itemStyle": {"color": "#388e3c"}}, {"name": "BTBT", "value": 20.566963801203133, "dp": -2.42, "close": 1.21, "cap": 423, "ind": "加密矿企与数字资产财库", "itemStyle": {"color": "#388e3c"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "服务与IP", "children": [{"name": "IT服务与咨询", "value": 1950.4226444579342, "children": [{"name": "IBM", "value": 466.28960957756715, "dp": 1.66, "close": 230.78, "cap": 217426, "ind": "IT服务与咨询", "itemStyle": {"color": "#e57373"}}, {"name": "ACN", "value": 361.50518668478327, "dp": 0.19, "close": 213.56, "cap": 130686, "ind": "IT服务与咨询", "itemStyle": {"color": "#ef9a9a"}}, {"name": "INFY", "value": 215.07208094032103, "dp": 5.26, "close": 11.4, "cap": 46256, "ind": "IT服务与咨询", "itemStyle": {"color": "#c62828"}}, {"name": "CTSH", "value": 166.21070964291079, "dp": 2.76, "close": 61.33, "cap": 27626, "ind": "IT服务与咨询", "itemStyle": {"color": "#e57373"}}, {"name": "WIT", "value": 133.43912469736904, "dp": 5.57, "close": 1.8, "cap": 17806, "ind": "IT服务与咨询", "itemStyle": {"color": "#c62828"}}, {"name": "GIB", "value": 124.16923934694937, "dp": 1.99, "close": 72.12, "cap": 15418, "ind": "IT服务与咨询", "itemStyle": {"color": "#e57373"}}, {"name": "ULS", "value": 119.52823934116992, "dp": -0.14, "close": 71.08, "cap": 14287, "ind": "IT服务与咨询", "itemStyle": {"color": "#a5d6a7"}}, {"name": "IT", "value": 114.83466375620212, "dp": 1.47, "close": 196.96, "cap": 13187, "ind": "IT服务与咨询", "itemStyle": {"color": "#e57373"}}, {"name": "DOX", "value": 79.68061244744545, "dp": 0.46, "close": 59.02, "cap": 6349, "ind": "IT服务与咨询", "itemStyle": {"color": "#ef9a9a"}}, {"name": "EPAM", "value": 77.67882594375381, "dp": 2.18, "close": 115.5, "cap": 6034, "ind": "IT服务与咨询", "itemStyle": {"color": "#e57373"}}, {"name": "KD", "value": 51.95190083144215, "dp": 3.9, "close": 12.24, "cap": 2699, "ind": "IT服务与咨询", "itemStyle": {"color": "#e57373"}}, {"name": "GLOB", "value": 40.06245124802026, "dp": 2.03, "close": 37.17, "cap": 1605, "ind": "IT服务与咨询", "itemStyle": {"color": "#e57373"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "营销与广告科技", "value": 828.1110043708824, "children": [{"name": "APP", "value": 302.4400767094202, "dp": 0.52, "close": 272.28, "cap": 91470, "ind": "营销与广告科技", "itemStyle": {"color": "#ef9a9a"}}, {"name": "ZETA", "value": 91.92932067626738, "dp": 0.87, "close": 33.8, "cap": 8451, "ind": "营销与广告科技", "itemStyle": {"color": "#ef9a9a"}}, {"name": "TTD", "value": 75.63729238940273, "dp": 1.93, "close": 12.17, "cap": 5721, "ind": "营销与广告科技", "itemStyle": {"color": "#e57373"}}, {"name": "KVYO", "value": 71.22499561249548, "dp": -0.94, "close": 16.95, "cap": 5073, "ind": "营销与广告科技", "itemStyle": {"color": "#a5d6a7"}}, {"name": "BRZE", "value": 57.07889277132134, "dp": -0.45, "close": 28.93, "cap": 3258, "ind": "营销与广告科技", "itemStyle": {"color": "#a5d6a7"}}, {"name": "RAMP", "value": 47.843494855622744, "dp": 0.4, "close": 37.66, "cap": 2289, "ind": "营销与广告科技", "itemStyle": {"color": "#ef9a9a"}}, {"name": "DV", "value": 45.617978911828175, "dp": 0.3, "close": 13.56, "cap": 2081, "ind": "营销与广告科技", "itemStyle": {"color": "#ef9a9a"}}, {"name": "CXM", "value": 37.26929030716845, "dp": 1.81, "close": 5.63, "cap": 1389, "ind": "营销与广告科技", "itemStyle": {"color": "#e57373"}}, {"name": "AMPL", "value": 45.5411901469428, "dp": 0.52, "close": 15.61, "cap": 2074, "ind": "营销与广告科技", "itemStyle": {"color": "#ef9a9a"}}, {"name": "SMWB", "value": 27.586228448267445, "dp": -1.59, "close": 8.69, "cap": 761, "ind": "营销与广告科技", "itemStyle": {"color": "#388e3c"}}, {"name": "SPT", "value": 25.942243542145693, "dp": 1.4, "close": 11.2, "cap": 673, "ind": "营销与广告科技", "itemStyle": {"color": "#e57373"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "IP授权与内容技术", "value": 217.70142212335426, "children": [{"name": "IDCC", "value": 92.68225288586807, "dp": 1.44, "close": 332.88, "cap": 8590, "ind": "IP授权与内容技术", "itemStyle": {"color": "#e57373"}}, {"name": "DLB", "value": 74.51174404078863, "dp": 0.5, "close": 58.36, "cap": 5552, "ind": "IP授权与内容技术", "itemStyle": {"color": "#ef9a9a"}}, {"name": "ADEA", "value": 50.50742519669756, "dp": -0.34, "close": 23.13, "cap": 2551, "ind": "IP授权与内容技术", "itemStyle": {"color": "#a5d6a7"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}];
+const SCATTER = [{"x": 6.63, "y": 0.3, "sym": "GOOGL", "ind": "云与互联网巨头", "cap": 4281485}, {"x": 6.61, "y": 0.43, "sym": "MSFT", "ind": "云与互联网巨头", "cap": 4035415}, {"x": 6.44, "y": -0.37, "sym": "AMZN", "ind": "云与互联网巨头", "cap": 2781571}, {"x": 6.29, "y": 2.63, "sym": "META", "ind": "云与互联网巨头", "cap": 1942459}, {"x": 5.62, "y": 4.24, "sym": "ORCL", "ind": "企业应用软件", "cap": 412541}, {"x": 5.41, "y": 0.87, "sym": "SAP", "ind": "企业应用软件", "cap": 256060}, {"x": 5.29, "y": 1.75, "sym": "CRM", "ind": "企业应用软件", "cap": 194930}, {"x": 5.16, "y": -1.22, "sym": "NOW", "ind": "企业应用软件", "cap": 143304}, {"x": 4.92, "y": -1.48, "sym": "INTU", "ind": "企业应用软件", "cap": 82458}, {"x": 4.69, "y": -1.18, "sym": "WDAY", "ind": "企业应用软件", "cap": 48726}, {"x": 4.05, "y": -1.05, "sym": "HUBS", "ind": "企业应用软件", "cap": 11320}, {"x": 3.83, "y": -0.08, "sym": "NICE", "ind": "企业应用软件", "cap": 6736}, {"x": 3.78, "y": 3.18, "sym": "OTEX", "ind": "企业应用软件", "cap": 6054}, {"x": 3.75, "y": -1.52, "sym": "PEGA", "ind": "企业应用软件", "cap": 5652}, {"x": 3.6, "y": -0.74, "sym": "WK", "ind": "企业应用软件", "cap": 3945}, {"x": 3.58, "y": -0.14, "sym": "FRSH", "ind": "企业应用软件", "cap": 3842}, {"x": 3.49, "y": -0.27, "sym": "AVPT", "ind": "企业应用软件", "cap": 3081}, {"x": 3.46, "y": -0.57, "sym": "APPN", "ind": "企业应用软件", "cap": 2864}, {"x": 3.31, "y": -1.4, "sym": "VERX", "ind": "企业应用软件", "cap": 2063}, {"x": 3.24, "y": 0.72, "sym": "BL", "ind": "企业应用软件", "cap": 1731}, {"x": 2.84, "y": 6.95, "sym": "DCBO", "ind": "企业应用软件", "cap": 695}, {"x": 4.97, "y": -0.78, "sym": "ADBE", "ind": "创意与内容软件", "cap": 93921}, {"x": 4.31, "y": -0.11, "sym": "U", "ind": "创意与内容软件", "cap": 20356}, {"x": 4.96, "y": -4.08, "sym": "CDNS", "ind": "EDA与工程软件", "cap": 92036}, {"x": 4.98, "y": -1.59, "sym": "SNPS", "ind": "EDA与工程软件", "cap": 94688}, {"x": 4.69, "y": -1.33, "sym": "ADSK", "ind": "EDA与工程软件", "cap": 48654}, {"x": 4.35, "y": -0.22, "sym": "PTC", "ind": "EDA与工程软件", "cap": 22404}, {"x": 4.01, "y": -0.26, "sym": "BSY", "ind": "EDA与工程软件", "cap": 10247}, {"x": 2.99, "y": -1.37, "sym": "AIP", "ind": "EDA与工程软件", "cap": 977}, {"x": 5.09, "y": -0.72, "sym": "SNOW", "ind": "数据基础设施", "cap": 124000}, {"x": 4.48, "y": -2.16, "sym": "MDB", "ind": "数据基础设施", "cap": 30007}, {"x": 4.29, "y": -1.7, "sym": "NTNX", "ind": "数据基础设施", "cap": 19701}, {"x": 3.99, "y": -1.26, "sym": "ESTC", "ind": "数据基础设施", "cap": 9805}, {"x": 3.46, "y": -0.65, "sym": "TDC", "ind": "数据基础设施", "cap": 2868}, {"x": 5.68, "y": -0.16, "sym": "PLTR", "ind": "AI应用与数据智能", "cap": 479121}, {"x": 3.85, "y": -0.56, "sym": "PATH", "ind": "AI应用与数据智能", "cap": 7048}, {"x": 3.33, "y": -1.81, "sym": "SOUN", "ind": "AI应用与数据智能", "cap": 2126}, {"x": 3.26, "y": 3.45, "sym": "AI", "ind": "AI应用与数据智能", "cap": 1825}, {"x": 3.06, "y": 4.35, "sym": "BBAI", "ind": "AI应用与数据智能", "cap": 1151}, {"x": 2.6, "y": 1.6, "sym": "CRNC", "ind": "AI应用与数据智能", "cap": 402}, {"x": 5.51, "y": -1.68, "sym": "PANW", "ind": "网络安全", "cap": 323579}, {"x": 5.43, "y": -0.68, "sym": "CRWD", "ind": "网络安全", "cap": 267462}, {"x": 5.15, "y": -1.13, "sym": "FTNT", "ind": "网络安全", "cap": 139963}, {"x": 4.57, "y": 1.28, "sym": "ZS", "ind": "网络安全", "cap": 36976}, {"x": 4.58, "y": -0.24, "sym": "OKTA", "ind": "网络安全", "cap": 37631}, {"x": 4.39, "y": -1.28, "sym": "RBRK", "ind": "网络安全", "cap": 24384}, {"x": 4.14, "y": 0.5, "sym": "CHKP", "ind": "网络安全", "cap": 13783}, {"x": 4.04, "y": -1.02, "sym": "SAIL", "ind": "网络安全", "cap": 10986}, {"x": 3.91, "y": -6.43, "sym": "S", "ind": "网络安全", "cap": 8085}, {"x": 4.15, "y": 1.97, "sym": "GEN", "ind": "网络安全", "cap": 14252}, {"x": 3.64, "y": 2.5, "sym": "YOU", "ind": "网络安全", "cap": 4379}, {"x": 3.84, "y": 0.68, "sym": "QLYS", "ind": "网络安全", "cap": 6977}, {"x": 3.82, "y": 2.24, "sym": "CVLT", "ind": "网络安全", "cap": 6583}, {"x": 3.75, "y": 5.07, "sym": "VRNS", "ind": "网络安全", "cap": 5596}, {"x": 3.66, "y": 1.28, "sym": "TENB", "ind": "网络安全", "cap": 4553}, {"x": 3.45, "y": -0.52, "sym": "CLBT", "ind": "网络安全", "cap": 2839}, {"x": 3.31, "y": -0.8, "sym": "ATEN", "ind": "网络安全", "cap": 2051}, {"x": 2.94, "y": -0.08, "sym": "RPD", "ind": "网络安全", "cap": 863}, {"x": 5.0, "y": -1.37, "sym": "DDOG", "ind": "开发运维与DevOps", "cap": 100858}, {"x": 4.74, "y": 0.14, "sym": "TEAM", "ind": "开发运维与DevOps", "cap": 54647}, {"x": 4.27, "y": -1.21, "sym": "DT", "ind": "开发运维与DevOps", "cap": 18789}, {"x": 4.08, "y": 0.26, "sym": "FROG", "ind": "开发运维与DevOps", "cap": 12025}, {"x": 3.94, "y": -7.25, "sym": "GTLB", "ind": "开发运维与DevOps", "cap": 8774}, {"x": 3.21, "y": 1.08, "sym": "PRGS", "ind": "开发运维与DevOps", "cap": 1616}, {"x": 3.18, "y": 2.71, "sym": "PD", "ind": "开发运维与DevOps", "cap": 1521}, {"x": 4.63, "y": -0.38, "sym": "TWLO", "ind": "协同办公与通信", "cap": 42738}, {"x": 4.46, "y": 0.22, "sym": "ZM", "ind": "协同办公与通信", "cap": 28784}, {"x": 4.14, "y": 1.89, "sym": "DOCU", "ind": "协同办公与通信", "cap": 13807}, {"x": 3.55, "y": -0.08, "sym": "MNDY", "ind": "协同办公与通信", "cap": 3580}, {"x": 3.96, "y": 2.09, "sym": "DBX", "ind": "协同办公与通信", "cap": 9061}, {"x": 3.83, "y": 0.67, "sym": "RNG", "ind": "协同办公与通信", "cap": 6785}, {"x": 3.72, "y": 2.26, "sym": "BOX", "ind": "协同办公与通信", "cap": 5201}, {"x": 3.43, "y": -0.73, "sym": "FIVN", "ind": "协同办公与通信", "cap": 2711}, {"x": 3.37, "y": -0.3, "sym": "ASAN", "ind": "协同办公与通信", "cap": 2343}, {"x": 4.96, "y": 0.52, "sym": "APP", "ind": "营销与广告科技", "cap": 91470}, {"x": 3.93, "y": 0.87, "sym": "ZETA", "ind": "营销与广告科技", "cap": 8451}, {"x": 3.76, "y": 1.93, "sym": "TTD", "ind": "营销与广告科技", "cap": 5721}, {"x": 3.71, "y": -0.94, "sym": "KVYO", "ind": "营销与广告科技", "cap": 5073}, {"x": 3.51, "y": -0.45, "sym": "BRZE", "ind": "营销与广告科技", "cap": 3258}, {"x": 3.36, "y": 0.4, "sym": "RAMP", "ind": "营销与广告科技", "cap": 2289}, {"x": 3.32, "y": 0.3, "sym": "DV", "ind": "营销与广告科技", "cap": 2081}, {"x": 3.14, "y": 1.81, "sym": "CXM", "ind": "营销与广告科技", "cap": 1389}, {"x": 3.32, "y": 0.52, "sym": "AMPL", "ind": "营销与广告科技", "cap": 2074}, {"x": 2.88, "y": -1.59, "sym": "SMWB", "ind": "营销与广告科技", "cap": 761}, {"x": 2.83, "y": 1.4, "sym": "SPT", "ind": "营销与广告科技", "cap": 673}, {"x": 5.87, "y": 1.74, "sym": "V", "ind": "金融科技与支付", "cap": 739463}, {"x": 5.72, "y": 1.63, "sym": "MA", "ind": "金融科技与支付", "cap": 530431}, {"x": 4.68, "y": 0.21, "sym": "PYPL", "ind": "金融科技与支付", "cap": 48051}, {"x": 4.19, "y": -2.29, "sym": "FICO", "ind": "金融科技与支付", "cap": 15616}, {"x": 3.64, "y": -0.43, "sym": "BILL", "ind": "金融科技与支付", "cap": 4380}, {"x": 3.72, "y": 0.27, "sym": "ACIW", "ind": "金融科技与支付", "cap": 5205}, {"x": 3.7, "y": -1.31, "sym": "WAY", "ind": "金融科技与支付", "cap": 5043}, {"x": 3.57, "y": 0.14, "sym": "QTWO", "ind": "金融科技与支付", "cap": 3696}, {"x": 3.69, "y": 0.49, "sym": "DAVE", "ind": "金融科技与支付", "cap": 4878}, {"x": 3.2, "y": -1.13, "sym": "NYAX", "ind": "金融科技与支付", "cap": 1603}, {"x": 3.33, "y": 0.87, "sym": "NCNO", "ind": "金融科技与支付", "cap": 2159}, {"x": 3.18, "y": 0.43, "sym": "ALKT", "ind": "金融科技与支付", "cap": 1513}, {"x": 3.17, "y": 2.35, "sym": "PGY", "ind": "金融科技与支付", "cap": 1487}, {"x": 4.57, "y": 0.3, "sym": "ROP", "ind": "垂直行业SaaS", "cap": 37179}, {"x": 4.38, "y": -0.84, "sym": "IOT", "ind": "垂直行业SaaS", "cap": 23815}, {"x": 4.14, "y": 0.63, "sym": "GWRE", "ind": "垂直行业SaaS", "cap": 13802}, {"x": 4.15, "y": 2.05, "sym": "TYL", "ind": "垂直行业SaaS", "cap": 14206}, {"x": 4.11, "y": 2.21, "sym": "MANH", "ind": "垂直行业SaaS", "cap": 12985}, {"x": 3.93, "y": -0.05, "sym": "PCOR", "ind": "垂直行业SaaS", "cap": 8479}, {"x": 3.84, "y": -0.72, "sym": "TTAN", "ind": "垂直行业SaaS", "cap": 6845}, {"x": 3.85, "y": 0.01, "sym": "APPF", "ind": "垂直行业SaaS", "cap": 7111}, {"x": 3.86, "y": 1.45, "sym": "DSGX", "ind": "垂直行业SaaS", "cap": 7273}, {"x": 3.49, "y": 3.36, "sym": "AGYS", "ind": "垂直行业SaaS", "cap": 3082}, {"x": 3.49, "y": 0.0, "sym": "INTA", "ind": "垂直行业SaaS", "cap": 3055}, {"x": 3.44, "y": 0.64, "sym": "ALRM", "ind": "垂直行业SaaS", "cap": 2784}, {"x": 3.48, "y": -0.99, "sym": "SPSC", "ind": "垂直行业SaaS", "cap": 3015}, {"x": 3.34, "y": 2.8, "sym": "BLKB", "ind": "垂直行业SaaS", "cap": 2181}, {"x": 3.28, "y": -0.15, "sym": "KARO", "ind": "垂直行业SaaS", "cap": 1902}, {"x": 3.22, "y": 1.94, "sym": "EVCM", "ind": "垂直行业SaaS", "cap": 1676}, {"x": 3.17, "y": -0.84, "sym": "LSPD", "ind": "垂直行业SaaS", "cap": 1471}, {"x": 5.09, "y": -0.89, "sym": "NET", "ind": "互联网基础设施", "cap": 123434}, {"x": 4.44, "y": -0.31, "sym": "VRSN", "ind": "互联网基础设施", "cap": 27279}, {"x": 4.16, "y": -1.69, "sym": "AKAM", "ind": "互联网基础设施", "cap": 14528}, {"x": 4.13, "y": 0.69, "sym": "GDDY", "ind": "互联网基础设施", "cap": 13642}, {"x": 4.18, "y": -2.44, "sym": "DOCN", "ind": "互联网基础设施", "cap": 14989}, {"x": 3.58, "y": -3.28, "sym": "WIX", "ind": "互联网基础设施", "cap": 3763}, {"x": 3.63, "y": 2.5, "sym": "FSLY", "ind": "互联网基础设施", "cap": 4240}, {"x": 4.75, "y": -1.52, "sym": "NBIS", "ind": "AI算力/数据中心", "cap": 56245}, {"x": 4.63, "y": -3.05, "sym": "CRWV", "ind": "AI算力/数据中心", "cap": 42451}, {"x": 4.09, "y": 0.0, "sym": "IREN", "ind": "AI算力/数据中心", "cap": 12419}, {"x": 3.81, "y": -3.48, "sym": "APLD", "ind": "AI算力/数据中心", "cap": 6460}, {"x": 3.82, "y": -1.2, "sym": "WULF", "ind": "AI算力/数据中心", "cap": 6546}, {"x": 3.67, "y": -12.77, "sym": "CIFR", "ind": "AI算力/数据中心", "cap": 4639}, {"x": 3.7, "y": 2.73, "sym": "CORZ", "ind": "AI算力/数据中心", "cap": 4958}, {"x": 3.76, "y": -2.6, "sym": "GDS", "ind": "AI算力/数据中心", "cap": 5770}, {"x": 3.17, "y": -1.13, "sym": "VNET", "ind": "AI算力/数据中心", "cap": 1470}, {"x": 6.31, "y": -4.21, "sym": "SPCX", "ind": "AI算力/数据中心", "cap": 2063476}, {"x": 4.7, "y": -0.33, "sym": "MSTR", "ind": "加密矿企与数字资产财库", "cap": 50342}, {"x": 3.8, "y": 1.21, "sym": "RIOT", "ind": "加密矿企与数字资产财库", "cap": 6304}, {"x": 3.54, "y": -3.5, "sym": "MARA", "ind": "加密矿企与数字资产财库", "cap": 3473}, {"x": 3.42, "y": -1.46, "sym": "CLSK", "ind": "加密矿企与数字资产财库", "cap": 2605}, {"x": 3.33, "y": -0.54, "sym": "BTDR", "ind": "加密矿企与数字资产财库", "cap": 2150}, {"x": 2.81, "y": -1.25, "sym": "HIVE", "ind": "加密矿企与数字资产财库", "cap": 649}, {"x": 2.63, "y": -2.42, "sym": "BTBT", "ind": "加密矿企与数字资产财库", "cap": 423}, {"x": 5.47, "y": -0.21, "sym": "NFLX", "ind": "消费互联网平台", "cap": 293391}, {"x": 5.36, "y": -1.51, "sym": "SHOP", "ind": "消费互联网平台", "cap": 229062}, {"x": 5.09, "y": -0.58, "sym": "BKNG", "ind": "消费互联网平台", "cap": 122051}, {"x": 5.16, "y": -0.25, "sym": "UBER", "ind": "消费互联网平台", "cap": 145179}, {"x": 4.82, "y": 1.48, "sym": "CVNA", "ind": "消费互联网平台", "cap": 66238}, {"x": 4.76, "y": 0.05, "sym": "SE", "ind": "消费互联网平台", "cap": 57592}, {"x": 4.71, "y": 1.54, "sym": "EBAY", "ind": "消费互联网平台", "cap": 51686}, {"x": 4.48, "y": -3.03, "sym": "RDDT", "ind": "消费互联网平台", "cap": 29856}, {"x": 4.07, "y": -5.4, "sym": "GRAB", "ind": "消费互联网平台", "cap": 11839}, {"x": 3.54, "y": -2.92, "sym": "LIF", "ind": "消费互联网平台", "cap": 3448}, {"x": 3.21, "y": 2.84, "sym": "OPRA", "ind": "消费互联网平台", "cap": 1622}, {"x": 4.9, "y": -0.52, "sym": "NTES", "ind": "中概/亚洲互联网", "cap": 79649}, {"x": 4.45, "y": -0.66, "sym": "BIDU", "ind": "中概/亚洲互联网", "cap": 28482}, {"x": 3.87, "y": -0.06, "sym": "BZ", "ind": "中概/亚洲互联网", "cap": 7363}, {"x": 3.8, "y": -1.38, "sym": "BILI", "ind": "中概/亚洲互联网", "cap": 6284}, {"x": 3.63, "y": 0.43, "sym": "JOYY", "ind": "中概/亚洲互联网", "cap": 4270}, {"x": 3.44, "y": 0.76, "sym": "KC", "ind": "中概/亚洲互联网", "cap": 2757}, {"x": 2.77, "y": -0.44, "sym": "ATHM", "ind": "中概/亚洲互联网", "cap": 589}, {"x": 3.2, "y": 0.23, "sym": "WB", "ind": "中概/亚洲互联网", "cap": 1568}, {"x": 2.98, "y": -2.78, "sym": "IQ", "ind": "中概/亚洲互联网", "cap": 956}, {"x": 2.89, "y": 0.0, "sym": "MOMO", "ind": "中概/亚洲互联网", "cap": 775}, {"x": 2.6, "y": 7.54, "sym": "API", "ind": "中概/亚洲互联网", "cap": 398}, {"x": 2.45, "y": 1.46, "sym": "ZH", "ind": "中概/亚洲互联网", "cap": 281}, {"x": 5.34, "y": 1.66, "sym": "IBM", "ind": "IT服务与咨询", "cap": 217426}, {"x": 5.12, "y": 0.19, "sym": "ACN", "ind": "IT服务与咨询", "cap": 130686}, {"x": 4.67, "y": 5.26, "sym": "INFY", "ind": "IT服务与咨询", "cap": 46256}, {"x": 4.44, "y": 2.76, "sym": "CTSH", "ind": "IT服务与咨询", "cap": 27626}, {"x": 4.25, "y": 5.57, "sym": "WIT", "ind": "IT服务与咨询", "cap": 17806}, {"x": 4.19, "y": 1.99, "sym": "GIB", "ind": "IT服务与咨询", "cap": 15418}, {"x": 4.15, "y": -0.14, "sym": "ULS", "ind": "IT服务与咨询", "cap": 14287}, {"x": 4.12, "y": 1.47, "sym": "IT", "ind": "IT服务与咨询", "cap": 13187}, {"x": 3.8, "y": 0.46, "sym": "DOX", "ind": "IT服务与咨询", "cap": 6349}, {"x": 3.78, "y": 2.18, "sym": "EPAM", "ind": "IT服务与咨询", "cap": 6034}, {"x": 3.43, "y": 3.9, "sym": "KD", "ind": "IT服务与咨询", "cap": 2699}, {"x": 3.21, "y": 2.03, "sym": "GLOB", "ind": "IT服务与咨询", "cap": 1605}, {"x": 4.02, "y": -5.65, "sym": "AUR", "ind": "自动驾驶与AI出行", "cap": 10473}, {"x": 3.3, "y": -2.61, "sym": "PONY", "ind": "自动驾驶与AI出行", "cap": 1975}, {"x": 3.69, "y": -2.62, "sym": "QBTS", "ind": "量子计算", "cap": 4914}, {"x": 3.19, "y": -0.87, "sym": "QUBT", "ind": "量子计算", "cap": 1543}, {"x": 3.93, "y": 1.44, "sym": "IDCC", "ind": "IP授权与内容技术", "cap": 8590}, {"x": 3.74, "y": 0.5, "sym": "DLB", "ind": "IP授权与内容技术", "cap": 5552}, {"x": 3.41, "y": -0.34, "sym": "ADEA", "ind": "IP授权与内容技术", "cap": 2551}];
+const chart = echarts.init(document.getElementById('treemap'), null, {renderer: 'canvas'});
+chart.setOption({
+  backgroundColor: 'transparent',
+  tooltip: {
+    formatter: function(p) {
+      const d = p.data;
+      if (d.dp !== undefined) {
+        const sign = d.dp > 0 ? '+' : '';
+        return `<b>${d.name}</b> <span style="color:#8b949e">[${d.ind}]</span><br/>` +
+               `涨跌: <b style="color:${d.dp>0?'#3fb950':'#f85149'}">${sign}${d.dp}%</b><br/>` +
+               `收盘: $${d.close}<br/>市值: $${(d.cap/1000).toFixed(1)}B`;
+      }
+      return `<b>${d.name}</b>`;
+    }
+  },
+  series: [{
+    type: 'treemap',
+    data: TREEMAP_DATA,
+    width: '100%', height: '100%',
+    roam: false, nodeClick: 'zoomToNode',
+    breadcrumb: {show: true, top: 5, left: 5, itemStyle: {color: '#21262d', borderColor: '#30363d', textStyle: {color: '#e6edf3'}}},
+    label: {
+      show: true, fontSize: 10, color: '#0d1117', fontWeight: 'bold',
+      formatter: function(p) {
+        if (p.data.dp !== undefined) {
+          const sign = p.data.dp > 0 ? '+' : '';
+          return `{a|${p.name}}\n{b|${sign}${p.data.dp}%}`;
+        }
+        return p.name;
+      },
+      rich: {
+        a: {fontSize: 11, fontWeight: 'bold', color: '#0d1117'},
+        b: {fontSize: 9, color: '#0d1117'}
+      }
+    },
+    upperLabel: {show: true, height: 22, color: '#fff', fontSize: 12, fontWeight: 'bold', backgroundColor: '#21262d', padding: [4, 8]},
+    itemStyle: {borderWidth: 1, borderColor: '#0d1117', gapWidth: 1},
+    levels: [
+      {itemStyle: {borderWidth: 3, borderColor: '#0d1117', gapWidth: 3}, upperLabel: {height: 24}},
+      {itemStyle: {borderWidth: 2, borderColor: '#21262d', gapWidth: 2}, upperLabel: {height: 20, backgroundColor: '#161b22'}},
+      {itemStyle: {borderWidth: 1, borderColor: '#0d1117', gapWidth: 1}}
+    ]
+  }]
+});
+window.addEventListener('resize', () => chart.resize());
+
+// 散点图
+function dpColorJs(dp) {
+  if (dp >= 7)  return '#7f0000';
+  if (dp >= 4)  return '#c62828';
+  if (dp >= 1)  return '#e57373cc';
+  if (dp >= 0)  return '#ef9a9acc';
+  if (dp >= -1) return '#a5d6a7cc';
+  if (dp >= -4) return '#388e3ccc';
+  return '#1b5e20';
+}
+new Chart(document.getElementById('scatter'), {
+  type: 'scatter',
+  data: {
+    datasets: [{
+      data: SCATTER.map(p => ({x: p.x, y: p.y, sym: p.sym, ind: p.ind, cap: p.cap})),
+      backgroundColor: SCATTER.map(p => dpColorJs(p.y)),
+      pointRadius: 4, pointHoverRadius: 7
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: {display: false},
+      tooltip: {
+        callbacks: {
+          label: (ctx) => {
+            const p = ctx.raw;
+            return `${p.sym} [${p.ind}]  ${p.y > 0 ? '+' : ''}${p.y}%  市值 $${(p.cap/1000).toFixed(1)}B`;
+          }
+        },
+        backgroundColor: '#21262d', titleColor: '#e6edf3', bodyColor: '#e6edf3'
+      }
+    },
+    scales: {
+      x: {
+        title: {display: true, text: 'log₁₀(市值，百万USD)', color: '#8b949e'},
+        grid: {color: '#21262d'}, ticks: {color: '#8b949e'}
+      },
+      y: {
+        title: {display: true, text: '涨跌幅 %', color: '#8b949e'},
+        grid: {color: '#21262d'}, ticks: {color: '#8b949e', callback: v => v + '%'}
+      }
+    }
+  }
+});
+</script>
+
+<div class="sub" style="margin-top:20px">数据来源：Finnhub /quote + WebSearch 公开市场数据交叉核对 · 大中盘股为确认值，微盘部分基于子行业均值估算</div>
+</body>
+</html>
