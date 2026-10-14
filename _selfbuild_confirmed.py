@@ -5,7 +5,7 @@
   1. 用 mcp__FMP__quote batch-quote 拉「硬件 102 + 宏观 30」合并 132 符号（通常内联返回）
      与「软件 181」（通常超限自动落盘 tool-results/ 目录）。
   2. 跑本脚本：python3 _selfbuild_confirmed.py <DATE> <transcript.jsonl> [software_toolresult.txt]
-     - 硬件+宏观从转录 JSONL 机器提取（三条件：rec.type=='user' + tool_result + text.startswith('[')，
+     - 硬件+宏观从转录 JSONL 机器提取（三条件：rec.type=='user' + tool_result + text.startswith('[{')，
        且包含 AAPL 与 GSPC 关键词——过滤词不带引号，原始行内引号是转义态）。
      - 软件优先从 tool-results 落盘文件读；若也内联，则从转录提取（包含 GOOGL 关键词）。
   3. 脚本自带三重验证：json 可解析 + hit 计数 + timestamp 换算 == 当日 20:00 UTC 附近。
@@ -46,9 +46,9 @@ def extract_inline_results(jsonl_path, must_contain):
                 if isinstance(content, list):
                     for c in content:
                         text = c.get('text', '') if isinstance(c, dict) else ''
-                        if text.startswith('[') and all(k in text for k in must_contain):
+                        if text.startswith('[{') and all(k in text for k in must_contain):
                             found = text  # 保留最新
-                elif isinstance(content, str) and content.startswith('['):
+                elif isinstance(content, str) and content.startswith('[{'):
                     found = content
     if not found:
         raise SystemExit(f'transcript 中未找到含 {must_contain} 的 tool_result 数组')
