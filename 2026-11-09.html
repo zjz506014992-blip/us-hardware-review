@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>美股硬件板块复盘 2026-11-09</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:20px;max-width:1400px;margin:0 auto}
+h1{font-size:1.6rem;margin-bottom:6px}
+#toc{position:fixed;left:14px;top:90px;width:158px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:10px 12px;font-size:.78rem;z-index:50;display:none;max-height:82vh;overflow-y:auto}
+#toc a{display:block;color:#8b949e;text-decoration:none;padding:4px 2px;border-radius:4px;white-space:nowrap}
+#toc a:hover{color:#58a6ff;background:#0d1117}
+@media(min-width:1780px){#toc{display:block}}
+#toc.open{display:block;left:auto;right:18px;bottom:64px;top:auto}
+#tocbtn{position:fixed;right:18px;bottom:18px;z-index:60;background:#21262d;border:1px solid #30363d;color:#c9d1d9;border-radius:20px;padding:8px 14px;font-size:.8rem;cursor:pointer}
+@media(min-width:1780px){#tocbtn{display:none}}
+[id^="sec-"]{scroll-margin-top:12px}
+.sub{color:#8b949e;font-size:.88rem;margin-bottom:18px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px 14px}
+.lbl{color:#8b949e;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em}
+.val{font-size:1.5rem;font-weight:700;margin-top:4px}
+.up{color:#e53935}.down{color:#43a047}.neutral{color:#8b949e}
+.section{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;margin-bottom:16px}
+.title{font-size:.95rem;color:#8b949e;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{background:#21262d;color:#8b949e;padding:8px 10px;text-align:left;font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em}
+td{padding:7px 10px;border-bottom:1px solid #21262d;vertical-align:middle}
+tr:hover td{background:#1c2128}
+.navlinks{display:flex;gap:10px;margin-bottom:16px;font-size:.88rem}
+.navlinks a{color:#58a6ff;text-decoration:none;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:6px 14px}
+.navlinks a:hover{background:#21262d}
+</style>
+</head>
+<body>
+<h1>🖥️ 美股硬件板块每日复盘</h1>
+<div class="sub">数据日期 <b>2026-11-09</b> · 覆盖 102 只股票 · 22 个子行业 · 5 大板块</div>
+
+<div class="navlinks">
+  <a href="index.html">← 历史存档</a>
+  <a href="stocks-2026-11-09.html">📋 全部个股数据</a>
+  
+  <a href="calendar.html">📅 业绩日历</a>
+  <a href="earnings.html">🗂️ 业绩历史</a>
+</div>
+
+<div class="stats">
+  <div class="card"><div class="lbl">总数</div><div class="val">102</div></div>
+  <div class="card"><div class="lbl">上涨</div><div class="val up">99</div></div>
+  <div class="card"><div class="lbl">下跌</div><div class="val down">2</div></div>
+  <div class="card"><div class="lbl">平盘</div><div class="val neutral">1</div></div>
+  <div class="card"><div class="lbl">市值加权均</div><div class="val up">+3.73%</div></div>
+  <div class="card"><div class="lbl">算术均</div><div class="val up">+7.93%</div></div>
+</div>
+
+<nav id="toc"><div style="color:#e6edf3;font-weight:700;font-size:.8rem;margin-bottom:6px">📑 目录</div><a href="#sec-tldr">🔥 当日核心叙事</a><a href="#sec-recap">📊 盘后业绩复盘</a><a href="#sec-treemap">🗺️ 市值热力图</a><a href="#sec-industry">📊 子行业涨跌榜</a><a href="#sec-scatter">💎 市值 vs 涨跌</a><a href="#sec-volume">📈 量能分析</a><a href="#sec-macro">📌 宏观大盘指数</a><a href="#sec-structure">🔄 市场结构因子</a><a href="#sec-themes">📊 板块 Beta 主题</a><a href="#sec-cards">🔍 个股深度解读</a><a href="#sec-news">📰 产业新闻分层</a><a href="#sec-forward">📅 未来 5 日观察</a></nav>
+<button id="tocbtn" onclick="document.getElementById('toc').classList.toggle('open')">☰ 目录</button>
+
+<div class="section" id="sec-tldr">
+  <div class="title">🔥 当日核心叙事</div>
+  <div style="line-height:1.85;color:#c9d1d9;font-size:.92rem">今天是 11/5 开池最深单日（-8.99%、广度 0:101:1）之后的第二波、也是真正的全面修复日：全池市值加权 +3.73%、算术平均 +7.93%、广度 99:2:1 完美镜像，22 个子行业 21 个上涨，唯一的负读数（AI芯片/CPU -1.00%）完全是 NVDA 单股治理事件砸出来的。驱动不是新的产业利好，而是三件事叠加：上周「蓝色浪潮」政策冲击的仓位出清完成后抄底资金回流（韩媒定性 bargain hunting、费半 +6.85%）、美国总统表态近期不太可能对伊朗发动新打击令通胀担忧进一步缓解（油价 $86.6 平稳于低位）、VIX 单日 -22.3% 跌回 20 下方确认恐慌溢价出清。<br><br>板块脉络上，修复榜大体仍是 11/5 跌幅榜的镜像（第 8 次复现）：光通信 +10.51%（十二只全红）、零部件 +10.65%、设备 +8.75%（十五只全红）、EMS +8.64%、封测 +8.45%、模拟/电源 +8.63% 领跑；存储 +6.31% 八只全红但三日复合仍是主线板块最深（SNDK -14.5%）；大盘 SPX +2.43%、道指 +1,104 点、纳指 100 +3.40%，GICS 十一板块全红。最有信息量的是修复的选择性：有新鲜财报实据的 COHR（三日 +15.4%）、MPWR（+10.1%）、AMD（+4.1%）已完全收复创三日新高，而 NVDA（三日 -10.7%）被治理事件按在深坑，SMCI（-0.56%）连续缺席修复——「财报实据新鲜度决定修复弹性」模型第四次验证。<br><br>后市看点：11/12 AMAT 财报是上周拉姆供给约束口径之后晶圆制造设备链的再裁决；11/11 CSCO 财报检验网络设备;NVDA 董事会调查进展与 11 月下旬 Q3 财报是头号权重变量；德州新政府 1 月就职前的数据中心政策文本随时可能二次定价。</div>
+</div>
+
+<div id="sec-recap"><div class="section" style="border-color:#8b6914">
+  <div class="title">📊 当日盘后业绩复盘（今晚谁报了 + 盘后怎么走）</div>
+  <p style="font-size:.82rem;color:#8b949e;margin-bottom:10px">结论 chip 衡量的是「headline 数字 vs 卖方共识」，与盘后方向经常不一致；盘后 % 才是市场的投票。共 2 家。</p>
+  
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px"><span style="display:inline-flex;align-items:center;gap:6px;background:#0d1117;border:1px solid #30363d;border-left:3px solid #e57373;border-radius:6px;padding:5px 10px;font-size:.8rem"><b style="color:#e6edf3">SANM</b><span style="color:#e57373;font-size:.7rem;font-weight:700">🟢 超共识</span><span style="color:#e57373;font-weight:700">盘后 +19.8%</span></span><span style="display:inline-flex;align-items:center;gap:6px;background:#0d1117;border:1px solid #30363d;border-left:3px solid #e57373;border-radius:6px;padding:5px 10px;font-size:.8rem"><b style="color:#e6edf3">ONTO</b><span style="color:#e57373;font-size:.7rem;font-weight:700">🟢 超共识</span><span style="color:#e57373;font-weight:700">盘后 +7%</span></span></div>
+  <div style="background:#0d1117;border:1px solid #30363d;border-left:4px solid #e57373;border-radius:6px;padding:14px 16px;margin-bottom:12px">
+  <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #30363d;padding-bottom:8px;margin-bottom:10px">
+    <div>
+      <span style="font-size:1.1rem;font-weight:700;color:#e6edf3">SANM</span>
+      <span style="background:#e5737333;color:#e57373;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700;margin-left:8px">🟢 超共识</span>
+    </div>
+    <div><span style="color:#e57373;font-weight:700">+19.8%（盘后买卖中值 $179.3，美东 5:58pm，成交 154 万股真实放量）</span></div>
+  </div>
+  <div style="font-size:.82rem;color:#c9d1d9;margin-bottom:8px"><b style="color:#8b949e">📊 数字</b><br>EPS：非 GAAP $4.43 vs $3.27E（超 35.5%）；GAAP $2.14（含 ZT Systems 收购摊销）<br>Rev：$38.6 亿 vs $34.8 亿 E（超 10.9%），FY26 全年 $145.3 亿</div><div style="font-size:.82rem;color:#c9d1d9;line-height:1.7;margin-bottom:8px"><b style="color:#8b949e">✨ 业绩亮点</b><br>第四财季营收与非 GAAP 每股收益双双大超，云与 AI 基础设施端市场在 ZT Systems 并表后成为第一增长引擎，全年营收 145.3 亿美元、GAAP 全年每股收益 $6.85。通信网络、云与 AI 基础设施端市场占比持续过半，机架级整机（ZT）与传统 EMS 双线放量。GAAP 与非 GAAP 口径差主要来自收购无形资产摊销，经营现金流细项待 10-K。这是继 CLS、DELL 之后整机/代工端第三份反证「企业 AI 采用迟缓」论的财报。</div><div style="font-size:.82rem;color:#c9d1d9;line-height:1.7;margin-bottom:8px"><b style="color:#8b949e">🎯 指引</b><br>FY27 Q1 营收指引 38-41 亿美元；FY27 全年营收 175-195 亿美元（对 FY26 中值隐含 +20%~+34%）、全年每股收益 $15.50-17.50——指引二阶导为本财报季 EMS 板块最强。</div><div style="font-size:.82rem;color:#c9d1d9;line-height:1.7"><b style="color:#8b949e">📞 电话会要点</b><br>CEO Jure Sola 表示增长将「贯穿 FY27 并延续至 FY28」，并重申对此前 FY27 160 亿美元以上营收目标的信心已被新指引上限大幅超越；电话会分项细节待明日回补。</div>
+</div><div style="background:#0d1117;border:1px solid #30363d;border-left:4px solid #e57373;border-radius:6px;padding:14px 16px;margin-bottom:12px">
+  <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #30363d;padding-bottom:8px;margin-bottom:10px">
+    <div>
+      <span style="font-size:1.1rem;font-weight:700;color:#e6edf3">ONTO</span>
+      <span style="background:#e5737333;color:#e57373;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700;margin-left:8px">🟢 超共识</span>
+    </div>
+    <div><span style="color:#e57373;font-weight:700">+7% 附近（盘后买卖价差 $204.5-211 偏宽，中值 $207.75 对收盘 $194.04）</span></div>
+  </div>
+  <div style="font-size:.82rem;color:#c9d1d9;margin-bottom:8px"><b style="color:#8b949e">📊 数字</b><br>EPS：非 GAAP $2.44 vs $2.30E（超 6.1%）；GAAP $0.95（低于 8 月 GAAP 指引区间，差异项待 10-Q 核实）<br>Rev：$4.097 亿 vs $3.921 亿 E（超 4.5%），同比 +87.8%，超 8 月指引上限（$3.8-4.0 亿）</div><div style="font-size:.82rem;color:#c9d1d9;line-height:1.7;margin-bottom:8px"><b style="color:#8b949e">✨ 业绩亮点</b><br>第三季营收同比接近翻倍并超自家指引上限，GAAP 毛利率 54.8%（去年同期 50.7%）、非 GAAP 毛利率 57.6%，经营利润 9,540 万美元（利润率 23.3%），期末现金与有价证券 12.5 亿美元。8 月完成对 Rigaku 27% 股权的收购交割，检测量测在 HBM 与先进封装扩产中的卡位持续兑现——「存储扩产先买检测量测」链条（CAMT/ONTO/FORM 今年屡次领涨）的直接财报验证。GAAP 每股收益低于指引区间的差异项（疑与 Rigaku 投资相关损益有关）待文件核实。</div><div style="font-size:.82rem;color:#c9d1d9;line-height:1.7;margin-bottom:8px"><b style="color:#8b949e">🎯 指引</b><br>第四季指引细节截稿未公开，待明日回补（盘后 +7% 隐含市场对指引的第一反应为正面）。</div><div style="font-size:.82rem;color:#c9d1d9;line-height:1.7"><b style="color:#8b949e">📞 电话会要点</b><br>电话会于美东 11/9 举行，管理层评论截稿未获公开转述，待明日回补。</div>
+</div>
+</div></div>
+
+<div id="sec-asia"></div>
+
+<div id="sec-ratings"></div>
+
+<div class="section" id="sec-treemap">
+  <div class="title">🗺️ 市值热力图（面积≈√市值 · 颜色：涨红跌绿 · 点击子行业可下钻）</div>
+  <div id="treemap" style="height:620px"></div>
+  <div style="margin-top:10px;font-size:.78rem;color:#8b949e">
+    色阶：
+    <span style="background:#1b5e20;color:#fff;padding:2px 8px;border-radius:3px">跌≥4%</span>
+    <span style="background:#388e3c;color:#fff;padding:2px 8px;border-radius:3px;margin-left:4px">-4~-1%</span>
+    <span style="background:#a5d6a7;color:#000;padding:2px 8px;border-radius:3px;margin-left:4px">-1~0%</span>
+    <span style="background:#ef9a9a;color:#000;padding:2px 8px;border-radius:3px;margin-left:4px">0~1%</span>
+    <span style="background:#e57373;color:#fff;padding:2px 8px;border-radius:3px;margin-left:4px">1~4%</span>
+    <span style="background:#c62828;color:#fff;padding:2px 8px;border-radius:3px;margin-left:4px">4~7%</span>
+    <span style="background:#7f0000;color:#fff;padding:2px 8px;border-radius:3px;margin-left:4px">涨≥7%</span>
+  </div>
+</div>
+
+<div class="section" id="sec-industry">
+  <div class="title">📊 子行业涨跌榜 · 成份股</div>
+  <table><thead><tr><th>子行业</th><th>均涨跌</th><th>上涨/总数</th><th>成份股（按涨幅排序）</th></tr></thead><tbody><tr><td style="white-space:nowrap;font-weight:600">PCB/面板</td><td style="white-space:nowrap"><span class="up">+13.26%</span></td><td style="white-space:nowrap">1/1</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>TTMI</b> +13.3%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">网络/互连芯片</td><td style="white-space:nowrap"><span class="up">+11.19%</span></td><td style="white-space:nowrap">5/5</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>ALAB</b> +13.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>MXL</b> +13.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>CRDO</b> +10.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>MRVL</b> +9.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>AVGO</b> +8.8%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">零部件</td><td style="white-space:nowrap"><span class="up">+11.04%</span></td><td style="white-space:nowrap">4/4</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>UCTT</b> +11.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>AEIS</b> +11.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>ICHR</b> +11.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>MKSI</b> +10.1%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">模拟/电源</td><td style="white-space:nowrap"><span class="up">+10.28%</span></td><td style="white-space:nowrap">5/5</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>MPWR</b> +16.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>POWI</b> +10.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>SITM</b> +9.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>ADI</b> +8.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>TXN</b> +6.6%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">光通信</td><td style="white-space:nowrap"><span class="up">+9.86%</span></td><td style="white-space:nowrap">12/12</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>COHR</b> +16.8%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>SMTC</b> +12.8%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>VIAV</b> +12.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>FN</b> +11.9%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>LITE</b> +10.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>CIEN</b> +10.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>AXTI</b> +10.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>GLW</b> +9.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>MTSI</b> +9.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>NOK</b> +6.8%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>AAOI</b> +3.9%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>POET</b> +3.8%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">设备</td><td style="white-space:nowrap"><span class="up">+9.35%</span></td><td style="white-space:nowrap">15/15</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>COHU</b> +12.8%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>TER</b> +12.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>ONTO</b> +12.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>AEHR</b> +11.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>ACMR</b> +11.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>AMAT</b> +11.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>LRCX</b> +10.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>KLAC</b> +9.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>ACLS</b> +8.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>CAMT</b> +8.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>KLIC</b> +7.8%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>VECO</b> +6.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>NVMI</b> +6.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>ASML</b> +6.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>FORM</b> +5.0%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">功率/分立</td><td style="white-space:nowrap"><span class="up">+9.24%</span></td><td style="white-space:nowrap">4/4</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>NVTS</b> +11.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>WOLF</b> +9.8%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>ON</b> +9.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>STM</b> +6.8%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">封测</td><td style="white-space:nowrap"><span class="up">+8.26%</span></td><td style="white-space:nowrap">3/3</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>IMOS</b> +9.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>ASX</b> +8.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>AMKR</b> +6.6%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">EMS</td><td style="white-space:nowrap"><span class="up">+8.08%</span></td><td style="white-space:nowrap">6/6</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>FLEX</b> +12.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>SANM</b> +11.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>CLS</b> +7.9%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>PLXS</b> +7.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>JBL</b> +5.6%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>BHE</b> +4.8%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">连接器/被动元件</td><td style="white-space:nowrap"><span class="up">+7.89%</span></td><td style="white-space:nowrap">4/4</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>BDC</b> +9.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>LFUS</b> +8.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>APH</b> +8.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>TEL</b> +5.7%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">存储</td><td style="white-space:nowrap"><span class="up">+7.61%</span></td><td style="white-space:nowrap">8/8</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>WDC</b> +9.9%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>STX</b> +9.8%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>PENG</b> +9.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>RMBS</b> +8.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>MU</b> +6.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>SNDK</b> +6.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>SIMO</b> +5.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>SKHY</b> +5.5%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">网络设备</td><td style="white-space:nowrap"><span class="up">+6.88%</span></td><td style="white-space:nowrap">3/3</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>ANET</b> +9.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>EXTR</b> +6.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>CSCO</b> +5.1%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">IP/EDA</td><td style="white-space:nowrap"><span class="up">+6.69%</span></td><td style="white-space:nowrap">1/1</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>ARM</b> +6.7%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">材料</td><td style="white-space:nowrap"><span class="up">+5.86%</span></td><td style="white-space:nowrap">5/5</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>ENTG</b> +9.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>Q</b> +6.9%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>PLAB</b> +5.7%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>ROG</b> +5.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>OLED</b> +1.9%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">分销</td><td style="white-space:nowrap"><span class="up">+5.76%</span></td><td style="white-space:nowrap">3/3</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>AVT</b> +7.0%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>ARW</b> +5.9%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>SNX</b> +4.4%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">AI芯片/CPU</td><td style="white-space:nowrap"><span class="up">+5.58%</span></td><td style="white-space:nowrap">3/4</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>AMD</b> +13.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>CBRS</b> +7.8%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>INTC</b> +5.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#1b5e20;white-space:nowrap;font-size:.78rem"><b>NVDA</b> -4.3%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">Fab/代工</td><td style="white-space:nowrap"><span class="up">+5.36%</span></td><td style="white-space:nowrap">4/5</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>TSEM</b> +10.9%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>UMC</b> +7.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>GFS</b> +4.9%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>TSM</b> +3.5%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>SKYT</b> 0.0%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">仪器/工业设备</td><td style="white-space:nowrap"><span class="up">+5.10%</span></td><td style="white-space:nowrap">2/2</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>KEYS</b> +6.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>TDY</b> +4.0%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">MCU/嵌入式/FPGA</td><td style="white-space:nowrap"><span class="up">+4.51%</span></td><td style="white-space:nowrap">5/5</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#7f0000;white-space:nowrap;font-size:.78rem"><b>LSCC</b> +8.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>MCHP</b> +5.4%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>AMBA</b> +5.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>NXPI</b> +3.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#ef9a9a;white-space:nowrap;font-size:.78rem"><b>SLAB</b> +0.1%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">服务器/存储系统</td><td style="white-space:nowrap"><span class="up">+4.27%</span></td><td style="white-space:nowrap">4/5</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>P</b> +6.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>HPE</b> +6.2%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>DELL</b> +5.3%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#c62828;white-space:nowrap;font-size:.78rem"><b>NTAP</b> +4.1%</span> <span style="display:inline-block;margin:1px 3px 1px 0;color:#a5d6a7;white-space:nowrap;font-size:.78rem"><b>SMCI</b> -0.6%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">射频</td><td style="white-space:nowrap"><span class="up">+3.66%</span></td><td style="white-space:nowrap">1/1</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>QCOM</b> +3.7%</span></td></tr><tr><td style="white-space:nowrap;font-weight:600">PC/消费电子</td><td style="white-space:nowrap"><span class="up">+2.43%</span></td><td style="white-space:nowrap">1/1</td><td style="line-height:1.9"><span style="display:inline-block;margin:1px 3px 1px 0;color:#e57373;white-space:nowrap;font-size:.78rem"><b>AAPL</b> +2.4%</span></td></tr></tbody></table>
+</div>
+
+<div class="section" id="sec-scatter">
+  <div class="title">💎 市值 vs 涨跌幅（X 轴：log₁₀ 市值（百万美元）· 涨红跌绿）</div>
+  <div style="position:relative;height:480px"><canvas id="scatter"></canvas></div>
+  <div style="margin-top:12px;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px;font-size:.87rem;color:#c9d1d9;line-height:1.7">
+    <b style="color:#e6edf3">📐 大小市值风格分析：</b>
+    大市值（≥$50B，31 只）均涨 <b class="up">+7.32%</b>，
+    中市值（$5–50B，46 只）均涨 <b class="up">+8.38%</b>，
+    小市值（&lt;$5B，25 只）均涨 <b class="up">+7.86%</b>。
+    大中小市值表现相近（大盘 +7.32%，中盘 +8.38%，小盘 +7.86%），板块整体同步，无明显风格分化。
+  </div>
+</div>
+
+<div id="sec-volume"><div class="section">
+  <div class="title">📈 量能分析（当日 vs 20 日均值）</div>
+  <div style="font-size:.87rem;color:#c9d1d9;line-height:1.8;margin-bottom:10px">
+    池总成交额 <b>$269B</b>，为 20 日均值的 <b>1.36x</b>（<b class="up">显著放量</b>）。
+    放量上涨（量比≥1.5）<b class="up">11 只</b> · 放量下跌 <b class="down">1 只</b> · 缩量（&lt;0.7x）21 只。
+    <span style="color:#8b949e">判读：缩量下跌偏仓位调整、放量下跌偏筹码出逃；放量上涨才是有效突破。</span>
+  </div>
+  <table><thead><tr><th>放量异动</th><th>子行业</th><th>涨跌</th><th>量比</th><th>成交额</th><th>2 日累计</th><th>5 日累计</th></tr></thead>
+  <tbody><tr><td><b>NVDA</b></td><td>AI芯片/CPU</td><td><span class="down">-4.27%</span></td><td><b>3.4x</b></td><td>$81.6B</td><td><span class="down">-1.61%</span></td><td><span class="down">-11.57%</span></td></tr><tr><td><b>AMD</b></td><td>AI芯片/CPU</td><td><span class="up">+13.26%</span></td><td><b>1.9x</b></td><td>$25.9B</td><td><span class="up">+25.76%</span></td><td><span class="up">+8.94%</span></td></tr><tr><td><b>NXPI</b></td><td>MCU/嵌入式/FPGA</td><td><span class="up">+3.27%</span></td><td><b>1.9x</b></td><td>$2.5B</td><td><span class="up">+4.90%</span></td><td><span class="down">-0.33%</span></td></tr><tr><td><b>MPWR</b></td><td>模拟/电源</td><td><span class="up">+16.60%</span></td><td><b>1.8x</b></td><td>$2.3B</td><td><span class="up">+22.69%</span></td><td><span class="up">+11.59%</span></td></tr><tr><td><b>LSCC</b></td><td>MCU/嵌入式/FPGA</td><td><span class="up">+8.45%</span></td><td><b>1.8x</b></td><td>$0.5B</td><td><span class="up">+16.18%</span></td><td><span class="up">+19.34%</span></td></tr><tr><td><b>COHR</b></td><td>光通信</td><td><span class="up">+16.79%</span></td><td><b>1.8x</b></td><td>$3.4B</td><td><span class="up">+32.65%</span></td><td><span class="up">+12.62%</span></td></tr></tbody></table>
+</div></div>
+
+<div class="section" id="sec-macro">
+  <div class="title">📌 宏观大盘 + 行业指数（GICS 11 板块 + 半导体专项）</div>
+
+  <div style="font-size:.82rem;color:#8b949e;margin:6px 0 6px;font-weight:600">📊 宽基与宏观</div>
+  <table>
+    <thead><tr><th>代码</th><th>名称</th><th>收盘</th><th>涨跌</th><th>备注</th></tr></thead>
+    <tbody><tr><td><b>SPX</b></td><td>S&P 500</td><td>7,556.16</td><td><span class="up">+2.43%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>NDX</b></td><td>Nasdaq 100</td><td>27,907.63</td><td><span class="up">+3.40%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>DJI</b></td><td>Dow Jones</td><td>52,389.75</td><td><span class="up">+2.15%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>RUT</b></td><td>Russell 2000</td><td>2,840.81</td><td><span class="up">+3.15%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>VIX</b></td><td>VIX</td><td>19.92</td><td><span class="down">-22.31%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>DXY</b></td><td>US Dollar</td><td>101.69</td><td><span class="down">-0.59%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>US10Y</b></td><td>10Y 收益率</td><td>4.86%</td><td><span class="up">+0.06%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>WTI</b></td><td>WTI 原油</td><td>$86.60</td><td><span class="up">+0.25%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr></tbody>
+  </table>
+
+  <div style="font-size:.82rem;color:#8b949e;margin:14px 0 6px;font-weight:600">💎 半导体/硬件专项</div>
+  <table>
+    <thead><tr><th>代码</th><th>名称</th><th>收盘</th><th>涨跌</th><th>备注</th></tr></thead>
+    <tbody><tr><td><b>SOX</b></td><td>PHLX 半导体</td><td>10,033.93</td><td><span class="up">+6.85%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>SOXX</b></td><td>iShares 半导体</td><td>$146.76</td><td><span class="up">+7.49%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>SMH</b></td><td>VanEck 半导体</td><td>$487.41</td><td><span class="up">+5.05%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>XSD</b></td><td>SPDR 半导体（小盘等权重）</td><td>$444.71</td><td><span class="up">+6.93%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>PSI</b></td><td>Invesco 动态半导体</td><td>$112.87</td><td><span class="up">+9.51%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr></tbody>
+  </table>
+
+  <div style="font-size:.82rem;color:#8b949e;margin:14px 0 6px;font-weight:600">🌐 GICS 11 板块（SPDR Sector ETF）— 横向跨行业对比</div>
+  <table>
+    <thead><tr><th>代码</th><th>名称</th><th>收盘</th><th>涨跌</th><th>备注</th></tr></thead>
+    <tbody><tr><td><b>XLK</b></td><td>信息科技 Tech</td><td>$170.88</td><td><span class="up">+3.73%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>XLC</b></td><td>通信服务 Comm Svc</td><td>$107.36</td><td><span class="up">+2.45%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>XLY</b></td><td>可选消费 Cons Disc</td><td>$121.01</td><td><span class="up">+2.92%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>XLF</b></td><td>金融 Financials</td><td>$57.99</td><td><span class="up">+1.45%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>XLI</b></td><td>工业 Industrials</td><td>$168.89</td><td><span class="up">+3.82%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>XLB</b></td><td>材料 Materials</td><td>$52.94</td><td><span class="up">+1.91%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>XLRE</b></td><td>房地产 Real Estate</td><td>$44.64</td><td><span class="up">+1.45%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>XLV</b></td><td>医疗 Health Care</td><td>$188.33</td><td><span class="up">+1.91%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>XLU</b></td><td>公用事业 Utilities</td><td>$43.79</td><td><span class="up">+1.53%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>XLP</b></td><td>必选消费 Cons Staples</td><td>$90.89</td><td><span class="up">+0.90%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>XLE</b></td><td>能源 Energy</td><td>$61.94</td><td><span class="up">+0.52%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr></tbody>
+  </table>
+
+  <div style="margin-top:14px;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px;font-size:.87rem;color:#c9d1d9;line-height:1.7">
+    <b style="color:#e6edf3">🎯 跨行业风格分析：</b>
+    今日 11 个 GICS 板块中 <b class="up">11 涨</b> / <b class="down">0 跌</b>，<b>工业 Industrials（XLI <span class="up">+3.82%</span>）</b>领涨，<b>能源 Energy（XLE <span class="up">+0.52%</span>）</b>垫底，强弱差 <b>3.3 个点</b>。 板块间无明显风格分化，市场整体方向性较弱。
+  </div>
+</div>
+
+<div class="section" id="sec-structure">
+  <div class="title">🔄 市场结构 + 风格因子（板块轮动周期 + 5 因子领跑判断）</div>
+
+  <div style="font-size:.82rem;color:#8b949e;margin-bottom:8px;font-weight:600">📐 4 个比值快照（自动算）</div>
+  <div class="stats" style="margin-bottom:18px">
+    <div class="card">
+  <div class="lbl">📊 普涨度 RSP/SPX</div>
+  <div style="font-size:1.4rem;font-weight:700;color:#c9d1d9;margin-top:4px">0.93x</div>
+  <div style="font-size:.72rem;color:#8b949e;margin-top:2px">RSP +2.27% ÷ SPX +2.43%</div>
+  <div style="font-size:.74rem;color:#c9d1d9;margin-top:6px;padding-top:6px;border-top:1px solid #30363d"><b>偏窄</b>（中小盘跟不上）</div>
+</div><div class="card">
+  <div class="lbl">🚀 科技强度 NDX/SPX</div>
+  <div style="font-size:1.4rem;font-weight:700;color:#e57373;margin-top:4px">1.40x</div>
+  <div style="font-size:.72rem;color:#8b949e;margin-top:2px">NDX +3.40% ÷ SPX +2.43%</div>
+  <div style="font-size:.74rem;color:#c9d1d9;margin-top:6px;padding-top:6px;border-top:1px solid #30363d"><b>科技独强</b>（NDX 领跑）</div>
+</div><div class="card">
+  <div class="lbl">⚡ 半导体强度 SOX/NDX</div>
+  <div style="font-size:1.4rem;font-weight:700;color:#e57373;margin-top:4px">2.01x</div>
+  <div style="font-size:.72rem;color:#8b949e;margin-top:2px">SOX +6.85% ÷ NDX +3.40%</div>
+  <div style="font-size:.74rem;color:#c9d1d9;margin-top:6px;padding-top:6px;border-top:1px solid #30363d"><b>半导体远超</b>（AI 算力领涨）</div>
+</div><div class="card">
+  <div class="lbl">🖥️ 硬件池强度 Pool/SOX</div>
+  <div style="font-size:1.4rem;font-weight:700;color:#c9d1d9;margin-top:4px">0.54x</div>
+  <div style="font-size:.72rem;color:#8b949e;margin-top:2px">Pool +3.73% ÷ SOX +6.85%</div>
+  <div style="font-size:.74rem;color:#c9d1d9;margin-top:6px;padding-top:6px;border-top:1px solid #30363d"><b>跑输 SOX</b>（半导体大盘股领涨而中小盘跟不上）</div>
+</div><div class="card">
+  <div class="lbl">🏋️ 剔除前二权重</div>
+  <div class="val" style="color:#e57373">+7.24%</div>
+  <div style="font-size:.72rem;color:#8b949e;margin-top:2px">全池 +3.73% · 剔除 AAPL+NVDA</div>
+  <div style="font-size:.74rem;color:#c9d1d9;margin-top:6px;padding-top:6px;border-top:1px solid #30363d"><b>权重股显著扭曲</b>（AAPL+NVDA 贡献 -3.51 个百分点，广度与表面数字背离）</div>
+</div>
+  </div>
+
+  <div style="font-size:.82rem;color:#8b949e;margin:14px 0 6px;font-weight:600">🎨 风格因子 ETF（5 因子 + 等权基准）</div>
+  <table>
+    <thead><tr><th>代码</th><th>名称</th><th>收盘</th><th>涨跌</th><th>备注</th></tr></thead>
+    <tbody><tr><td><b>IWF</b></td><td>Russell 1000 Growth</td><td>$115.01</td><td><span class="up">+2.92%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>IWD</b></td><td>Russell 1000 Value</td><td>$262.61</td><td><span class="up">+2.00%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>MTUM</b></td><td>iShares Momentum Factor</td><td>$66.87</td><td><span class="up">+4.87%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>SPLV</b></td><td>S&P 500 Low Volatility</td><td>$77.83</td><td><span class="up">+1.25%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>QUAL</b></td><td>iShares Quality Factor</td><td>$56.04</td><td><span class="up">+2.21%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr><tr><td><b>RSP</b></td><td>S&P 500 Equal Weight</td><td>$220.95</td><td><span class="up">+2.27%</span></td><td style="color:#8b949e;font-size:.82rem"></td></tr></tbody>
+  </table>
+
+  <div style="margin-top:14px;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:14px;font-size:.87rem;color:#c9d1d9;line-height:1.85">
+    <b style="color:#e6edf3">💬 综合解读：</b>
+    <b>市场结构</b>：开池最深单日（11/5 市值加权 -8.99%）之后的第二波、也是更广的一波修复：全池市值加权 +3.73%、算术平均 +7.93%、广度 99:2:1——全池仅 NVDA（-4.27%，董事会调查独立利空）与 SMCI（-0.56%）下跌，与 11/5 的 0:101:1 构成完美镜像。普涨度 RSP/SPX 为 0.93，等权重几乎与标普同步，属健康的全面修复；科技强度 NDX/SPX 为 1.40 科技独强；半导体强度 SOX/NDX 达 2.02，费城半导体指数 +6.85% 远超科技大盘；硬件池强度 Pool/SOX 仅 0.54，但这是 NVDA（-4.27%、单股拖累 -0.87 个百分点）与 AAPL 两大权重稀释的结果——剔除两者后池涨幅 +7.24%，实际反超 SOX，中小盘弹性显著强于头部。<br><br><b>风格因子</b>：动量 +4.87% 一骑绝尘，成长 +2.92% 明显跑赢价值 +2.00%，低波 +1.25% 垫底，质量 +2.21% 居中——「动量+成长领跑、低波垫底」的教科书式风险偏好回升结构；GICS 11 个板块罕见全红（工业 +3.82% 与科技 +3.73% 双领涨、能源 +0.52% 最弱），VIX 单日 -22.3% 自 25.64 跌回 19.92、重返 20 下方，为开池以来最大单日降幅之一。<br><br><b>综合判断</b>：本日属「政策冲击出清后的仓位全面回补日」——十年期 4.863% 平稳、油价 $86.6 持平，宏观无新变量，修复完全由仓位驱动。但三日复合全池仍约 -2.9%（11/5 深坑收复约三分之二），且修复高度选择性：有财报实据者（COHR 三日 +15.4%、MPWR +10.1%、AMD +4.1%）已完全收复并创三日新高，存储（SNDK 三日 -14.5%、WDC -10.5%）与 NVDA（-10.7%）仍在深坑。后市看点：NVDA 调查进展与 11 月下旬 Q3 财报、11/12 AMAT 财报的晶圆制造设备口径、德州新政府数据中心审批文本。
+  </div>
+</div>
+
+<div class="section" id="sec-themes">
+  <div class="title">📊 板块 Beta 解读 · 跨子行业联动主题</div>
+  <p style="font-size:.8rem;color:#8b949e;margin-bottom:12px">挑当日最有信号意义的 3-5 个板块联动主题。每个主题：涉及板块（市值加权涨跌 + 领涨领跌个股）+ 共同驱动 + 跨板块联动 + 时效判断。<b style="color:#79c0ff">板块联动的故事比单只个股的超额收益更重要</b>。</p>
+  <div style="background:#0d1117;border:1px solid #30363d;border-left:4px solid #e57373;border-radius:6px;padding:14px 16px;margin-bottom:14px">
+  <div style="font-size:1.02rem;font-weight:700;color:#e6edf3;margin-bottom:10px;line-height:1.5">光通信板块修复领涨：财报实据者与并购套利者的分层回补</div>
+  <div style="background:#161b22;border-radius:4px;padding:10px 12px;margin-bottom:10px"><div style="margin-bottom:6px"><b style="color:#79c0ff">光通信</b> <span style="color:#e57373;font-weight:600">+10.51%</span> <span style="color:#8b949e;font-size:.78rem">(12 只)</span><br><span style="font-size:.82rem"><span style="color:#e57373">COHR +16.8%</span> · <span style="color:#e57373">GLW +9.2%</span> · <span style="color:#e57373">LITE +10.7%</span> · <span style="color:#e57373">CIEN +10.7%</span> · <span style="color:#e57373">NOK +6.8%</span></span></div></div>
+  <div style="margin-bottom:8px"><span style="color:#79c0ff;font-weight:600;font-size:.82rem">💡 共同驱动</span><p style="margin-top:4px;font-size:.85rem;line-height:1.7;color:#c9d1d9">光通信板块市值加权 +10.51%，十二只成分股全红，为 22 个子行业中市值体量与涨幅兼具的修复主力（11/5 该板块 -14.25% 为跌幅榜第二，镜像修复精确兑现）。板块内部分层清晰：领涨的 COHR +16.79%（11/4 财报指引环比 +11.8% 加速的实据锚，详见个股卡）；FN +11.86%（11/2 财报双超+指引环比加速的次新实据）；LITE +10.69% 的属性是并购套利——对 MRVL 换股隐含价的折价随 MRVL +9.49% 同步收敛；AAOI +3.93% 与 POET +3.75% 两只高贝塔小盘垫底，显示本轮回补资金优先买「有实据的龙头」而非「弹性最大的票」。设备端 VIAV +12.33%、SMTC +12.83% 同步修复。板块逻辑层面，「产能售罄至 2029 年初」的管理层口径（10/9 标题级情报）与云厂商资本开支虽边际降速但绝对额仍创新高的现实，共同支撑订单可见性未因上周政策冲击受损的判断。</p></div>
+  <div style="margin-bottom:8px"><span style="color:#79c0ff;font-weight:600;font-size:.82rem">🔗 跨板块联动</span><p style="margin-top:4px;font-size:.85rem;line-height:1.7;color:#c9d1d9">A 股映射（中际旭创/新易盛/天孚通信）：本轮美股反弹属仓位修复而非新增订单催化，同向传导但强度打折；需警惕的反向变量仍是 8 月 FCC 光模块禁令预期类政策——本日无该线新增文本。</p></div>
+  <div style="background:#161b22;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">⏱️ 时效判断：</b>仓位修复逻辑看一至两周；板块中期定价回归云厂商资本开支与 1.6T 放量节奏，11 月下旬 NVDA 财报是下一个锚。</div>
+</div>
+<div style="background:#0d1117;border:1px solid #30363d;border-left:4px solid #e57373;border-radius:6px;padding:14px 16px;margin-bottom:14px">
+  <div style="font-size:1.02rem;font-weight:700;color:#e6edf3;margin-bottom:10px;line-height:1.5">晶圆制造设备生态链 27 只全红：拉姆约束阴影下的全员回补</div>
+  <div style="background:#161b22;border-radius:4px;padding:10px 12px;margin-bottom:10px"><div style="margin-bottom:6px"><b style="color:#79c0ff">设备</b> <span style="color:#e57373;font-weight:600">+8.75%</span> <span style="color:#8b949e;font-size:.78rem">(15 只)</span><br><span style="font-size:.82rem"><span style="color:#e57373">AMAT +11.4%</span> · <span style="color:#e57373">LRCX +10.4%</span> · <span style="color:#e57373">ASML +6.2%</span> · <span style="color:#e57373">KLAC +9.3%</span> · <span style="color:#e57373">TER +12.7%</span></span></div>
+<div style="margin-bottom:6px"><b style="color:#79c0ff">零部件</b> <span style="color:#e57373;font-weight:600">+10.65%</span> <span style="color:#8b949e;font-size:.78rem">(4 只)</span><br><span style="font-size:.82rem"><span style="color:#e57373">MKSI +10.1%</span> · <span style="color:#e57373">AEIS +11.3%</span> · <span style="color:#e57373">UCTT +11.6%</span> · <span style="color:#e57373">ICHR +11.2%</span></span></div>
+<div style="margin-bottom:6px"><b style="color:#79c0ff">材料</b> <span style="color:#e57373;font-weight:600">+7.40%</span> <span style="color:#8b949e;font-size:.78rem">(5 只)</span><br><span style="font-size:.82rem"><span style="color:#e57373">ENTG +9.4%</span> · <span style="color:#e57373">Q +6.9%</span> · <span style="color:#e57373">ROG +5.3%</span> · <span style="color:#e57373">PLAB +5.7%</span> · <span style="color:#e57373">OLED +1.9%</span></span></div>
+<div style="margin-bottom:6px"><b style="color:#79c0ff">封测</b> <span style="color:#e57373;font-weight:600">+8.45%</span> <span style="color:#8b949e;font-size:.78rem">(3 只)</span><br><span style="font-size:.82rem"><span style="color:#e57373">ASX +8.6%</span> · <span style="color:#e57373">AMKR +6.6%</span> · <span style="color:#e57373">IMOS +9.5%</span></span></div></div>
+  <div style="margin-bottom:8px"><span style="color:#79c0ff;font-weight:600;font-size:.82rem">💡 共同驱动</span><p style="margin-top:4px;font-size:.85rem;line-height:1.7;color:#c9d1d9">设备 +8.75%（十五只全红）、零部件 +10.65%（四只全红）、材料 +7.40%（五只全红）、封测 +8.45%（三只全红）——四个标签合计 27 只无一下跌。这四个标签放在一起是因为它们是同一条晶圆制造设备生态链（铁律 4）：从主设备（AMAT +11.37%、LRCX +10.41%、KLAC +9.31%）、零部件（UCTT +11.57%、ICHR +11.25%、AEIS +11.31%）、材料（ENTG +9.44%）到后道封测（ASX +8.63%、AMKR +6.64%），修复没有缺席者。弹性排序上，零部件 +10.65% 高于主设备，精确对应 11/5 跌幅榜上零部件 -7.49% 的高贝塔位置；后道测试链 TER +12.73%、COHU +12.76% 领涨设备内部，检测量测 ONTO +11.98%（盘后财报双超，详见业绩复盘）盘中已抢跑。但要点是三日复合：AMAT +0.3%、TER -2.0% 刚回到冲击前水平，本轮全红只是收复失地——10/21 拉姆「无尘室与零部件短缺限制出货至 2027 年初」的供给约束口径仍压着板块估值上限。</p></div>
+  <div style="margin-bottom:8px"><span style="color:#79c0ff;font-weight:600;font-size:.82rem">🔗 跨板块联动</span><p style="margin-top:4px;font-size:.85rem;line-height:1.7;color:#c9d1d9">A 股映射（北方华创/中微公司/富创精密/沪硅产业链）：扩产周期同向传导，修复日映射偏正面；若 11/12 AMAT 财报复述供给约束口径，设备链将二次定价、A 股同向承压。</p></div>
+  <div style="background:#161b22;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">⏱️ 时效判断：</b>修复级别行情；11/12 AMAT 财报（晶圆制造设备口径再裁决）前属观察窗口，之后方向由指引加速度决定。</div>
+</div>
+<div style="background:#0d1117;border:1px solid #30363d;border-left:4px solid #e57373;border-radius:6px;padding:14px 16px;margin-bottom:14px">
+  <div style="font-size:1.02rem;font-weight:700;color:#e6edf3;margin-bottom:10px;line-height:1.5">存储板块八只全红但三日仍最深：HDD 双雄反转领涨的弱修复</div>
+  <div style="background:#161b22;border-radius:4px;padding:10px 12px;margin-bottom:10px"><div style="margin-bottom:6px"><b style="color:#79c0ff">存储</b> <span style="color:#e57373;font-weight:600">+6.31%</span> <span style="color:#8b949e;font-size:.78rem">(8 只)</span><br><span style="font-size:.82rem"><span style="color:#e57373">MU +6.2%</span> · <span style="color:#e57373">SKHY +5.5%</span> · <span style="color:#e57373">STX +9.8%</span> · <span style="color:#e57373">WDC +9.9%</span> · <span style="color:#e57373">SNDK +6.2%</span></span></div></div>
+  <div style="margin-bottom:8px"><span style="color:#79c0ff;font-weight:600;font-size:.82rem">💡 共同驱动</span><p style="margin-top:4px;font-size:.85rem;line-height:1.7;color:#c9d1d9">存储板块市值加权 +6.31%，八只全红，但在 21 个上涨子行业中弹性仅居中游——与它 11/5 跌幅榜第二（-15.84%）的位置不对称，是本日修复选择性的最佳负样本：三日复合 SNDK -14.5%、WDC -10.5%、STX -9.1%、MU -7.8%，整条存储链仍是全池三日最深的主线板块。内部结构出现反转：11/6 修复日「无人接盘」的 HDD 双雄今日反而领涨（WDC +9.86%、STX +9.79%），SKHY +5.53%、MU +6.25%、SNDK +6.16% 原厂居中，SIMO +5.68% 模组端同步——一周内板块确定性排序的第三轮切换，更像低位补涨轮动而非逻辑改变。压制仍在：11/5 政策冲击打的是「数据中心需求侧」，恰好同时动摇涨价叙事的需求假设与「谁买单」的盈利分配（英特尔 Q4 指引崩塌的需求破坏样本在前），三星拟削减手机产量 30% 的终端砍单阴影未散，涨价证据链需要新的客户端确认来重启。</p></div>
+  <div style="margin-bottom:8px"><span style="color:#79c0ff;font-weight:600;font-size:.82rem">🔗 跨板块联动</span><p style="margin-top:4px;font-size:.85rem;line-height:1.7;color:#c9d1d9">A 股映射（江波龙/佰维存储/兆易创新）：「美股原厂超预期也不涨领先 A 股模组一至两日」的传导规律下，本轮弱修复对 A 股存储链的拉动预计有限，同向偏弱；11 月中旬 DRAM 合约价落地是下一个双边共振点。</p></div>
+  <div style="background:#161b22;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">⏱️ 时效判断：</b>短期跟随大盘修复；中期方向等 11 月中 DRAM 合约价与下一家整机厂电话会的成本口径，三日深坑收复需要新证据而非仓位。</div>
+</div>
+<div style="background:#0d1117;border:1px solid #30363d;border-left:4px solid #e57373;border-radius:6px;padding:14px 16px;margin-bottom:14px">
+  <div style="font-size:1.02rem;font-weight:700;color:#e6edf3;margin-bottom:10px;line-height:1.5">AI 整机链修复＋SANM 盘后指引核爆：订单可见性续上最硬一笔</div>
+  <div style="background:#161b22;border-radius:4px;padding:10px 12px;margin-bottom:10px"><div style="margin-bottom:6px"><b style="color:#79c0ff">EMS</b> <span style="color:#e57373;font-weight:600">+8.64%</span> <span style="color:#8b949e;font-size:.78rem">(6 只)</span><br><span style="font-size:.82rem"><span style="color:#e57373">FLEX +12.0%</span> · <span style="color:#e57373">CLS +7.9%</span> · <span style="color:#e57373">SANM +11.1%</span> · <span style="color:#e57373">JBL +5.6%</span> · <span style="color:#e57373">PLXS +7.0%</span></span></div>
+<div style="margin-bottom:6px"><b style="color:#79c0ff">服务器/存储系统</b> <span style="color:#e57373;font-weight:600">+5.15%</span> <span style="color:#8b949e;font-size:.78rem">(5 只)</span><br><span style="font-size:.82rem"><span style="color:#e57373">DELL +5.3%</span> · <span style="color:#e57373">HPE +6.2%</span> · <span style="color:#e57373">P +6.3%</span> · <span style="color:#e57373">NTAP +4.1%</span> · <span style="color:#43a047">SMCI -0.6%</span></span></div></div>
+  <div style="margin-bottom:8px"><span style="color:#79c0ff;font-weight:600;font-size:.82rem">💡 共同驱动</span><p style="margin-top:4px;font-size:.85rem;line-height:1.7;color:#c9d1d9">EMS +8.64%（六只全红）与服务器/存储系统 +5.15%（四涨一跌）构成 AI 整机链的双板块修复：FLEX +12.03%、SANM +11.11%、CLS +7.86%、PLXS +7.01%、DELL +5.33%、HPE +6.19% 全线回补 11/5 政策冲击（当日两板块合计跌幅居前）。盘后 SANM 第四财季大超并给出 FY27 营收 175-195 亿美元指引（中值同比约 +27%），盘后约 +19.8%（详见业绩复盘与个股卡）——这是继 10/26 CLS「2027 增长加速」、11/2 DELL 订单可见性之后，代工/整机端第三份直接反证 10/14 巴克莱「企业 AI 采用迟缓」降级论的财报，把 AI 整机订单可见性的证据链又续上一笔。缺席名单同样有信息量：SMCI -0.56% 为全池唯二下跌，连续第三个交易日缺席修复（10/28 财报经营现金流 -4.34 亿美元的软肋 + 高杠杆库存模式在存储涨价周期的双重折价）。</p></div>
+  <div style="margin-bottom:8px"><span style="color:#79c0ff;font-weight:600;font-size:.82rem">🔗 跨板块联动</span><p style="margin-top:4px;font-size:.85rem;line-height:1.7;color:#c9d1d9">A 股映射（工业富联/浪潮信息/环旭电子）：SANM 盘后核爆对 A 股 EMS/服务器链是次日直接同向映射，映射强度高；但「存储缺货两面定价」规律提示，整机链利好与存储原厂利好互为成本对手盘，A 股两条链难以同日齐涨。</p></div>
+  <div style="background:#161b22;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">⏱️ 时效判断：</b>财报驱动叠加修复，可看至 11 月中旬密集财报期结束；FY27 指引的兑现节奏是明年主线。</div>
+</div>
+</div>
+
+<div class="section" id="sec-cards">
+  <div class="title">🔍 重点个股深度解读</div>
+  <div style="display:grid;grid-template-columns:1fr;gap:16px">
+  <div style="background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:18px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #30363d;padding-bottom:10px;margin-bottom:12px">
+    <div>
+      <span style="font-size:1.2rem;font-weight:700;color:#43a047">NVDA</span>
+      <span style="color:#c9d1d9;margin-left:8px;font-size:.95rem">— 黄仁勋丑闻引爆董事会调查，普涨日逆市独跌（-4.27%）</span>
+    </div>
+    <div style="font-weight:700;font-size:1.1rem;color:#43a047">-4.27%</div>
+  </div>
+  <div style="font-size:.82rem;color:#8b949e;margin-bottom:14px">收盘 $178.67 · 市值 $4.31 万亿 · 成交额 4.57 亿股天量（以收盘价估约 816 亿美元，量比未计） · 52w $164.27 – $243.37</div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">📊 基本面变化</div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.75;margin-bottom:14px">在全池 99 涨 2 跌的超级修复日，英伟达是唯一深跌的权重股，单股拖累池读数 -0.87 个百分点。独立催化为 CEO 个人层面的罕见事件：黄仁勋承认与一名被怀疑受中国情报机构招募的女商人存在婚外情，董事会已就「其是否曾被外国情报机构针对」启动独立调查；董事会声明称目前未发现国家安全或公司机密受损的证据。股价盘中最深 -8.8%，尾盘收窄至 -4.27%，单日市值蒸发约 1,920 亿美元，盘后企稳（约 +0.2%）。叠加上周「蓝色浪潮」后俄亥俄数据中心被点名为潜在审查对象的政策阴影，公司三日复合 -10.7%，距一个月前峰值 $243.37 已回撤约 26.6%，在修复行情中被持续绕行。需要强调：本次调查属治理与安全层事件，与数据中心需求、Blackwell/Rubin 产品节奏均无直接关联，基本面叙事暂未受损。</p>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">🏛️ 卖方观点</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:14px"><li><b>高盛</b>（买入（维持），—）：丑闻当日维持买入（FMP 评级库 11/9 当日记录），未因治理事件调整基本面判断</li><li><b>RBC</b>（跑赢大盘（维持），—）：当日维持跑赢评级，与高盛构成「卖方集体维持 vs 股价深跌」的护盘组合</li></ul>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div style="background:#161b22;border-left:3px solid #e57373;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#e57373;font-weight:600;margin-bottom:6px">🐂 多方逻辑</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>董事会明确声明未发现机密或国家安全受损证据，最坏情形（CEO 涉密/被迫离任）概率被初步压低</li><li>盘中 -8.8% 深跌被买回过半，盘后企稳，恐慌抛压在当日已大部分出清</li><li>数据中心需求、产品路线图与订单可见性未受事件影响，11 月下旬 Q3 财报是用实据夺回定价权的窗口</li><li>高盛/RBC 当日集体维持，卖方未跟随情绪下调</li></ul>
+    </div>
+    <div style="background:#161b22;border-left:3px solid #43a047;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#43a047;font-weight:600;margin-bottom:6px">🐻 空方担忧</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>独立调查结论未出，若出现「信息接触面扩大」类后续披露将二次冲击</li><li>距峰值回撤 26.6% 叠加俄亥俄审查点名，政策与治理双重阴影下修复资金持续绕行</li><li>全球市值第一公司的 CEO 关键人风险首次被定价，估值溢价的「治理折扣」可能长期化</li></ul>
+    </div>
+  </div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">⏭️ 后续催化</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:10px"><li><b>董事会独立调查进展</b>：任何阶段性结论都是二元事件</li><li><b>11 月下旬 Q3 FY27 财报</b>：订单实据 vs 治理叙事的总对决</li><li><b>德州/国会数据中心议程</b>：俄亥俄点名后的政策文本落地</li></ul>
+
+  <div style="background:#161b22;border:1px solid #30363d;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">📈 技术面：</b>收盘 $178.67 跌破 200 日均线（$204.67）与 50 日均线（$219.81）之下运行，距 52 周低点 $164.27 仅 8.8% 缓冲；盘中 $170.24 探底回升留长下影，天量换手显示多空分歧极大，$170 一线为短期生死位。</div>
+</div>
+<div style="background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:18px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #30363d;padding-bottom:10px;margin-bottom:12px">
+    <div>
+      <span style="font-size:1.2rem;font-weight:700;color:#e57373">COHR</span>
+      <span style="color:#c9d1d9;margin-left:8px;font-size:.95rem">— 财报核爆第三日加速，三日复合 +15.4% 全池修复王（+16.79%）</span>
+    </div>
+    <div style="font-weight:700;font-size:1.1rem;color:#e57373">+16.79%</div>
+  </div>
+  <div style="font-size:.82rem;color:#8b949e;margin-bottom:14px">收盘 $225.19 · 市值 $443 亿 · 成交额 1,493 万股（以收盘价估约 33.6 亿美元，量比未计） · 52w $130.42 – $440.00</div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">📊 基本面变化</div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.75;margin-bottom:14px">光通信板块 +10.51% 十二只全红中的绝对领涨者。11/4 财报给出的「FQ2 营收指引环比 +11.8% 加速 + FY27 增速上看 60%」是本轮修复行情中最硬的板块级实据锚：11/5 政策冲击日被错杀 -12.98% 后，11/6 +13.58%、今日再 +16.79%，三日复合 +15.4%，是全池唯一在三个交易日内完全收复冲击并大幅创出新高的标的——「财报实据新鲜度决定修复弹性」模型的第一样本。公司数据中心光模块与光学元件双线放量，管理层在电话会上确认产能扩张按计划推进，与同板块靠并购套利定价的 LITE（+10.69%，对 MRVL 换股隐含价折价收敛）形成「实据驱动 vs 事件驱动」的清晰分层。</p>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">🏛️ 卖方观点</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:14px"><li><b>花旗</b>（买入（维持），—）：11/6 财报后维持买入（FMP 评级库），本日无新动作，当日卖方静默</li></ul>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div style="background:#161b22;border-left:3px solid #e57373;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#e57373;font-weight:600;margin-bottom:6px">🐂 多方逻辑</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>FQ2 指引环比加速 + FY27 增速上看 60%，指引二阶导为全板块最强</li><li>三日完全收复政策冲击，筹码结构经历一轮完整换手后更干净</li><li>数据中心光学与激光双业务线共振，客户集中度低于同业</li></ul>
+    </div>
+    <div style="background:#161b22;border-left:3px solid #43a047;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#43a047;font-weight:600;margin-bottom:6px">🐻 空方担忧</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>单日 +16.79% 后短线超买，距 52 周高点 $440 仍有一倍空间意味着此前清算深度同样惊人</li><li>板块修复若在利率再冲击下回吐，高贝塔属性使其回撤同样领先</li><li>后续季度若环比加速不能延续，将按「指引二阶导」规则被清算</li></ul>
+    </div>
+  </div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">⏭️ 后续催化</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:10px"><li><b>800G/1.6T 出货节奏</b>：云厂商资本开支指引变化的直接传导</li><li><b>2027 财年中期指引更新</b>：下一次电话会的加速度验证</li><li><b>MRVL-LITE 并购交割进展</b>：板块竞争格局重塑</li></ul>
+
+  <div style="background:#161b22;border:1px solid #30363d;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">📈 技术面：</b>收盘 $225.19 站回 11/5 冲击前平台，仍低于 50 日均线（$270.02）与 200 日均线（$296.42），三日 V 型反转后短期阻力看 $230-240 缺口区，支撑 $197（今日开盘低点）。</div>
+</div>
+<div style="background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:18px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #30363d;padding-bottom:10px;margin-bottom:12px">
+    <div>
+      <span style="font-size:1.2rem;font-weight:700;color:#e57373">MPWR</span>
+      <span style="color:#c9d1d9;margin-left:8px;font-size:.95rem">— 崩盘日唯一上涨者变修复日最强模拟股（+16.60%）</span>
+    </div>
+    <div style="font-weight:700;font-size:1.1rem;color:#e57373">+16.6%</div>
+  </div>
+  <div style="font-size:.82rem;color:#8b949e;margin-bottom:14px">收盘 $1388.05 · 市值 $677 亿 · 成交额 166 万股（以收盘价估约 23.1 亿美元，量比未计） · 52w $833.18 – $1,714.09</div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">📊 基本面变化</div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.75;margin-bottom:14px">模拟/电源板块 +8.63% 的绝对主引擎。公司是 11/5 开池最深单日中全池唯一实质上涨的标的（+1.07%），今日再以 +16.60% 领涨，三日复合 +10.1% 仅次于 COHR——两只「崩盘日抗跌 + 修复日领涨」标的的共同点都是十月末财报给出的硬实据：公司 10/29 财报单季营收首破 12 亿美元、同比 +47.6%，回购额度上调至 10 亿美元，AI 服务器电源管理（垂直供电）内容价值随机架功率密度提升持续扩张。在数据中心电源链（英伟达 800 VDC 架构推进）叙事下，公司作为核心供应商的订单可见性未受上周政策冲击影响，修复资金将其作为「模拟板块的 AI 纯度最高标的」集中回补。</p>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">🏛️ 卖方观点</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:14px"><li><b>—</b>（当日卖方静默，—）：FMP 评级库 11/9 无该股记录，未经 ratings 文件核实</li></ul>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div style="background:#161b22;border-left:3px solid #e57373;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#e57373;font-weight:600;margin-bottom:6px">🐂 多方逻辑</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>单季营收首破 12 亿美元 + 回购上调 10 亿美元，财报实据全板块最新鲜</li><li>AI 服务器垂直供电单机价值量随功率密度提升结构性扩张</li><li>崩盘日唯一上涨显示持仓盘极度稳定，浮筹少</li></ul>
+    </div>
+    <div style="background:#161b22;border-left:3px solid #43a047;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#43a047;font-weight:600;margin-bottom:6px">🐻 空方担忧</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>收盘已高于 50 日均线（$1,267）约 9.5%，短线乖离偏大</li><li>模拟板块整体仍处车规/工业去库存尾段，非 AI 业务拖累仍在</li><li>估值重回高位后对「指引不加速」的容错度低</li></ul>
+    </div>
+  </div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">⏭️ 后续催化</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:10px"><li><b>英伟达 800 VDC 电源架构放量</b>：垂直供电订单兑现节奏</li><li><b>下季财报</b>：数据中心电源收入占比能否继续抬升</li><li><b>12/8-9 联储议息</b>：利率敏感的模拟板块贝塔</li></ul>
+
+  <div style="background:#161b22;border:1px solid #30363d;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">📈 技术面：</b>收盘 $1,388.05 一举收复 50 日均线（$1,267）与 200 日均线（$1,321），盘中高点 $1,396.55 逼近 $1,400 关口；MACD 日线金叉在即，上方阻力 $1,450-1,500 区间，支撑回看 $1,321（200 日线）。</div>
+</div>
+<div style="background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:18px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #30363d;padding-bottom:10px;margin-bottom:12px">
+    <div>
+      <span style="font-size:1.2rem;font-weight:700;color:#e57373">AMD</span>
+      <span style="color:#c9d1d9;margin-left:8px;font-size:.95rem">— 修复弹性王连续第二日兑现，三日复合转正（+13.26%）</span>
+    </div>
+    <div style="font-weight:700;font-size:1.1rem;color:#e57373">+13.26%</div>
+  </div>
+  <div style="font-size:.82rem;color:#8b949e;margin-bottom:14px">收盘 $508.58 · 市值 $8,302 亿 · 成交额 5,086 万股（以收盘价估约 259 亿美元，量比未计） · 52w $108.62 – $658.52</div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">📊 基本面变化</div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.75;margin-bottom:14px">11/6 修复日 +11.04% 弹性第一，今日再 +13.26% 收复 $500 关口，三日复合 +4.1% 成为权重股中率先把 11/5 冲击（单日 -17.26%）全部收复并转正的标的。支撑弹性的仍是 11/3 财报实据：第四季营收指引约 170 亿美元、隐含环比 +27%（财报季全场指引加速度最大的权重股之一），管理层给出 2027 年服务器收入翻倍目标并明确「已锁定内存供应」——在存储涨价挤压整机与平台厂商毛利率（英特尔 Q4 指引崩塌的直接原因）的当下，「锁定内存」成为 AMD 与同业拉开的身位。普涨日 NVDA 因治理事件独跌，部分 AI 算力配置资金当日向 AMD 迁移，「AI 芯片双雄」出现罕见的单日 17.5 个百分点剪刀差。</p>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">🏛️ 卖方观点</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:14px"><li><b>—</b>（当日卖方静默，—）：FMP 评级库 11/9 无新记录（最新停在 11/5 前），未经 ratings 文件核实</li></ul>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div style="background:#161b22;border-left:3px solid #e57373;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#e57373;font-weight:600;margin-bottom:6px">🐂 多方逻辑</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>Q4 指引环比 +27% 加速 + 2027 服务器收入翻倍目标，指引二阶导权重股最强</li><li>「已锁定内存供应」在存储涨价周期中构成结构性成本优势</li><li>NVDA 治理阴影下承接 AI 算力配置的迁移资金</li></ul>
+    </div>
+    <div style="background:#161b22;border-left:3px solid #43a047;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#43a047;font-weight:600;margin-bottom:6px">🐻 空方担忧</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>三日 +4.1% 刚转正即面临 50 日均线（$546.81）压制</li><li>微软 Maia 300 等云厂商自研芯片对第三方加速器的长期替代叙事未消</li><li>若 NVDA 调查快速了结，迁移资金可能回流</li></ul>
+    </div>
+  </div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">⏭️ 后续催化</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:10px"><li><b>MI455X/Helios 机架出货爬坡</b>：微软 Azure 大单兑现节奏</li><li><b>11 月下旬 NVDA 财报</b>：AI 算力板块整体定价的锚事件</li><li><b>12/8-9 联储议息</b>：高估值成长股贝塔</li></ul>
+
+  <div style="background:#161b22;border:1px solid #30363d;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">📈 技术面：</b>收盘 $508.58 收复 $500 心理关口，低于 50 日均线（$546.81）约 7%，远高于 200 日均线（$415.98）；三日 V 型结构完整，上方缺口阻力 $540-550，支撑 $468（今日开盘低点）。</div>
+</div>
+<div style="background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:18px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #30363d;padding-bottom:10px;margin-bottom:12px">
+    <div>
+      <span style="font-size:1.2rem;font-weight:700;color:#e57373">SANM</span>
+      <span style="color:#c9d1d9;margin-left:8px;font-size:.95rem">— 盘后 FY27 指引核爆约 +19.8%，AI 整机订单可见性续上（+11.11%）</span>
+    </div>
+    <div style="font-weight:700;font-size:1.1rem;color:#e57373">+11.11%</div>
+  </div>
+  <div style="font-size:.82rem;color:#8b949e;margin-bottom:14px">收盘 $149.64 · 市值 $80 亿 · 成交额 154 万股（以收盘价估约 2.3 亿美元，量比未计） · 52w $118.10 – $288.68</div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">📊 基本面变化</div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.75;margin-bottom:14px">EMS 板块 +8.64% 六只全红中的财报前抢跑主角，盘后兑现为核爆：第四财季营收 38.6 亿美元超共识约 11%，非 GAAP 每股收益 $4.43 超共识 35.5%，盘后实查约 +19.8%（买卖中值 $179.3，美东 5:58pm，成交 154 万股为真实放量）。核心看点在指引：FY27 全年营收指引 175-195 亿美元，对 FY26 的 145.3 亿中值隐含 +20%~+34%——ZT Systems 并表后云与 AI 基础设施端市场成为第一增长引擎，指引二阶导为本财报季 EMS 板块最强。这是继 10/26 CLS 之后，代工/整机端第三份直接反证「企业 AI 采用迟缓」降级论的财报。</p>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">🏛️ 卖方观点</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:14px"><li><b>—</b>（当日卖方静默，—）：FMP 评级库 11/9 无该股记录；财报夜大行通常次日集中更新，待明日回补</li></ul>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div style="background:#161b22;border-left:3px solid #e57373;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#e57373;font-weight:600;margin-bottom:6px">🐂 多方逻辑</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>FY27 营收指引中值同比约 +27%，EMS 板块本财报季最强加速度</li><li>ZT Systems 并表打开 AI 机架级整机第二曲线</li><li>盘后近 +20% 为真实成交放量，非稀薄报价</li></ul>
+    </div>
+    <div style="background:#161b22;border-left:3px solid #43a047;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#43a047;font-weight:600;margin-bottom:6px">🐻 空方担忧</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>AI 整机毛利率天然偏低，存储涨价的成本传导是 FY27 兑现的最大变量</li><li>11/5 政策冲击显示该板块对「数据中心审批」类政策的贝塔极高</li><li>盘后暴涨后明日开盘的「首付款兑现」风险（盘后反应只是首付款样本库）</li></ul>
+    </div>
+  </div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">⏭️ 后续催化</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:10px"><li><b>FY27 Q1 指引兑现</b>（营收 38-41 亿美元）</li><li><b>ZT Systems 机架级订单披露</b>：下季电话会分项数据</li><li><b>11/12 AMAT 财报</b>：制造链整体口径的连带定价</li></ul>
+
+  <div style="background:#161b22;border:1px solid #30363d;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">📈 技术面：</b>收盘 $149.64 仍低于 50 日均线（$193.26）约 23%，盘后价 $179 一步跳回 10 月末平台；日线三日反转但周线仍深度破位，$180-190 区域为密集套牢区，放量能否站稳决定修复级别。</div>
+</div>
+<div style="background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:18px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #30363d;padding-bottom:10px;margin-bottom:12px">
+    <div>
+      <span style="font-size:1.2rem;font-weight:700;color:#e57373">ALAB</span>
+      <span style="color:#c9d1d9;margin-left:8px;font-size:.95rem">— 互连链修复急先锋，但三日仍未转正（+13.72%）</span>
+    </div>
+    <div style="font-weight:700;font-size:1.1rem;color:#e57373">+13.72%</div>
+  </div>
+  <div style="font-size:.82rem;color:#8b949e;margin-bottom:14px">收盘 $216.87 · 市值 $376 亿 · 成交额 716 万股（以收盘价估约 15.5 亿美元，量比未计） · 52w $97.89 – $499.48</div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">📊 基本面变化</div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.75;margin-bottom:14px">网络/互连芯片板块剔除 AVGO（占板块约 87% 权重、+8.78%）后的真实弹性代表：11/5 作为全池最深标的之一崩跌 -19.62%，今日 +13.72% 领衔互连链修复，但三日复合仍 -2.9% 未转正——与 COHR/MPWR 的差异精确体现「有无新鲜财报实据」：公司 11/3 财报指引超共识 13% 却遭遇「超而不涨」，实据的边际定价力已在当时被消耗。今日修复更多是高贝塔仓位回补，叠加 10 月标普 500 纳入投机证伪后的筹码出清（10/8 -9.21% 教训样本）。PCIe 6.0 重定时器与 Scorpio 交换芯片在机架级互连的渗透逻辑未变，但微软 Maia 300 自研芯片与英伟达 NVLink 融合两条替代叙事仍悬在估值上方。</p>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">🏛️ 卖方观点</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:14px"><li><b>—</b>（当日卖方静默，—）：FMP 评级库 11/9 无该股记录，未经 ratings 文件核实</li></ul>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div style="background:#161b22;border-left:3px solid #e57373;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#e57373;font-weight:600;margin-bottom:6px">🐂 多方逻辑</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>机架级互连内容价值量随 GPU 代际持续扩张，Scorpio 平台客户破十家</li><li>11/3 财报营收指引超共识 13%，基本面无瑕疵</li><li>高贝塔属性在修复行情延续时弹性领先</li></ul>
+    </div>
+    <div style="background:#161b22;border-left:3px solid #43a047;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#43a047;font-weight:600;margin-bottom:6px">🐻 空方担忧</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>三日复合未转正，修复资金优先级排在实据更新者之后</li><li>云厂商自研芯片（Maia 300）与英伟达生态内化双重替代叙事</li><li>距 52 周高点 $499 回撤 57%，动量资金伤痕未愈</li></ul>
+    </div>
+  </div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">⏭️ 后续催化</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:10px"><li><b>下一代 Scorpio X 出货数据</b></li><li><b>11 月下旬 NVDA 财报</b>：NVLink 生态表述对第三方互连的定价</li><li><b>标普指数季度调整</b>：纳入预期的二次定价</li></ul>
+
+  <div style="background:#161b22;border:1px solid #30363d;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">📈 技术面：</b>收盘 $216.87 低于 200 日均线（$256.06）与 50 日均线（$300.46），日线三连阳但均线全面压制，$230-240 为第一阻力带，支撑 $195（今日低点）。</div>
+</div>
+<div style="background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:18px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #30363d;padding-bottom:10px;margin-bottom:12px">
+    <div>
+      <span style="font-size:1.2rem;font-weight:700;color:#e57373">TTMI</span>
+      <span style="color:#c9d1d9;margin-left:8px;font-size:.95rem">— 崩盘后第三波修复，PCB 单股板块领涨全池（+13.26%）</span>
+    </div>
+    <div style="font-weight:700;font-size:1.1rem;color:#e57373">+13.26%</div>
+  </div>
+  <div style="font-size:.82rem;color:#8b949e;margin-bottom:14px">收盘 $75.33 · 市值 $79 亿 · 成交额 336 万股（以收盘价估约 2.5 亿美元，量比未计） · 52w $55.44 – $223.83</div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">📊 基本面变化</div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.75;margin-bottom:14px">PCB/面板单股板块 +13.26% 为 22 个子行业表面涨幅第一（单股板块，本质是个股行为）。公司自 10/22 财报夜因「第四季指引中点微低于共识」单日崩跌 -27.67% 以来，经历了 10/23 卖方集体维持下的 +8.42% 反弹、11/5 政策冲击 -15.21% 的二次探底，今日 +13.26% 是第三波修复，三日复合 +2.6% 勉强转正。股价从 52 周高点 $223.83 回撤 66% 后，AI 服务器高多层板订单逻辑（与 EMS 链共振）在 SANM 盘后指引核爆的带动下被重新定价；但公司自身 10/22 的教训在于「抢跑后门槛被抬高」，当前位置更多反映清算出清后的均值回归，尚无新增公司级实据。</p>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">🏛️ 卖方观点</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:14px"><li><b>—</b>（当日卖方静默，—）：FMP 评级库 11/9 无该股记录；10/23 Needham/Stifel/Truist 维持买入齐降目标价为存量动作</li></ul>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div style="background:#161b22;border-left:3px solid #e57373;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#e57373;font-weight:600;margin-bottom:6px">🐂 多方逻辑</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>AI 服务器高多层板量价齐升逻辑未因单季指引波动改变</li><li>回撤 66% 后估值回到 2026 年初水平，清算充分</li><li>EMS 链 SANM 指引核爆对上游 PCB 的订单传导</li></ul>
+    </div>
+    <div style="background:#161b22;border-left:3px solid #43a047;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#43a047;font-weight:600;margin-bottom:6px">🐻 空方担忧</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>无新增公司级实据，修复纯靠板块贝塔</li><li>10/22「指引中点微低于共识即崩 27%」显示容错度极低</li><li>单股板块无同伴缓冲，波动天然放大</li></ul>
+    </div>
+  </div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">⏭️ 后续催化</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:10px"><li><b>下季财报</b>：2027 指引的二次校准</li><li><b>AI 服务器链财报潮余波</b>：CLS/SANM 订单口径传导</li><li><b>数据中心政策文本</b>：德州议程对下游资本开支的影响</li></ul>
+
+  <div style="background:#161b22;border:1px solid #30363d;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">📈 技术面：</b>收盘 $75.33 距 52 周低点 $55.44 反弹 36%，但仍低于 50 日均线（$108.96）31%，均线系统深度空头排列，$80-85 缺口为第一阻力，支撑 $67（今日低点）。</div>
+</div>
+<div style="background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:18px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #30363d;padding-bottom:10px;margin-bottom:12px">
+    <div>
+      <span style="font-size:1.2rem;font-weight:700;color:#e57373">AAPL</span>
+      <span style="color:#c9d1d9;margin-left:8px;font-size:.95rem">— 距历史新高一步之遥，修复日罕见与大盘同涨（+2.43%）</span>
+    </div>
+    <div style="font-weight:700;font-size:1.1rem;color:#e57373">+2.43%</div>
+  </div>
+  <div style="font-size:.82rem;color:#8b949e;margin-bottom:14px">收盘 $350.69 · 市值 $5.12 万亿 · 成交额 4,750 万股（以收盘价估约 167 亿美元，量比未计） · 52w $243.42 – $355.38</div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">📊 基本面变化</div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.75;margin-bottom:14px">收盘 $350.69 距 11/5 盘中创下的 52 周高点 $355.38 仅 1.3%，权重贡献 +0.59 个百分点为全池第三。值得注意的是结构角色切换：过去三个恐慌日（10/16、10/22、11/5）苹果均以「全池唯一上涨/最浅跌」的避风港角色出现，而按「避风港溢价对称回吐」规律，修复日它本应垫底甚至回吐（10/26、11/6 两次均如此）——今日 +2.43% 与大盘同涨打破了这一模式，显示 11/2 财报的毛利率阴影（内存成本「史无前例」上升 + 12 月季毛利率指引 45-46%）已被「iPhone 18 提价转嫁 + 囤货库存 +154% 对冲」的多头叙事阶段性压制。公司在 NVDA 治理阴影下再度巩固全球市值第一（$5.12 万亿）。</p>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">🏛️ 卖方观点</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:14px"><li><b>—</b>（当日卖方静默，—）：FMP 评级库 11/9 无新记录，未经 ratings 文件核实</li></ul>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div style="background:#161b22;border-left:3px solid #e57373;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#e57373;font-weight:600;margin-bottom:6px">🐂 多方逻辑</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>iPhone 18 Pro 提价 $100 被解读为成本转嫁能力的实证</li><li>库存囤货 +154% 为 12 月季内存成本提供缓冲</li><li>治理阴影下的 NVDA 让出「市值第一 + 避险权重」双重资金去向</li></ul>
+    </div>
+    <div style="background:#161b22;border-left:3px solid #43a047;padding:10px 12px;border-radius:4px">
+      <div style="font-size:.8rem;color:#43a047;font-weight:600;margin-bottom:6px">🐻 空方担忧</div>
+      <ul style="font-size:.82rem;color:#c9d1d9;line-height:1.7;padding-left:16px"><li>12 月季毛利率指引 45-46% 的内存成本压制是实打实的数字</li><li>Mac/iPad 已被管理层明示将受内存短缺供应约束</li><li>距历史新高一步之遥，利好兑现的回吐风险累积</li></ul>
+    </div>
+  </div>
+
+  <div style="font-size:.85rem;color:#e6edf3;font-weight:600;margin-bottom:6px">⏭️ 后续催化</div>
+  <ul style="font-size:.83rem;color:#c9d1d9;line-height:1.7;padding-left:18px;margin-bottom:10px"><li><b>12 月季 iPhone 18 销售数据</b>：提价后的量价验证</li><li><b>内存合约价走势</b>：成本曲线的每月校准</li><li><b>历史新高突破与否</b>：被动资金的技术面触发器</li></ul>
+
+  <div style="background:#161b22;border:1px solid #30363d;border-radius:4px;padding:8px 12px;font-size:.82rem;color:#c9d1d9"><b style="color:#8b949e">📈 技术面：</b>收盘 $350.69 高于 50 日均线（$336.01）与 200 日均线（$298.81），距 52 周高点 $355.38 仅差 1.3%，均线多头排列完整；突破 $355.38 将触发新高动量买盘，支撑 $344（今日低点）。</div>
+</div>
+  </div>
+</div>
+
+<div class="section" id="sec-news">
+  <div class="title">📰 产业新闻 · 按权威性分层（Tier 1-4）</div>
+  <div style="margin-bottom:18px">
+  <div style="font-size:.88rem;font-weight:700;color:#58a6ff;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #58a6ff55">Tier 1·宏观/大盘</div>
+  <div style="font-size:.78rem;color:#8b949e;margin-bottom:8px">Bloomberg / Reuters / WSJ / CNN 等一线财经媒体</div>
+  <div style="background:#0d1117;border:1px solid #30363d;border-left:3px solid #58a6ff;border-radius:4px;padding:10px 14px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <span style="font-weight:600;font-size:.92rem;color:#e6edf3">英伟达 CEO 黄仁勋承认婚外情并接受董事会独立调查</span>
+    <span style="background:#21262d;color:#58a6ff;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:600">CNN</span>
+  </div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.7;margin-bottom:6px">黄仁勋承认与一名被怀疑受中国情报机构招募的女商人存在婚外情，董事会就其是否曾被外国情报机构针对启动独立调查，声明称未发现国家安全或公司机密受损证据。股价盘中最深 -8.8%、收跌 4.27%，单日市值蒸发约 1,920 亿美元。</p>
+  <div style="font-size:.78rem;color:#8b949e"><b style="color:#58a6ff">影响：</b>硬件池唯一深跌权重，单股拖累池读数 -0.87 个百分点；治理与安全层事件，暂不改变产业基本面。</div>
+</div><div style="background:#0d1117;border:1px solid #30363d;border-left:3px solid #58a6ff;border-radius:4px;padding:10px 14px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <span style="font-weight:600;font-size:.92rem;color:#e6edf3">道指大涨 1,104 点、VIX 单日 -22.3% 跌回 20 下方</span>
+    <span style="background:#21262d;color:#58a6ff;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:600">综合媒体</span>
+  </div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.7;margin-bottom:6px">上周「蓝色浪潮」政策冲击引发的深度抛售后，抄底资金全面回流：标普 +2.43%、纳指 100 +3.40%、罗素 2000 +3.15%，GICS 十一板块全红，恐慌指数自 25.64 一日回落至 19.92。</p>
+  <div style="font-size:.78rem;color:#8b949e"><b style="color:#58a6ff">影响：</b>硬件池广度 99:2:1 与 11/5 的 0:101:1 完美镜像，政策冲击的仓位出清阶段确认结束。</div>
+</div><div style="background:#0d1117;border:1px solid #30363d;border-left:3px solid #58a6ff;border-radius:4px;padding:10px 14px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <span style="font-weight:600;font-size:.92rem;color:#e6edf3">美国总统表态近期不太可能对伊朗发动新一轮打击</span>
+    <span style="background:#21262d;color:#58a6ff;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:600">路透/环球邮报</span>
+  </div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.7;margin-bottom:6px">表态令市场对中东供应风险的担忧进一步缓解，WTI 收 $86.60 平稳于低位（较 10 月末高点 $103 已回落约 16%），通胀与利率压制链条继续松绑，十年期收益率 4.863% 持平。</p>
+  <div style="font-size:.78rem;color:#8b949e"><b style="color:#58a6ff">影响：</b>油价—通胀—利率传导链松绑是本轮修复的宏观前提，半导体高估值板块受益最大。</div>
+</div>
+</div>
+<div style="margin-bottom:18px">
+  <div style="font-size:.88rem;font-weight:700;color:#e57373;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #e5737355">Tier 2·半导体深度</div>
+  <div style="font-size:.78rem;color:#8b949e;margin-bottom:8px">行业垂媒与卖方深度</div>
+  <div style="background:#0d1117;border:1px solid #30363d;border-left:3px solid #e57373;border-radius:4px;padding:10px 14px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <span style="font-weight:600;font-size:.92rem;color:#e6edf3">上周芯片深跌归因：中期选举后的数据中心监管忧虑</span>
+    <span style="background:#21262d;color:#e57373;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:600">媒体综述</span>
+  </div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.7;margin-bottom:6px">多家媒体复盘将上周抛售归因于民主党横扫后的 AI 与数据中心监管预期（德州审批暂停、全国暂停令呼声），本周一的反弹则被定性为估值出清后的抄底，而非监管风险解除——政策文本仍未落地。</p>
+  <div style="font-size:.78rem;color:#8b949e"><b style="color:#e57373">影响：</b>修复是仓位行为、风险未出清：德州新政府 1 月就职前，政策线随时可能二次定价。</div>
+</div><div style="background:#0d1117;border:1px solid #30363d;border-left:3px solid #e57373;border-radius:4px;padding:10px 14px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <span style="font-weight:600;font-size:.92rem;color:#e6edf3">英伟达距一个月前峰值回撤约 26%</span>
+    <span style="background:#21262d;color:#e57373;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:600">Stocktitan/综合</span>
+  </div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.7;margin-bottom:6px">治理事件叠加俄亥俄数据中心被点名潜在审查，英伟达在板块修复行情中被持续绕行，三日复合 -10.7% 为权重股中唯一继续探深者，全球市值第一让位苹果。</p>
+  <div style="font-size:.78rem;color:#8b949e"><b style="color:#e57373">影响：</b>AI 算力链定价锚临时失灵，资金短期向 AMD 与整机链迁移。</div>
+</div>
+</div>
+<div style="margin-bottom:18px">
+  <div style="font-size:.88rem;font-weight:700;color:#ffd54f;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #ffd54f55">Tier 3·亚洲供应链</div>
+  <div style="font-size:.78rem;color:#8b949e;margin-bottom:8px">DigiTimes / 韩媒 / 台系供应链</div>
+  <div style="background:#0d1117;border:1px solid #30363d;border-left:3px solid #ffd54f;border-radius:4px;padding:10px 14px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <span style="font-weight:600;font-size:.92rem;color:#e6edf3">芯片指数单日大涨约 7%，韩媒定性为「低接买盘」</span>
+    <span style="background:#21262d;color:#ffd54f;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:600">首尔经济日报</span>
+  </div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.7;margin-bottom:6px">韩媒报道费城半导体指数反弹由 bargain hunting（低位承接）主导，SK 海力士美股 ADR +5.53%、三星链同步修复，上周 KOSPI 半导体传染性抛售的余波告一段落。</p>
+  <div style="font-size:.78rem;color:#8b949e"><b style="color:#ffd54f">影响：</b>亚洲资金对美股芯片的定性是仓位修复而非基本面反转，与本池三日复合仍负的结构一致。</div>
+</div><div style="background:#0d1117;border:1px solid #30363d;border-left:3px solid #ffd54f;border-radius:4px;padding:10px 14px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <span style="font-weight:600;font-size:.92rem;color:#e6edf3">台积电 ADR +3.51%、联电 +7.51%、日月光 +8.63% 全线修复</span>
+    <span style="background:#21262d;color:#ffd54f;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:600">台系供应链</span>
+  </div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.7;margin-bottom:6px">代工与封测的台系三杰随大盘回补，但台积电弹性垫底于二线厂——与上周冲击中「权重防御、中小盘深跌」的结构互为镜像，资金回补优先高贝塔。</p>
+  <div style="font-size:.78rem;color:#8b949e"><b style="color:#ffd54f">影响：</b>Fab/代工板块 +3.65% 为硬件池弹性最低的制造环节，修复资金的风险偏好排序清晰。</div>
+</div>
+</div>
+<div style="margin-bottom:18px">
+  <div style="font-size:.88rem;font-weight:700;color:#a5d6a7;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #a5d6a755">Tier 4·公司公告/分析师评级</div>
+  <div style="font-size:.78rem;color:#8b949e;margin-bottom:8px">8-K / 评级变动 / 财报定档</div>
+  <div style="background:#0d1117;border:1px solid #30363d;border-left:3px solid #a5d6a7;border-radius:4px;padding:10px 14px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <span style="font-weight:600;font-size:.92rem;color:#e6edf3">高盛与 RBC 于丑闻当日双双维持英伟达买入/跑赢评级</span>
+    <span style="background:#21262d;color:#a5d6a7;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:600">FMP 评级库</span>
+  </div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.7;margin-bottom:6px">11/9 当日记录：高盛维持买入、RBC 维持跑赢大盘——「卖方集体维持 vs 股价深跌」组合第四次出现（此前 LRCX、SNDK、KLAC 样本），历史上该组合的修复赔率优于卖方同步转空的下跌。</p>
+  <div style="font-size:.78rem;color:#8b949e"><b style="color:#a5d6a7">影响：</b>卖方未跟随治理情绪下调基本面判断，调查结论成为唯一变量。</div>
+</div><div style="background:#0d1117;border:1px solid #30363d;border-left:3px solid #a5d6a7;border-radius:4px;padding:10px 14px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <span style="font-weight:600;font-size:.92rem;color:#e6edf3">Sanmina 与 Onto Innovation 盘后发布财报（8-K）</span>
+    <span style="background:#21262d;color:#a5d6a7;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:600">公司公告</span>
+  </div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.7;margin-bottom:6px">SANM 第四财季双超并给出 FY27 大幅加速指引，盘后约 +19.8%；ONTO 第三季营收同比 +87.8% 超指引上限，盘后约 +7%。详见业绩复盘区块。</p>
+  <div style="font-size:.78rem;color:#8b949e"><b style="color:#a5d6a7">影响：</b>AI 整机链与检测量测两条线的订单可见性同晚续上实据。</div>
+</div><div style="background:#0d1117;border:1px solid #30363d;border-left:3px solid #a5d6a7;border-radius:4px;padding:10px 14px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <span style="font-weight:600;font-size:.92rem;color:#e6edf3">Silicon Labs 财报定档 11/10，德州仪器收购在途</span>
+    <span style="background:#21262d;color:#a5d6a7;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:600">财报日历</span>
+  </div>
+  <p style="font-size:.85rem;color:#c9d1d9;line-height:1.7;margin-bottom:6px">SLAB 今日盘后未发布（FMP 占位经盘后报价平静与无新闻稿双重判据判定错位），真实窗口为 11/10；股价被德州仪器全现金收购协议锚定，财报信息价值有限。</p>
+  <div style="font-size:.78rem;color:#8b949e"><b style="color:#a5d6a7">影响：</b>池内 11/10 关注 IMOS/SLAB，11/11 CSCO、11/12 AMAT 为本周两大权重财报。</div>
+</div>
+</div>
+  <div style="margin-top:14px;padding:10px 14px;background:#0d1117;border:1px solid #30363d;border-radius:6px;font-size:.78rem;color:#8b949e;line-height:1.7">
+    <b style="color:#c9d1d9">📚 渠道说明：</b>Tier 1 宏观大盘（Bloomberg/Reuters/WSJ/CNBC/FT）；Tier 2 半导体深度（SemiAnalysis/SemiWiki/Semiconductor Engineering/EETimes/TechInsights/ServeTheHome）；Tier 3 亚洲供应链（DigiTimes/TrendForce/Nikkei Asia/日经亚洲）；Tier 4 公司公告 + 分析师评级（公司 IR / Bloomberg Analyst Estimates）。
+  </div>
+</div>
+
+<div id="sec-forward"><div class="section">
+  <div class="title">🔭 未来 5 交易日观察（11/10 – 11/16）</div>
+  <table>
+    <thead><tr><th style="min-width:90px">日期</th><th>池内业绩</th><th>宏观数据</th><th>行业事件 / 大会</th></tr></thead>
+    <tbody>
+      <tr><td><b>11/10 周二</b></td><td><div style="margin-bottom:6px">GFS<br><span style="font-size:.74rem;color:#8b949e">EPS $0.51 / Rev $1.89B</span></div><div style="margin-bottom:6px">IMOS<br><span style="font-size:.74rem;color:#8b949e">EPS $0.81 / Rev $249M</span></div></td><td><span style="color:#8b949e">—</span></td><td><span style="color:#8b949e">—</span></td></tr>
+      <tr><td><b>11/11 周三</b></td><td><div style="margin-bottom:6px"><b class="up">CSCO</b><br><span style="font-size:.74rem;color:#8b949e">EPS $1.32 / Rev $18.11B</span></div><div style="margin-bottom:6px">GFS<br><span style="font-size:.74rem;color:#8b949e">EPS $0.51 / Rev $1.89B</span></div><div style="margin-bottom:6px">ACMR<br><span style="font-size:.74rem;color:#8b949e">EPS $0.60 / Rev $321M</span></div></td><td><span style="color:#8b949e">—</span></td><td><span style="color:#8b949e">—</span></td></tr>
+      <tr><td><b>11/12 周四</b></td><td><div style="margin-bottom:6px"><b class="up">CSCO</b><br><span style="font-size:.74rem;color:#8b949e">EPS $1.32 / Rev $18.11B</span></div><div style="margin-bottom:6px"><b class="up">AMAT</b><br><span style="font-size:.74rem;color:#8b949e">EPS $4.06 / Rev $10.30B</span></div><div style="margin-bottom:6px">CBRS<br><span style="font-size:.74rem;color:#8b949e">EPS -$0.15 / Rev $215M</span></div><div style="margin-bottom:6px">POET<br><span style="font-size:.74rem;color:#8b949e">EPS -$0.07 / Rev $2M</span></div></td><td><span style="color:#8b949e">—</span></td><td><span style="color:#8b949e">—</span></td></tr>
+      <tr><td><b>11/13 周五</b></td><td><span style="color:#8b949e">—</span></td><td><span style="color:#8b949e">—</span></td><td><span style="color:#8b949e">—</span></td></tr>
+      <tr><td><b>11/16 周一</b></td><td><div style="margin-bottom:6px">POET<br><span style="font-size:.74rem;color:#8b949e">EPS -$0.07 / Rev $2M</span></div></td><td><span style="color:#8b949e">—</span></td><td><b>SC26 Supercomputing</b><br><span style="font-size:.78rem;color:#8b949e">HPC/AI 计算</span></td></tr>
+    </tbody>
+  </table>
+  <p style="margin-top:10px;font-size:.82rem;color:#8b949e">共池内 10 家公司在未来 5 交易日内披露业绩。宏观日历来自 MACRO_EVENTS（每周维护），行业大会来自 INDUSTRY_EVENTS。</p>
+  <div style="margin-top:8px;font-size:.82rem;color:#8b949e">⏰ 时间转换：美东 → 北京 +12h（夏令时）；盘前 = 北京 21:00 前；盘后 = 北京次日凌晨 04:00 起</div>
+</div></div>
+
+<div class="section">
+  <div class="title">🎤 2026 行业大会日历（年度参考）</div>
+  <table>
+    <thead><tr><th>时段</th><th>大会</th><th>看点</th><th>距今</th></tr></thead>
+    <tbody><tr><td style="white-space:nowrap"><b>11-15 ~ 11-20</b></td><td><b>SC26 Supercomputing</b></td><td style="color:#c9d1d9">HPC/AI 计算</td><td><span style="color:#e57373;font-weight:700">6 天后</span></td></tr></tbody>
+  </table>
+  <p style="margin-top:10px;font-size:.82rem;color:#8b949e">🎯 大会窗口前后 5 个交易日通常有 sector rotation，重点关注产品发布预期与实际差异</p>
+</div>
+
+<script>
+const TREEMAP_DATA = [{"name": "半导体设计", "children": [{"name": "AI芯片/CPU", "value": 3696.003405656881, "children": [{"name": "NVDA", "value": 2075.077588910834, "dp": -4.27, "close": 178.67, "cap": 4305947, "ind": "AI芯片/CPU", "itemStyle": {"color": "#1b5e20"}}, {"name": "AMD", "value": 911.178906691765, "dp": 13.26, "close": 508.58, "cap": 830247, "ind": "AI芯片/CPU", "itemStyle": {"color": "#7f0000"}}, {"name": "INTC", "value": 561.7401534517538, "dp": 5.49, "close": 59.37, "cap": 315552, "ind": "AI芯片/CPU", "itemStyle": {"color": "#c62828"}}, {"name": "CBRS", "value": 148.00675660252813, "dp": 7.83, "close": 96.7, "cap": 21906, "ind": "AI芯片/CPU", "itemStyle": {"color": "#7f0000"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "网络/互连芯片", "value": 2026.1199250966304, "children": [{"name": "AVGO", "value": 1234.9408892736526, "dp": 8.78, "close": 319.48, "cap": 1525079, "ind": "网络/互连芯片", "itemStyle": {"color": "#7f0000"}}, {"name": "MRVL", "value": 367.9578780241021, "dp": 9.49, "close": 154.6, "cap": 135393, "ind": "网络/互连芯片", "itemStyle": {"color": "#7f0000"}}, {"name": "ALAB", "value": 193.9690696992693, "dp": 13.72, "close": 216.87, "cap": 37624, "ind": "网络/互连芯片", "itemStyle": {"color": "#7f0000"}}, {"name": "CRDO", "value": 158.04113388608675, "dp": 10.27, "close": 132.89, "cap": 24977, "ind": "网络/互连芯片", "itemStyle": {"color": "#7f0000"}}, {"name": "MXL", "value": 71.21095421351971, "dp": 13.68, "close": 55.91, "cap": 5071, "ind": "网络/互连芯片", "itemStyle": {"color": "#7f0000"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "存储", "value": 3130.1854188535535, "children": [{"name": "SKHY", "value": 976.6795789817662, "dp": 5.53, "close": 134.38, "cap": 953903, "ind": "存储", "itemStyle": {"color": "#c62828"}}, {"name": "MU", "value": 910.7694549116148, "dp": 6.25, "close": 733.15, "cap": 829501, "ind": "存储", "itemStyle": {"color": "#c62828"}}, {"name": "SNDK", "value": 355.1633427030442, "dp": 6.16, "close": 886.51, "cap": 126141, "ind": "存储", "itemStyle": {"color": "#c62828"}}, {"name": "STX", "value": 340.8665427993777, "dp": 9.79, "close": 506.14, "cap": 116190, "ind": "存储", "itemStyle": {"color": "#7f0000"}}, {"name": "WDC", "value": 329.34935858446727, "dp": 9.86, "close": 289.78, "cap": 108471, "ind": "存储", "itemStyle": {"color": "#7f0000"}}, {"name": "RMBS", "value": 92.98924669014154, "dp": 8.33, "close": 80.74, "cap": 8647, "ind": "存储", "itemStyle": {"color": "#7f0000"}}, {"name": "SIMO", "value": 75.97367965289031, "dp": 5.68, "close": 172.01, "cap": 5772, "ind": "存储", "itemStyle": {"color": "#c62828"}}, {"name": "PENG", "value": 48.394214530251446, "dp": 9.25, "close": 45.7, "cap": 2342, "ind": "存储", "itemStyle": {"color": "#7f0000"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "模拟/电源", "value": 1384.3707401504698, "children": [{"name": "TXN", "value": 519.8355509197115, "dp": 6.62, "close": 295.73, "cap": 270229, "ind": "模拟/电源", "itemStyle": {"color": "#c62828"}}, {"name": "ADI", "value": 437.3088153696424, "dp": 8.55, "close": 394.66, "cap": 191239, "ind": "模拟/电源", "itemStyle": {"color": "#7f0000"}}, {"name": "MPWR", "value": 260.2421948877622, "dp": 16.6, "close": 1388.05, "cap": 67726, "ind": "模拟/电源", "itemStyle": {"color": "#7f0000"}}, {"name": "SITM", "value": 117.23480711802276, "dp": 9.63, "close": 457.05, "cap": 13744, "ind": "模拟/电源", "itemStyle": {"color": "#7f0000"}}, {"name": "POWI", "value": 49.749371855331, "dp": 10.01, "close": 44.29, "cap": 2475, "ind": "模拟/电源", "itemStyle": {"color": "#7f0000"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "功率/分立", "value": 450.76953964650147, "children": [{"name": "STM", "value": 199.54949260772375, "dp": 6.76, "close": 44.54, "cap": 39820, "ind": "功率/分立", "itemStyle": {"color": "#c62828"}}, {"name": "ON", "value": 164.02134007500365, "dp": 9.16, "close": 69.11, "cap": 26903, "ind": "功率/分立", "itemStyle": {"color": "#7f0000"}}, {"name": "NVTS", "value": 50.00999900019995, "dp": 11.27, "close": 9.58, "cap": 2501, "ind": "功率/分立", "itemStyle": {"color": "#7f0000"}}, {"name": "WOLF", "value": 37.1887079635741, "dp": 9.79, "close": 26.12, "cap": 1383, "ind": "功率/分立", "itemStyle": {"color": "#7f0000"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "MCU/嵌入式/FPGA", "value": 702.3382326943646, "children": [{"name": "NXPI", "value": 254.2262771626883, "dp": 3.27, "close": 256.42, "cap": 64631, "ind": "MCU/嵌入式/FPGA", "itemStyle": {"color": "#e57373"}}, {"name": "MCHP", "value": 182.73478048800672, "dp": 5.39, "close": 61.49, "cap": 33392, "ind": "MCU/嵌入式/FPGA", "itemStyle": {"color": "#c62828"}}, {"name": "LSCC", "value": 127.18490476467717, "dp": 8.45, "close": 113.89, "cap": 16176, "ind": "MCU/嵌入式/FPGA", "itemStyle": {"color": "#7f0000"}}, {"name": "SLAB", "value": 86.02906485601247, "dp": 0.14, "close": 221.8, "cap": 7401, "ind": "MCU/嵌入式/FPGA", "itemStyle": {"color": "#ef9a9a"}}, {"name": "AMBA", "value": 52.16320542297991, "dp": 5.28, "close": 61.64, "cap": 2721, "ind": "MCU/嵌入式/FPGA", "itemStyle": {"color": "#c62828"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "射频", "value": 427.9053633690515, "children": [{"name": "QCOM", "value": 427.9053633690515, "dp": 3.66, "close": 171.47, "cap": 183103, "ind": "射频", "itemStyle": {"color": "#e57373"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "IP/EDA", "value": 446.0582921547362, "children": [{"name": "ARM", "value": 446.0582921547362, "dp": 6.69, "close": 186.3, "cap": 198968, "ind": "IP/EDA", "itemStyle": {"color": "#c62828"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "半导体制造", "children": [{"name": "Fab/代工", "value": 1932.9713259430869, "children": [{"name": "TSM", "value": 1419.7077163979916, "dp": 3.51, "close": 388.62, "cap": 2015570, "ind": "Fab/代工", "itemStyle": {"color": "#e57373"}}, {"name": "UMC", "value": 192.7200041511, "dp": 7.51, "close": 14.89, "cap": 37141, "ind": "Fab/代工", "itemStyle": {"color": "#7f0000"}}, {"name": "GFS", "value": 149.09728367747013, "dp": 4.89, "close": 40.51, "cap": 22230, "ind": "Fab/代工", "itemStyle": {"color": "#c62828"}}, {"name": "TSEM", "value": 131.4838393111488, "dp": 10.89, "close": 152.29, "cap": 17288, "ind": "Fab/代工", "itemStyle": {"color": "#7f0000"}}, {"name": "SKYT", "value": 39.96248240537617, "dp": 0.0, "close": 32.46, "cap": 1597, "ind": "Fab/代工", "itemStyle": {"color": "#ef9a9a"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "封测", "value": 409.5047591867626, "children": [{"name": "ASX", "value": 275.412418020684, "dp": 8.63, "close": 34.36, "cap": 75852, "ind": "封测", "itemStyle": {"color": "#7f0000"}}, {"name": "AMKR", "value": 93.1289428695505, "dp": 6.64, "close": 35.0, "cap": 8673, "ind": "封测", "itemStyle": {"color": "#c62828"}}, {"name": "IMOS", "value": 40.963398296528084, "dp": 9.52, "close": 47.95, "cap": 1678, "ind": "封测", "itemStyle": {"color": "#7f0000"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "设备", "value": 3137.6335592891464, "children": [{"name": "ASML", "value": 763.6975841260728, "dp": 6.21, "close": 1513.25, "cap": 583234, "ind": "设备", "itemStyle": {"color": "#c62828"}}, {"name": "AMAT", "value": 542.2803702882854, "dp": 11.37, "close": 370.55, "cap": 294068, "ind": "设备", "itemStyle": {"color": "#7f0000"}}, {"name": "LRCX", "value": 526.2632421136783, "dp": 10.41, "close": 221.31, "cap": 276953, "ind": "设备", "itemStyle": {"color": "#7f0000"}}, {"name": "KLAC", "value": 444.1193533274586, "dp": 9.31, "close": 151.38, "cap": 197242, "ind": "设备", "itemStyle": {"color": "#7f0000"}}, {"name": "TER", "value": 195.97703947146462, "dp": 12.73, "close": 246.0, "cap": 38407, "ind": "设备", "itemStyle": {"color": "#7f0000"}}, {"name": "NVMI", "value": 102.95144486601438, "dp": 6.41, "close": 333.24, "cap": 10599, "ind": "设备", "itemStyle": {"color": "#c62828"}}, {"name": "ONTO", "value": 97.58073580374356, "dp": 11.98, "close": 194.04, "cap": 9522, "ind": "设备", "itemStyle": {"color": "#7f0000"}}, {"name": "FORM", "value": 81.58431221748455, "dp": 5.03, "close": 85.2, "cap": 6656, "ind": "设备", "itemStyle": {"color": "#c62828"}}, {"name": "CAMT", "value": 70.01428425685718, "dp": 8.23, "close": 105.04, "cap": 4902, "ind": "设备", "itemStyle": {"color": "#7f0000"}}, {"name": "ACMR", "value": 56.71860364994893, "dp": 11.52, "close": 49.75, "cap": 3217, "ind": "设备", "itemStyle": {"color": "#7f0000"}}, {"name": "KLIC", "value": 60.07495318350236, "dp": 7.75, "close": 68.97, "cap": 3609, "ind": "设备", "itemStyle": {"color": "#7f0000"}}, {"name": "ACLS", "value": 57.654141221598294, "dp": 8.46, "close": 107.64, "cap": 3324, "ind": "设备", "itemStyle": {"color": "#7f0000"}}, {"name": "VECO", "value": 49.20365840057018, "dp": 6.48, "close": 39.6, "cap": 2421, "ind": "设备", "itemStyle": {"color": "#c62828"}}, {"name": "AEHR", "value": 44.19275958796871, "dp": 11.65, "close": 59.81, "cap": 1953, "ind": "设备", "itemStyle": {"color": "#7f0000"}}, {"name": "COHU", "value": 45.32107677449864, "dp": 12.76, "close": 43.4, "cap": 2054, "ind": "设备", "itemStyle": {"color": "#7f0000"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "零部件", "value": 296.66639814406415, "children": [{"name": "MKSI", "value": 119.61187232043481, "dp": 10.05, "close": 211.59, "cap": 14307, "ind": "零部件", "itemStyle": {"color": "#7f0000"}}, {"name": "AEIS", "value": 94.22313940853383, "dp": 11.31, "close": 219.3, "cap": 8878, "ind": "零部件", "itemStyle": {"color": "#7f0000"}}, {"name": "UCTT", "value": 46.9148164229596, "dp": 11.57, "close": 45.89, "cap": 2201, "ind": "零部件", "itemStyle": {"color": "#7f0000"}}, {"name": "ICHR", "value": 35.91656999213594, "dp": 11.25, "close": 34.45, "cap": 1290, "ind": "零部件", "itemStyle": {"color": "#7f0000"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "材料", "value": 460.8073092028871, "children": [{"name": "Q", "value": 161.73744155265967, "dp": 6.87, "close": 125.04, "cap": 26159, "ind": "材料", "itemStyle": {"color": "#c62828"}}, {"name": "ENTG", "value": 146.2908062729849, "dp": 9.44, "close": 140.06, "cap": 21401, "ind": "材料", "itemStyle": {"color": "#7f0000"}}, {"name": "OLED", "value": 63.66317616958802, "dp": 1.93, "close": 90.01, "cap": 4053, "ind": "材料", "itemStyle": {"color": "#e57373"}}, {"name": "ROG", "value": 47.81213235152768, "dp": 5.35, "close": 128.48, "cap": 2286, "ind": "材料", "itemStyle": {"color": "#c62828"}}, {"name": "PLAB", "value": 41.30375285612676, "dp": 5.7, "close": 28.92, "cap": 1706, "ind": "材料", "itemStyle": {"color": "#c62828"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "通信硬件", "children": [{"name": "光通信", "value": 1750.5090174878496, "children": [{"name": "GLW", "value": 316.0363903097237, "dp": 9.25, "close": 115.95, "cap": 99879, "ind": "光通信", "itemStyle": {"color": "#7f0000"}}, {"name": "LITE", "value": 232.38330404742936, "dp": 10.69, "close": 596.16, "cap": 54002, "ind": "光通信", "itemStyle": {"color": "#7f0000"}}, {"name": "CIEN", "value": 195.43029447861966, "dp": 10.66, "close": 269.33, "cap": 38193, "ind": "光通信", "itemStyle": {"color": "#7f0000"}}, {"name": "COHR", "value": 210.5872740694461, "dp": 16.79, "close": 225.19, "cap": 44347, "ind": "光通信", "itemStyle": {"color": "#7f0000"}}, {"name": "NOK", "value": 210.18801107579853, "dp": 6.79, "close": 8.18, "cap": 44179, "ind": "光通信", "itemStyle": {"color": "#c62828"}}, {"name": "MTSI", "value": 132.53301475481496, "dp": 9.02, "close": 230.0, "cap": 17565, "ind": "光通信", "itemStyle": {"color": "#7f0000"}}, {"name": "FN", "value": 114.51200810395389, "dp": 11.86, "close": 365.94, "cap": 13113, "ind": "光通信", "itemStyle": {"color": "#7f0000"}}, {"name": "SMTC", "value": 104.24970023937719, "dp": 12.83, "close": 116.45, "cap": 10868, "ind": "光通信", "itemStyle": {"color": "#7f0000"}}, {"name": "VIAV", "value": 88.68483523128404, "dp": 12.33, "close": 31.98, "cap": 7865, "ind": "光通信", "itemStyle": {"color": "#7f0000"}}, {"name": "AAOI", "value": 66.51315659326356, "dp": 3.93, "close": 52.1, "cap": 4424, "ind": "光通信", "itemStyle": {"color": "#e57373"}}, {"name": "AXTI", "value": 53.04714883949938, "dp": 10.37, "close": 42.91, "cap": 2814, "ind": "光通信", "itemStyle": {"color": "#7f0000"}}, {"name": "POET", "value": 26.343879744638983, "dp": 3.75, "close": 5.26, "cap": 694, "ind": "光通信", "itemStyle": {"color": "#e57373"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "网络设备", "value": 1166.158278461164, "children": [{"name": "CSCO", "value": 623.6473362406032, "dp": 5.11, "close": 98.65, "cap": 388936, "ind": "网络设备", "itemStyle": {"color": "#c62828"}}, {"name": "ANET", "value": 484.5626894427593, "dp": 9.0, "close": 186.17, "cap": 234801, "ind": "网络设备", "itemStyle": {"color": "#7f0000"}}, {"name": "EXTR", "value": 57.94825277780168, "dp": 6.53, "close": 25.6, "cap": 3358, "ind": "网络设备", "itemStyle": {"color": "#c62828"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "系统与终端", "children": [{"name": "服务器/存储系统", "value": 1228.4610722283, "children": [{"name": "DELL", "value": 469.0660934239438, "dp": 5.33, "close": 346.05, "cap": 220023, "ind": "服务器/存储系统", "itemStyle": {"color": "#c62828"}}, {"name": "HPE", "value": 251.21106663521016, "dp": 6.19, "close": 47.54, "cap": 63107, "ind": "服务器/存储系统", "itemStyle": {"color": "#c62828"}}, {"name": "NTAP", "value": 185.96505047992216, "dp": 4.07, "close": 176.07, "cap": 34583, "ind": "服务器/存储系统", "itemStyle": {"color": "#c62828"}}, {"name": "P", "value": 185.14588842315672, "dp": 6.33, "close": 102.87, "cap": 34279, "ind": "服务器/存储系统", "itemStyle": {"color": "#c62828"}}, {"name": "SMCI", "value": 137.0729732660673, "dp": -0.56, "close": 28.6, "cap": 18789, "ind": "服务器/存储系统", "itemStyle": {"color": "#a5d6a7"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "PC/消费电子", "value": 2262.3085554362383, "children": [{"name": "AAPL", "value": 2262.3085554362383, "dp": 2.43, "close": 350.69, "cap": 5118040, "ind": "PC/消费电子", "itemStyle": {"color": "#e57373"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "元器件与配套", "children": [{"name": "连接器/被动元件", "value": 861.7017808008821, "children": [{"name": "APH", "value": 446.42356568622137, "dp": 8.2, "close": 80.71, "cap": 199294, "ind": "连接器/被动元件", "itemStyle": {"color": "#7f0000"}}, {"name": "TEL", "value": 251.6505513604133, "dp": 5.67, "close": 218.74, "cap": 63328, "ind": "连接器/被动元件", "itemStyle": {"color": "#c62828"}}, {"name": "LFUS", "value": 98.97474425326898, "dp": 8.41, "close": 385.63, "cap": 9796, "ind": "连接器/被动元件", "itemStyle": {"color": "#7f0000"}}, {"name": "BDC", "value": 64.65291950097846, "dp": 9.28, "close": 106.91, "cap": 4180, "ind": "连接器/被动元件", "itemStyle": {"color": "#7f0000"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "PCB/面板", "value": 89.09545442950498, "children": [{"name": "TTMI", "value": 89.09545442950498, "dp": 13.26, "close": 75.33, "cap": 7938, "ind": "PCB/面板", "itemStyle": {"color": "#7f0000"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "EMS", "value": 710.0605303723985, "children": [{"name": "FLEX", "value": 169.94410845922255, "dp": 12.03, "close": 78.17, "cap": 28881, "ind": "EMS", "itemStyle": {"color": "#7f0000"}}, {"name": "CLS", "value": 167.6693174078072, "dp": 7.86, "close": 222.92, "cap": 28113, "ind": "EMS", "itemStyle": {"color": "#7f0000"}}, {"name": "JBL", "value": 161.26685958373469, "dp": 5.63, "close": 252.56, "cap": 26007, "ind": "EMS", "itemStyle": {"color": "#c62828"}}, {"name": "SANM", "value": 89.55445270895244, "dp": 11.11, "close": 149.64, "cap": 8020, "ind": "EMS", "itemStyle": {"color": "#7f0000"}}, {"name": "PLXS", "value": 74.03377607551839, "dp": 7.01, "close": 205.64, "cap": 5481, "ind": "EMS", "itemStyle": {"color": "#7f0000"}}, {"name": "BHE", "value": 47.59201613716318, "dp": 4.83, "close": 63.32, "cap": 2265, "ind": "EMS", "itemStyle": {"color": "#c62828"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "仪器/工业设备", "value": 394.4921877976873, "children": [{"name": "KEYS", "value": 221.80171324856803, "dp": 6.19, "close": 288.97, "cap": 49196, "ind": "仪器/工业设备", "itemStyle": {"color": "#c62828"}}, {"name": "TDY", "value": 172.69047454911924, "dp": 4.0, "close": 643.34, "cap": 29822, "ind": "仪器/工业设备", "itemStyle": {"color": "#c62828"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}, {"name": "分销", "value": 317.29422767626414, "children": [{"name": "SNX", "value": 134.9666625504239, "dp": 4.39, "close": 228.33, "cap": 18216, "ind": "分销", "itemStyle": {"color": "#c62828"}}, {"name": "ARW", "value": 98.82307422864359, "dp": 5.94, "close": 191.84, "cap": 9766, "ind": "分销", "itemStyle": {"color": "#c62828"}}, {"name": "AVT", "value": 83.50449089719666, "dp": 6.95, "close": 84.79, "cap": 6973, "ind": "分销", "itemStyle": {"color": "#c62828"}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}], "itemStyle": {"color": "#0d1117", "borderColor": "#30363d", "gapWidth": 2}}];
+const SCATTER = [{"x": 6.63, "y": -4.27, "sym": "NVDA", "ind": "AI芯片/CPU", "cap": 4305947}, {"x": 5.92, "y": 13.26, "sym": "AMD", "ind": "AI芯片/CPU", "cap": 830247}, {"x": 5.5, "y": 5.49, "sym": "INTC", "ind": "AI芯片/CPU", "cap": 315552}, {"x": 4.34, "y": 7.83, "sym": "CBRS", "ind": "AI芯片/CPU", "cap": 21906}, {"x": 6.18, "y": 8.78, "sym": "AVGO", "ind": "网络/互连芯片", "cap": 1525079}, {"x": 5.13, "y": 9.49, "sym": "MRVL", "ind": "网络/互连芯片", "cap": 135393}, {"x": 4.58, "y": 13.72, "sym": "ALAB", "ind": "网络/互连芯片", "cap": 37624}, {"x": 4.4, "y": 10.27, "sym": "CRDO", "ind": "网络/互连芯片", "cap": 24977}, {"x": 3.71, "y": 13.68, "sym": "MXL", "ind": "网络/互连芯片", "cap": 5071}, {"x": 5.98, "y": 5.53, "sym": "SKHY", "ind": "存储", "cap": 953903}, {"x": 5.92, "y": 6.25, "sym": "MU", "ind": "存储", "cap": 829501}, {"x": 5.1, "y": 6.16, "sym": "SNDK", "ind": "存储", "cap": 126141}, {"x": 5.07, "y": 9.79, "sym": "STX", "ind": "存储", "cap": 116190}, {"x": 5.04, "y": 9.86, "sym": "WDC", "ind": "存储", "cap": 108471}, {"x": 3.94, "y": 8.33, "sym": "RMBS", "ind": "存储", "cap": 8647}, {"x": 3.76, "y": 5.68, "sym": "SIMO", "ind": "存储", "cap": 5772}, {"x": 3.37, "y": 9.25, "sym": "PENG", "ind": "存储", "cap": 2342}, {"x": 5.43, "y": 6.62, "sym": "TXN", "ind": "模拟/电源", "cap": 270229}, {"x": 5.28, "y": 8.55, "sym": "ADI", "ind": "模拟/电源", "cap": 191239}, {"x": 4.83, "y": 16.6, "sym": "MPWR", "ind": "模拟/电源", "cap": 67726}, {"x": 4.14, "y": 9.63, "sym": "SITM", "ind": "模拟/电源", "cap": 13744}, {"x": 3.39, "y": 10.01, "sym": "POWI", "ind": "模拟/电源", "cap": 2475}, {"x": 4.6, "y": 6.76, "sym": "STM", "ind": "功率/分立", "cap": 39820}, {"x": 4.43, "y": 9.16, "sym": "ON", "ind": "功率/分立", "cap": 26903}, {"x": 3.4, "y": 11.27, "sym": "NVTS", "ind": "功率/分立", "cap": 2501}, {"x": 3.14, "y": 9.79, "sym": "WOLF", "ind": "功率/分立", "cap": 1383}, {"x": 4.81, "y": 3.27, "sym": "NXPI", "ind": "MCU/嵌入式/FPGA", "cap": 64631}, {"x": 4.52, "y": 5.39, "sym": "MCHP", "ind": "MCU/嵌入式/FPGA", "cap": 33392}, {"x": 4.21, "y": 8.45, "sym": "LSCC", "ind": "MCU/嵌入式/FPGA", "cap": 16176}, {"x": 3.87, "y": 0.14, "sym": "SLAB", "ind": "MCU/嵌入式/FPGA", "cap": 7401}, {"x": 3.43, "y": 5.28, "sym": "AMBA", "ind": "MCU/嵌入式/FPGA", "cap": 2721}, {"x": 5.26, "y": 3.66, "sym": "QCOM", "ind": "射频", "cap": 183103}, {"x": 5.3, "y": 6.69, "sym": "ARM", "ind": "IP/EDA", "cap": 198968}, {"x": 6.3, "y": 3.51, "sym": "TSM", "ind": "Fab/代工", "cap": 2015570}, {"x": 4.57, "y": 7.51, "sym": "UMC", "ind": "Fab/代工", "cap": 37141}, {"x": 4.35, "y": 4.89, "sym": "GFS", "ind": "Fab/代工", "cap": 22230}, {"x": 4.24, "y": 10.89, "sym": "TSEM", "ind": "Fab/代工", "cap": 17288}, {"x": 3.2, "y": 0.0, "sym": "SKYT", "ind": "Fab/代工", "cap": 1597}, {"x": 4.88, "y": 8.63, "sym": "ASX", "ind": "封测", "cap": 75852}, {"x": 3.94, "y": 6.64, "sym": "AMKR", "ind": "封测", "cap": 8673}, {"x": 3.22, "y": 9.52, "sym": "IMOS", "ind": "封测", "cap": 1678}, {"x": 5.77, "y": 6.21, "sym": "ASML", "ind": "设备", "cap": 583234}, {"x": 5.47, "y": 11.37, "sym": "AMAT", "ind": "设备", "cap": 294068}, {"x": 5.44, "y": 10.41, "sym": "LRCX", "ind": "设备", "cap": 276953}, {"x": 5.29, "y": 9.31, "sym": "KLAC", "ind": "设备", "cap": 197242}, {"x": 4.58, "y": 12.73, "sym": "TER", "ind": "设备", "cap": 38407}, {"x": 4.03, "y": 6.41, "sym": "NVMI", "ind": "设备", "cap": 10599}, {"x": 3.98, "y": 11.98, "sym": "ONTO", "ind": "设备", "cap": 9522}, {"x": 3.82, "y": 5.03, "sym": "FORM", "ind": "设备", "cap": 6656}, {"x": 3.69, "y": 8.23, "sym": "CAMT", "ind": "设备", "cap": 4902}, {"x": 3.51, "y": 11.52, "sym": "ACMR", "ind": "设备", "cap": 3217}, {"x": 3.56, "y": 7.75, "sym": "KLIC", "ind": "设备", "cap": 3609}, {"x": 3.52, "y": 8.46, "sym": "ACLS", "ind": "设备", "cap": 3324}, {"x": 3.38, "y": 6.48, "sym": "VECO", "ind": "设备", "cap": 2421}, {"x": 3.29, "y": 11.65, "sym": "AEHR", "ind": "设备", "cap": 1953}, {"x": 3.31, "y": 12.76, "sym": "COHU", "ind": "设备", "cap": 2054}, {"x": 4.16, "y": 10.05, "sym": "MKSI", "ind": "零部件", "cap": 14307}, {"x": 3.95, "y": 11.31, "sym": "AEIS", "ind": "零部件", "cap": 8878}, {"x": 3.34, "y": 11.57, "sym": "UCTT", "ind": "零部件", "cap": 2201}, {"x": 3.11, "y": 11.25, "sym": "ICHR", "ind": "零部件", "cap": 1290}, {"x": 4.42, "y": 6.87, "sym": "Q", "ind": "材料", "cap": 26159}, {"x": 4.33, "y": 9.44, "sym": "ENTG", "ind": "材料", "cap": 21401}, {"x": 3.61, "y": 1.93, "sym": "OLED", "ind": "材料", "cap": 4053}, {"x": 3.36, "y": 5.35, "sym": "ROG", "ind": "材料", "cap": 2286}, {"x": 3.23, "y": 5.7, "sym": "PLAB", "ind": "材料", "cap": 1706}, {"x": 5.0, "y": 9.25, "sym": "GLW", "ind": "光通信", "cap": 99879}, {"x": 4.73, "y": 10.69, "sym": "LITE", "ind": "光通信", "cap": 54002}, {"x": 4.58, "y": 10.66, "sym": "CIEN", "ind": "光通信", "cap": 38193}, {"x": 4.65, "y": 16.79, "sym": "COHR", "ind": "光通信", "cap": 44347}, {"x": 4.65, "y": 6.79, "sym": "NOK", "ind": "光通信", "cap": 44179}, {"x": 4.24, "y": 9.02, "sym": "MTSI", "ind": "光通信", "cap": 17565}, {"x": 4.12, "y": 11.86, "sym": "FN", "ind": "光通信", "cap": 13113}, {"x": 4.04, "y": 12.83, "sym": "SMTC", "ind": "光通信", "cap": 10868}, {"x": 3.9, "y": 12.33, "sym": "VIAV", "ind": "光通信", "cap": 7865}, {"x": 3.65, "y": 3.93, "sym": "AAOI", "ind": "光通信", "cap": 4424}, {"x": 3.45, "y": 10.37, "sym": "AXTI", "ind": "光通信", "cap": 2814}, {"x": 2.84, "y": 3.75, "sym": "POET", "ind": "光通信", "cap": 694}, {"x": 5.59, "y": 5.11, "sym": "CSCO", "ind": "网络设备", "cap": 388936}, {"x": 5.37, "y": 9.0, "sym": "ANET", "ind": "网络设备", "cap": 234801}, {"x": 3.53, "y": 6.53, "sym": "EXTR", "ind": "网络设备", "cap": 3358}, {"x": 5.34, "y": 5.33, "sym": "DELL", "ind": "服务器/存储系统", "cap": 220023}, {"x": 4.8, "y": 6.19, "sym": "HPE", "ind": "服务器/存储系统", "cap": 63107}, {"x": 4.54, "y": 4.07, "sym": "NTAP", "ind": "服务器/存储系统", "cap": 34583}, {"x": 4.54, "y": 6.33, "sym": "P", "ind": "服务器/存储系统", "cap": 34279}, {"x": 4.27, "y": -0.56, "sym": "SMCI", "ind": "服务器/存储系统", "cap": 18789}, {"x": 6.71, "y": 2.43, "sym": "AAPL", "ind": "PC/消费电子", "cap": 5118040}, {"x": 5.3, "y": 8.2, "sym": "APH", "ind": "连接器/被动元件", "cap": 199294}, {"x": 4.8, "y": 5.67, "sym": "TEL", "ind": "连接器/被动元件", "cap": 63328}, {"x": 3.99, "y": 8.41, "sym": "LFUS", "ind": "连接器/被动元件", "cap": 9796}, {"x": 3.62, "y": 9.28, "sym": "BDC", "ind": "连接器/被动元件", "cap": 4180}, {"x": 3.9, "y": 13.26, "sym": "TTMI", "ind": "PCB/面板", "cap": 7938}, {"x": 4.46, "y": 12.03, "sym": "FLEX", "ind": "EMS", "cap": 28881}, {"x": 4.45, "y": 7.86, "sym": "CLS", "ind": "EMS", "cap": 28113}, {"x": 4.42, "y": 5.63, "sym": "JBL", "ind": "EMS", "cap": 26007}, {"x": 3.9, "y": 11.11, "sym": "SANM", "ind": "EMS", "cap": 8020}, {"x": 3.74, "y": 7.01, "sym": "PLXS", "ind": "EMS", "cap": 5481}, {"x": 3.36, "y": 4.83, "sym": "BHE", "ind": "EMS", "cap": 2265}, {"x": 4.69, "y": 6.19, "sym": "KEYS", "ind": "仪器/工业设备", "cap": 49196}, {"x": 4.47, "y": 4.0, "sym": "TDY", "ind": "仪器/工业设备", "cap": 29822}, {"x": 4.26, "y": 4.39, "sym": "SNX", "ind": "分销", "cap": 18216}, {"x": 3.99, "y": 5.94, "sym": "ARW", "ind": "分销", "cap": 9766}, {"x": 3.84, "y": 6.95, "sym": "AVT", "ind": "分销", "cap": 6973}];
+const chart = echarts.init(document.getElementById('treemap'), null, {renderer: 'canvas'});
+chart.setOption({
+  backgroundColor: 'transparent',
+  tooltip: {
+    formatter: function(p) {
+      const d = p.data;
+      if (d.dp !== undefined) {
+        const sign = d.dp > 0 ? '+' : '';
+        return `<b>${d.name}</b> <span style="color:#8b949e">[${d.ind}]</span><br/>` +
+               `涨跌: <b style="color:${d.dp>0?'#3fb950':'#f85149'}">${sign}${d.dp}%</b><br/>` +
+               `收盘: $${d.close}<br/>市值: $${(d.cap/1000).toFixed(1)}B`;
+      }
+      return `<b>${d.name}</b>`;
+    }
+  },
+  series: [{
+    type: 'treemap',
+    data: TREEMAP_DATA,
+    width: '100%', height: '100%',
+    roam: false, nodeClick: 'zoomToNode',
+    breadcrumb: {show: true, top: 5, left: 5, itemStyle: {color: '#21262d', borderColor: '#30363d', textStyle: {color: '#e6edf3'}}},
+    label: {
+      show: true, fontSize: 10, color: '#0d1117', fontWeight: 'bold',
+      formatter: function(p) {
+        if (p.data.dp !== undefined) {
+          const sign = p.data.dp > 0 ? '+' : '';
+          return `{a|${p.name}}\n{b|${sign}${p.data.dp}%}`;
+        }
+        return p.name;
+      },
+      rich: {
+        a: {fontSize: 11, fontWeight: 'bold', color: '#0d1117'},
+        b: {fontSize: 9, color: '#0d1117'}
+      }
+    },
+    upperLabel: {show: true, height: 22, color: '#fff', fontSize: 12, fontWeight: 'bold', backgroundColor: '#21262d', padding: [4, 8]},
+    itemStyle: {borderWidth: 1, borderColor: '#0d1117', gapWidth: 1},
+    levels: [
+      {itemStyle: {borderWidth: 3, borderColor: '#0d1117', gapWidth: 3}, upperLabel: {height: 24}},
+      {itemStyle: {borderWidth: 2, borderColor: '#21262d', gapWidth: 2}, upperLabel: {height: 20, backgroundColor: '#161b22'}},
+      {itemStyle: {borderWidth: 1, borderColor: '#0d1117', gapWidth: 1}}
+    ]
+  }]
+});
+window.addEventListener('resize', () => chart.resize());
+
+// 散点图
+function dpColorJs(dp) {
+  if (dp >= 7)  return '#7f0000';
+  if (dp >= 4)  return '#c62828';
+  if (dp >= 1)  return '#e57373cc';
+  if (dp >= 0)  return '#ef9a9acc';
+  if (dp >= -1) return '#a5d6a7cc';
+  if (dp >= -4) return '#388e3ccc';
+  return '#1b5e20';
+}
+new Chart(document.getElementById('scatter'), {
+  type: 'scatter',
+  data: {
+    datasets: [{
+      data: SCATTER.map(p => ({x: p.x, y: p.y, sym: p.sym, ind: p.ind, cap: p.cap})),
+      backgroundColor: SCATTER.map(p => dpColorJs(p.y)),
+      pointRadius: 4, pointHoverRadius: 7
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: {display: false},
+      tooltip: {
+        callbacks: {
+          label: (ctx) => {
+            const p = ctx.raw;
+            return `${p.sym} [${p.ind}]  ${p.y > 0 ? '+' : ''}${p.y}%  市值 $${(p.cap/1000).toFixed(1)}B`;
+          }
+        },
+        backgroundColor: '#21262d', titleColor: '#e6edf3', bodyColor: '#e6edf3'
+      }
+    },
+    scales: {
+      x: {
+        title: {display: true, text: 'log₁₀(市值，百万USD)', color: '#8b949e'},
+        grid: {color: '#21262d'}, ticks: {color: '#8b949e'}
+      },
+      y: {
+        title: {display: true, text: '涨跌幅 %', color: '#8b949e'},
+        grid: {color: '#21262d'}, ticks: {color: '#8b949e', callback: v => v + '%'}
+      }
+    }
+  }
+});
+</script>
+
+<div class="sub" style="margin-top:20px">数据来源：Finnhub /quote + WebSearch 公开市场数据交叉核对 · 大中盘股为确认值，微盘部分基于子行业均值估算</div>
+</body>
+</html>
